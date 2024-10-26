@@ -68,10 +68,6 @@
 - 测试页面
     - 测试用例
 
-## 在线演示
-
-### 目前单体架构不满足业务需要, 已转至[Go Cinch](https://go-cinch.github.io/docs/#/README), 本项目不再提供在线演示.
-
 ## 快速开始
 
 ```
@@ -83,8 +79,6 @@ go run main.go
 ```
 
 > 启动成功之后, 可在浏览器中输入: [http://127.0.0.1:10000/api/ping](http://127.0.0.1:10000/api/ping), 若不能访问请检查Go环境变量或数据库配置是否正确
-
-## [文档](https://piupuer.github.io/gnboot-slate)
 
 ## 项目结构概览
 
@@ -120,94 +114,5 @@ go run main.go
 ├── TODO.md # 已完成/待完成列表
 ```
 
-## 前端
 
-- 项目地址: [gnboot-vue](https://github.com/piupuer/gnboot-vue)
-- 实现方式: Typescript(为什么使用它, JS的弱类型带来的问题实在不想再吐槽, TS提高效率, 反正笔者作为一枚后端用起来很舒服~)
-
-## [注意事项](https://github.com/piupuer/gnboot/blob/master/TIPS.md)
-
-## [TODO](https://github.com/piupuer/gnboot/blob/master/TODO.md)
-
-## 特别感谢
-
-前端:
-<br/>
-[Element UI](https://github.com/ElemeFE/element): A Vue.js 2.0 UI Toolkit for Web.
-<br/>
-[vue-element-admin](https://github.com/PanJiaChen/vue-element-admin): a production-ready front-end solution for admin
-interfaces.
-<br/>
-[vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template): a production-ready front-end
-solution for admin interfaces based on vue, typescript and UI Toolkit element-ui.
-<br/>
-
-后端:
-<br/>
-[Gin](https://github.com/gin-gonic/gin): a web framework written in Go (Golang).
-<br/>
-[gin-jwt](https://github.com/appleboy/gin-jwt): a middleware for Gin framework.
-<br/>
-[casbin](https://github.com/casbin/casbin): An authorization library that supports access control models like ACL, RBAC,
-ABAC in Golang.
-<br/>
-[Gorm](https://github.com/jinzhu/gorm): The fantastic ORM library for Golang.
-<br/>
-[logrus](https://github.com/sirupsen/logrus): Logrus is a structured logger for Go (golang), completely API compatible with the standard library logger.
-<br/>
-[zap](https://github.com/uber-go/zap): Blazing fast, structured, leveled logging in Go.
-<br/>
-[lumberjack](https://github.com/natefinch/lumberjack): lumberjack is a log rolling package for Go.
-<br/>
-[viper](https://github.com/spf13/viper): Go configuration with fangs.
-<br/>
-[packr](https://github.com/gobuffalo/packr): The simple and easy way to embed static files into Go binaries.
-<br/>
-[go-funk](https://github.com/thoas/go-funk): A modern Go utility library which provides helpers (map, find, contains,
-filter, ...).
-<br/>
-[limiter](https://github.com/ulule/limiter): Dead simple rate limit middleware for Go.
-<br/>
-[validator](https://github.com/go-playground/validator): Go Struct and Field validation, including Cross Field, Cross
-Struct, Map, Slice and Array diving.
-<br/>
-[dcron](https://github.com/libi/dcron): 分布式定时任务库.
-<br/>
-[fsm](https://github.com/looplab/fsm): FSM is a finite state machine for Go.
-<br/>
-[sql-migrate](https://github.com/rubenv/sql-migrate): SQL Schema migration tool for Go. Based on gorp and goose.
-<br/>
-
-日志搜集:
-<br/>
-[loki](https://github.com/grafana/loki): Loki: like Prometheus, but for logs.
-
-<br/>
-
-下面几个类似本项目, 学习了大神的一些代码风格:
-<br/>
-[gin-admin](https://github.com/LyricTian/gin-admin): RBAC scaffolding based on Gin + Gorm/Mongo + Casbin + Wire.
-<br/>
-[gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin): Gin-vue-admin is a full-stack (frontend and backend
-separation) framework designed for management system.
-<br/>
-[go-admin](https://github.com/wenjianzhang/go-admin): Gin + Vue + Element UI based scaffolding for front and back
-separation management system.
-
-## 互动交流
-
-### 与作者对话
-
-> 该项目是利用业余时间进行开发的, 开发思路参考了很多优秀的前后端框架, 结合自己的理解和实际需求, 做了改进.
-> 如果觉得项目有不懂的地方或需要改进的地方, 欢迎提issue或pr!
-
-### QQ群：943724601
-
-<img src="https://github.com/piupuer/gnboot-images/blob/master/contact/qq_group.jpeg?raw=true" width="256" alt="QQ群" />
-
-> 就不贴打赏二维码了, 不然显得项目很low, 如果您非要请我喝咖啡, 私信我, 哈哈哈~
-
-## MIT License
-
-    Copyright (c) 2021 piupuer
 

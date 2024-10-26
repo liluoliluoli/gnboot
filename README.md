@@ -1,4 +1,4 @@
-<h1 align="center">Gin Web</h1>
+<h1 align="center">gnboot</h1>
 
 <div align="center">
 由gin + gorm + jwt + casbin组合实现的RBAC权限管理脚手架Golang版, 搭建完成即可快速、高效投入业务开发

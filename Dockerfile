@@ -1,7 +1,7 @@
 FROM golang:1.23 AS gnboot
 #FROM registry.cn-shenzhen.aliyuncs.com/piupuer/golang:1.17-alpine AS gnboot
 
-RUN echo "----------------- Gin Web building -----------------"
+RUN echo "----------------- gnboot building -----------------"
 
 # set environments
 # enable go modules
@@ -23,7 +23,7 @@ RUN go mod tidy
 COPY . .
 
 # save current git version
-RUN chmod +x version.sh && ./version.sh
+#RUN chmod +x version.sh && ./version.sh
 
 RUN go build -o gnboot .
 
@@ -34,13 +34,14 @@ FROM frolvlad/alpine-glibc:alpine-3.12
 # set project run mode
 ENV APP_HOME /app/gnboot
 
-RUN mkdir -p $APP_HOME
+#RUN mkdir -p $APP_HOME
 
 WORKDIR $APP_HOME
 
 COPY --from=gnboot $APP_HOME/conf ./conf/
 COPY --from=gnboot $APP_HOME/gnboot .
 COPY --from=gnboot $APP_HOME/gitversion .
+
 
 # use ali apk mirros
 # change timezone to Shanghai

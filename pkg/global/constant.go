@@ -2,7 +2,7 @@ package global
 
 const (
 	ProName     = "gnboot"
-	ProEnvName  = "GIN_WEB"
+	ProEnvName  = "GNBOOT"
 	ProProdName = "PROD"
 )
 

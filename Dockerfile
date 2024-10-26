@@ -9,7 +9,7 @@ ENV GO111MODULE=on
 # set up an agent to speed up downloading resources
 ENV GOPROXY=https://goproxy.cn,direct
 # set app home dir
-ENV APP_HOME /app/gnboot
+ENV APP_HOME=/app/gnboot
 
 RUN mkdir -p $APP_HOME
 
@@ -28,11 +28,11 @@ COPY . .
 RUN go build -o gnboot .
 
 # mysqldump need to use alpine-glibc
-FROM frolvlad/alpine-glibc:alpine-3.12
+FROM oowy/glibc:2.39-alpine3.19
 #FROM registry.cn-shenzhen.aliyuncs.com/piupuer/frolvlad-alpine-glibc:alpine-3.12
 
 # set project run mode
-ENV APP_HOME /app/gnboot
+ENV APP_HOME=/app/gnboot
 
 #RUN mkdir -p $APP_HOME
 

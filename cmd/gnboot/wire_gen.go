@@ -46,11 +46,11 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 	dataData, cleanup := data.NewData(universalClient, tenant, sonyflake, tracerProvider)
-	gnbootRepo := data.NewGnbootRepo(dataData)
+	movieRepo := data.NewMovieRepo(dataData)
 	transaction := data.NewTransaction(dataData)
 	cache := data.NewCache(c, universalClient)
-	gnbootUseCase := biz.NewGnbootUseCase(c, gnbootRepo, transaction, cache)
-	gnbootService := service.NewGnbootService(worker, gnbootUseCase)
+	movieUseCase := biz.NewMovieUseCase(c, movieRepo, transaction, cache)
+	gnbootService := service.NewGnbootService(worker, movieUseCase)
 	grpcServer := server.NewGRPCServer(c, gnbootService)
 	httpServer := server.NewHTTPServer(c, gnbootService)
 	app := newApp(grpcServer, httpServer)

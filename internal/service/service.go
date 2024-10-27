@@ -14,11 +14,11 @@ var ProviderSet = wire.NewSet(NewGnbootService)
 type GnbootService struct {
 	gnboot.UnimplementedGnbootServer
 
-	task   *worker.Worker
-	gnboot *biz.GnbootUseCase
+	task  *worker.Worker
+	movie *biz.MovieUseCase
 }
 
 // NewGnbootService new a service.
-func NewGnbootService(task *worker.Worker, gnboot *biz.GnbootUseCase) *GnbootService {
-	return &GnbootService{task: task, gnboot: gnboot}
+func NewGnbootService(task *worker.Worker, movie *biz.MovieUseCase) *GnbootService {
+	return &GnbootService{task: task, movie: movie}
 }

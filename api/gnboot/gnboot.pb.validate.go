@@ -35,331 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on GnbootReply with the rules defined in the
+// Validate checks the field values on MovieReply with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *GnbootReply) Validate() error {
+func (m *MovieReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GnbootReply with the rules defined in
+// ValidateAll checks the field values on MovieReply with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GnbootReplyMultiError, or nil
-// if none found.
-func (m *GnbootReply) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GnbootReply) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for Name
-
-	if len(errors) > 0 {
-		return GnbootReplyMultiError(errors)
-	}
-
-	return nil
-}
-
-// GnbootReplyMultiError is an error wrapping multiple validation errors returned
-// by GnbootReply.ValidateAll() if the designated constraints aren't met.
-type GnbootReplyMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GnbootReplyMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GnbootReplyMultiError) AllErrors() []error { return m }
-
-// GnbootReplyValidationError is the validation error returned by
-// GnbootReply.Validate if the designated constraints aren't met.
-type GnbootReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GnbootReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GnbootReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GnbootReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GnbootReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GnbootReplyValidationError) ErrorName() string { return "GnbootReplyValidationError" }
-
-// Error satisfies the builtin error interface
-func (e GnbootReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGnbootReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GnbootReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GnbootReplyValidationError{}
-
-// Validate checks the field values on CreateGnbootRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *CreateGnbootRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CreateGnbootRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateGnbootRequestMultiError, or nil if none found.
-func (m *CreateGnbootRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CreateGnbootRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Name
-
-	if len(errors) > 0 {
-		return CreateGnbootRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateGnbootRequestMultiError is an error wrapping multiple validation errors
-// returned by CreateGnbootRequest.ValidateAll() if the designated constraints
-// aren't met.
-type CreateGnbootRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateGnbootRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateGnbootRequestMultiError) AllErrors() []error { return m }
-
-// CreateGnbootRequestValidationError is the validation error returned by
-// CreateGnbootRequest.Validate if the designated constraints aren't met.
-type CreateGnbootRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateGnbootRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateGnbootRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateGnbootRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateGnbootRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateGnbootRequestValidationError) ErrorName() string {
-	return "CreateGnbootRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateGnbootRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateGnbootRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateGnbootRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateGnbootRequestValidationError{}
-
-// Validate checks the field values on GetGnbootRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *GetGnbootRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetGnbootRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GetGnbootRequestMultiError,
-// or nil if none found.
-func (m *GetGnbootRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetGnbootRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(errors) > 0 {
-		return GetGnbootRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetGnbootRequestMultiError is an error wrapping multiple validation errors
-// returned by GetGnbootRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetGnbootRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetGnbootRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetGnbootRequestMultiError) AllErrors() []error { return m }
-
-// GetGnbootRequestValidationError is the validation error returned by
-// GetGnbootRequest.Validate if the designated constraints aren't met.
-type GetGnbootRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetGnbootRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetGnbootRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetGnbootRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetGnbootRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetGnbootRequestValidationError) ErrorName() string { return "GetGnbootRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e GetGnbootRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetGnbootRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetGnbootRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetGnbootRequestValidationError{}
-
-// Validate checks the field values on GetGnbootReply with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *GetGnbootReply) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetGnbootReply with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in GetGnbootReplyMultiError, or
+// result is a list of violation errors wrapped in MovieReplyMultiError, or
 // nil if none found.
-func (m *GetGnbootReply) ValidateAll() error {
+func (m *MovieReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetGnbootReply) validate(all bool) error {
+func (m *MovieReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -371,18 +62,18 @@ func (m *GetGnbootReply) validate(all bool) error {
 	// no validation rules for Name
 
 	if len(errors) > 0 {
-		return GetGnbootReplyMultiError(errors)
+		return MovieReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetGnbootReplyMultiError is an error wrapping multiple validation errors
-// returned by GetGnbootReply.ValidateAll() if the designated constraints aren't met.
-type GetGnbootReplyMultiError []error
+// MovieReplyMultiError is an error wrapping multiple validation errors
+// returned by MovieReply.ValidateAll() if the designated constraints aren't met.
+type MovieReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetGnbootReplyMultiError) Error() string {
+func (m MovieReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -391,11 +82,11 @@ func (m GetGnbootReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetGnbootReplyMultiError) AllErrors() []error { return m }
+func (m MovieReplyMultiError) AllErrors() []error { return m }
 
-// GetGnbootReplyValidationError is the validation error returned by
-// GetGnbootReply.Validate if the designated constraints aren't met.
-type GetGnbootReplyValidationError struct {
+// MovieReplyValidationError is the validation error returned by
+// MovieReply.Validate if the designated constraints aren't met.
+type MovieReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -403,22 +94,22 @@ type GetGnbootReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetGnbootReplyValidationError) Field() string { return e.field }
+func (e MovieReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetGnbootReplyValidationError) Reason() string { return e.reason }
+func (e MovieReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetGnbootReplyValidationError) Cause() error { return e.cause }
+func (e MovieReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetGnbootReplyValidationError) Key() bool { return e.key }
+func (e MovieReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetGnbootReplyValidationError) ErrorName() string { return "GetGnbootReplyValidationError" }
+func (e MovieReplyValidationError) ErrorName() string { return "MovieReplyValidationError" }
 
 // Error satisfies the builtin error interface
-func (e GetGnbootReplyValidationError) Error() string {
+func (e MovieReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -430,14 +121,14 @@ func (e GetGnbootReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetGnbootReply.%s: %s%s",
+		"invalid %sMovieReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetGnbootReplyValidationError{}
+var _ error = MovieReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -445,24 +136,334 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetGnbootReplyValidationError{}
+} = MovieReplyValidationError{}
 
-// Validate checks the field values on FindGnbootRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *FindGnbootRequest) Validate() error {
+// Validate checks the field values on CreateMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateMovieRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on FindGnbootRequest with the rules
+// ValidateAll checks the field values on CreateMovieRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// FindGnbootRequestMultiError, or nil if none found.
-func (m *FindGnbootRequest) ValidateAll() error {
+// CreateMovieRequestMultiError, or nil if none found.
+func (m *CreateMovieRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *FindGnbootRequest) validate(all bool) error {
+func (m *CreateMovieRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	if len(errors) > 0 {
+		return CreateMovieRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateMovieRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateMovieRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateMovieRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateMovieRequestMultiError) AllErrors() []error { return m }
+
+// CreateMovieRequestValidationError is the validation error returned by
+// CreateMovieRequest.Validate if the designated constraints aren't met.
+type CreateMovieRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateMovieRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateMovieRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateMovieRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateMovieRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateMovieRequestValidationError) ErrorName() string {
+	return "CreateMovieRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateMovieRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateMovieRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateMovieRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateMovieRequestValidationError{}
+
+// Validate checks the field values on GetMovieRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetMovieRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMovieRequestMultiError, or nil if none found.
+func (m *GetMovieRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMovieRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetMovieRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by GetMovieRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetMovieRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMovieRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMovieRequestMultiError) AllErrors() []error { return m }
+
+// GetMovieRequestValidationError is the validation error returned by
+// GetMovieRequest.Validate if the designated constraints aren't met.
+type GetMovieRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMovieRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMovieRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMovieRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMovieRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMovieRequestValidationError) ErrorName() string { return "GetMovieRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetMovieRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMovieRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMovieRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMovieRequestValidationError{}
+
+// Validate checks the field values on GetMovieReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetMovieReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMovieReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetMovieReplyMultiError, or
+// nil if none found.
+func (m *GetMovieReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMovieReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	if len(errors) > 0 {
+		return GetMovieReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMovieReplyMultiError is an error wrapping multiple validation errors
+// returned by GetMovieReply.ValidateAll() if the designated constraints
+// aren't met.
+type GetMovieReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMovieReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMovieReplyMultiError) AllErrors() []error { return m }
+
+// GetMovieReplyValidationError is the validation error returned by
+// GetMovieReply.Validate if the designated constraints aren't met.
+type GetMovieReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMovieReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMovieReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMovieReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMovieReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMovieReplyValidationError) ErrorName() string { return "GetMovieReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetMovieReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMovieReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMovieReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMovieReplyValidationError{}
+
+// Validate checks the field values on FindMovieRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *FindMovieRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FindMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FindMovieRequestMultiError, or nil if none found.
+func (m *FindMovieRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FindMovieRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -473,7 +474,7 @@ func (m *FindGnbootRequest) validate(all bool) error {
 		switch v := interface{}(m.GetPage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, FindGnbootRequestValidationError{
+				errors = append(errors, FindMovieRequestValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -481,7 +482,7 @@ func (m *FindGnbootRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, FindGnbootRequestValidationError{
+				errors = append(errors, FindMovieRequestValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -490,7 +491,7 @@ func (m *FindGnbootRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return FindGnbootRequestValidationError{
+			return FindMovieRequestValidationError{
 				field:  "Page",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -503,19 +504,19 @@ func (m *FindGnbootRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return FindGnbootRequestMultiError(errors)
+		return FindMovieRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// FindGnbootRequestMultiError is an error wrapping multiple validation errors
-// returned by FindGnbootRequest.ValidateAll() if the designated constraints
+// FindMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by FindMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
-type FindGnbootRequestMultiError []error
+type FindMovieRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m FindGnbootRequestMultiError) Error() string {
+func (m FindMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -524,11 +525,11 @@ func (m FindGnbootRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m FindGnbootRequestMultiError) AllErrors() []error { return m }
+func (m FindMovieRequestMultiError) AllErrors() []error { return m }
 
-// FindGnbootRequestValidationError is the validation error returned by
-// FindGnbootRequest.Validate if the designated constraints aren't met.
-type FindGnbootRequestValidationError struct {
+// FindMovieRequestValidationError is the validation error returned by
+// FindMovieRequest.Validate if the designated constraints aren't met.
+type FindMovieRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -536,24 +537,22 @@ type FindGnbootRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e FindGnbootRequestValidationError) Field() string { return e.field }
+func (e FindMovieRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e FindGnbootRequestValidationError) Reason() string { return e.reason }
+func (e FindMovieRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e FindGnbootRequestValidationError) Cause() error { return e.cause }
+func (e FindMovieRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e FindGnbootRequestValidationError) Key() bool { return e.key }
+func (e FindMovieRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e FindGnbootRequestValidationError) ErrorName() string {
-	return "FindGnbootRequestValidationError"
-}
+func (e FindMovieRequestValidationError) ErrorName() string { return "FindMovieRequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e FindGnbootRequestValidationError) Error() string {
+func (e FindMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -565,14 +564,14 @@ func (e FindGnbootRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sFindGnbootRequest.%s: %s%s",
+		"invalid %sFindMovieRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = FindGnbootRequestValidationError{}
+var _ error = FindMovieRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -580,24 +579,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = FindGnbootRequestValidationError{}
+} = FindMovieRequestValidationError{}
 
-// Validate checks the field values on FindGnbootReply with the rules defined in
+// Validate checks the field values on FindMovieReply with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *FindGnbootReply) Validate() error {
+func (m *FindMovieReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on FindGnbootReply with the rules defined
+// ValidateAll checks the field values on FindMovieReply with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in FindGnbootReplyMultiError, or
-// nil if none found.
-func (m *FindGnbootReply) ValidateAll() error {
+// result is a list of violation errors wrapped in FindMovieReplyMultiError,
+// or nil if none found.
+func (m *FindMovieReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *FindGnbootReply) validate(all bool) error {
+func (m *FindMovieReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -608,7 +607,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 		switch v := interface{}(m.GetPage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, FindGnbootReplyValidationError{
+				errors = append(errors, FindMovieReplyValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -616,7 +615,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, FindGnbootReplyValidationError{
+				errors = append(errors, FindMovieReplyValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -625,7 +624,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return FindGnbootReplyValidationError{
+			return FindMovieReplyValidationError{
 				field:  "Page",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -640,7 +639,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, FindGnbootReplyValidationError{
+					errors = append(errors, FindMovieReplyValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -648,7 +647,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, FindGnbootReplyValidationError{
+					errors = append(errors, FindMovieReplyValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -657,7 +656,7 @@ func (m *FindGnbootReply) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return FindGnbootReplyValidationError{
+				return FindMovieReplyValidationError{
 					field:  fmt.Sprintf("List[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -668,19 +667,19 @@ func (m *FindGnbootReply) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return FindGnbootReplyMultiError(errors)
+		return FindMovieReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// FindGnbootReplyMultiError is an error wrapping multiple validation errors
-// returned by FindGnbootReply.ValidateAll() if the designated constraints
+// FindMovieReplyMultiError is an error wrapping multiple validation errors
+// returned by FindMovieReply.ValidateAll() if the designated constraints
 // aren't met.
-type FindGnbootReplyMultiError []error
+type FindMovieReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m FindGnbootReplyMultiError) Error() string {
+func (m FindMovieReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -689,11 +688,11 @@ func (m FindGnbootReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m FindGnbootReplyMultiError) AllErrors() []error { return m }
+func (m FindMovieReplyMultiError) AllErrors() []error { return m }
 
-// FindGnbootReplyValidationError is the validation error returned by
-// FindGnbootReply.Validate if the designated constraints aren't met.
-type FindGnbootReplyValidationError struct {
+// FindMovieReplyValidationError is the validation error returned by
+// FindMovieReply.Validate if the designated constraints aren't met.
+type FindMovieReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -701,22 +700,22 @@ type FindGnbootReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e FindGnbootReplyValidationError) Field() string { return e.field }
+func (e FindMovieReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e FindGnbootReplyValidationError) Reason() string { return e.reason }
+func (e FindMovieReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e FindGnbootReplyValidationError) Cause() error { return e.cause }
+func (e FindMovieReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e FindGnbootReplyValidationError) Key() bool { return e.key }
+func (e FindMovieReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e FindGnbootReplyValidationError) ErrorName() string { return "FindGnbootReplyValidationError" }
+func (e FindMovieReplyValidationError) ErrorName() string { return "FindMovieReplyValidationError" }
 
 // Error satisfies the builtin error interface
-func (e FindGnbootReplyValidationError) Error() string {
+func (e FindMovieReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -728,14 +727,14 @@ func (e FindGnbootReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sFindGnbootReply.%s: %s%s",
+		"invalid %sFindMovieReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = FindGnbootReplyValidationError{}
+var _ error = FindMovieReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -743,24 +742,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = FindGnbootReplyValidationError{}
+} = FindMovieReplyValidationError{}
 
-// Validate checks the field values on UpdateGnbootRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UpdateGnbootRequest) Validate() error {
+// Validate checks the field values on UpdateMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateMovieRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateGnbootRequest with the rules
+// ValidateAll checks the field values on UpdateMovieRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateGnbootRequestMultiError, or nil if none found.
-func (m *UpdateGnbootRequest) ValidateAll() error {
+// UpdateMovieRequestMultiError, or nil if none found.
+func (m *UpdateMovieRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateGnbootRequest) validate(all bool) error {
+func (m *UpdateMovieRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -774,19 +773,19 @@ func (m *UpdateGnbootRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateGnbootRequestMultiError(errors)
+		return UpdateMovieRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateGnbootRequestMultiError is an error wrapping multiple validation errors
-// returned by UpdateGnbootRequest.ValidateAll() if the designated constraints
+// UpdateMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdateMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
-type UpdateGnbootRequestMultiError []error
+type UpdateMovieRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateGnbootRequestMultiError) Error() string {
+func (m UpdateMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -795,11 +794,11 @@ func (m UpdateGnbootRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateGnbootRequestMultiError) AllErrors() []error { return m }
+func (m UpdateMovieRequestMultiError) AllErrors() []error { return m }
 
-// UpdateGnbootRequestValidationError is the validation error returned by
-// UpdateGnbootRequest.Validate if the designated constraints aren't met.
-type UpdateGnbootRequestValidationError struct {
+// UpdateMovieRequestValidationError is the validation error returned by
+// UpdateMovieRequest.Validate if the designated constraints aren't met.
+type UpdateMovieRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -807,24 +806,24 @@ type UpdateGnbootRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateGnbootRequestValidationError) Field() string { return e.field }
+func (e UpdateMovieRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateGnbootRequestValidationError) Reason() string { return e.reason }
+func (e UpdateMovieRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateGnbootRequestValidationError) Cause() error { return e.cause }
+func (e UpdateMovieRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateGnbootRequestValidationError) Key() bool { return e.key }
+func (e UpdateMovieRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateGnbootRequestValidationError) ErrorName() string {
-	return "UpdateGnbootRequestValidationError"
+func (e UpdateMovieRequestValidationError) ErrorName() string {
+	return "UpdateMovieRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateGnbootRequestValidationError) Error() string {
+func (e UpdateMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -836,14 +835,14 @@ func (e UpdateGnbootRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateGnbootRequest.%s: %s%s",
+		"invalid %sUpdateMovieRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateGnbootRequestValidationError{}
+var _ error = UpdateMovieRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -851,4 +850,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateGnbootRequestValidationError{}
+} = UpdateMovieRequestValidationError{}

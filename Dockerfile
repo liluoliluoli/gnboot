@@ -1,58 +1,29 @@
-FROM golang:1.23 AS gnboot
-#FROM registry.cn-shenzhen.aliyuncs.com/piupuer/golang:1.17-alpine AS gnboot
+FROM golang:1.22-alpine3.18 AS builder
 
-RUN echo "----------------- gnboot building -----------------"
+#ENV GOPROXY=https://goproxy.cn
+# CGO_ENABLED=1, need check `ldd --version` is same as builder
+ENV CGO_ENABLED=0
 
-# set environments
-# enable go modules
-ENV GO111MODULE=on
-# set up an agent to speed up downloading resources
-ENV GOPROXY=https://goproxy.cn,direct
-# set app home dir
-ENV APP_HOME=/app/gnboot
+RUN apk update && apk add --no-cache git make
 
-RUN mkdir -p $APP_HOME
-
-WORKDIR $APP_HOME
-
-# copy go.mod / go.sum to download dependent files
+COPY . /src
+WORKDIR /src
+# download first can use docker build cache if go.mod not change
 COPY go.mod go.sum ./
-RUN go mod tidy
+RUN go mod download
+RUN go mod verify
 
-# copy source files
 COPY . .
+RUN make build
 
-# save current git version
-#RUN chmod +x version.sh && ./version.sh
+FROM alpine:3.18
 
-RUN go build -o gnboot .
+RUN apk update && apk add --no-cache bash
 
-# mysqldump need to use alpine-glibc
-FROM oowy/glibc:2.39-alpine3.19
-#FROM registry.cn-shenzhen.aliyuncs.com/piupuer/frolvlad-alpine-glibc:alpine-3.12
+COPY --from=builder /src/bin /app
 
-# set project run mode
-ENV APP_HOME=/app/gnboot
+WORKDIR /app
 
-#RUN mkdir -p $APP_HOME
+COPY configs /data/conf
 
-WORKDIR $APP_HOME
-
-COPY --from=gnboot $APP_HOME/conf ./conf/
-COPY --from=gnboot $APP_HOME/gnboot .
-COPY --from=gnboot $APP_HOME/gitversion .
-
-
-# use ali apk mirros
-# change timezone to Shanghai
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-RUN apk update \
-  && apk add tzdata \
-  && apk add curl \
-  && apk add libstdc++ \
-  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  && echo "Asia/Shanghai" > /etc/timezone
-# verify that the time zone has been modified
-# RUN date -R
-
-CMD ["./gnboot"]
+CMD ["sh", "-c", "./gnboot -c /data/conf"]

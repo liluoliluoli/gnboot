@@ -1,0 +1,89 @@
+syntax = "proto3";
+package cinch.conf;
+
+option go_package = "gnboot/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  string name = 1;
+  string version = 2;
+  Server server = 3;
+  Data data = 4;
+  Tracer tracer = 5;
+  map<string, Task> task = 6;
+  Client client = 7;
+  Log log = 8;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  bool prod = 1;
+  string machineId = 2;
+  HTTP http = 3;
+  GRPC grpc = 4;
+  string language = 5;
+  bool idempotent = 6;
+  bool validate = 7;
+  bool nocache = 8;
+}
+
+message Data {
+  message Database {
+    string dsn = 1;
+    string driver = 2;
+    string endpoint = 3;
+    string username = 4;
+    string password = 5;
+    string schema = 6;
+    string query = 7;
+    map<string, string> tenants = 8;
+  }
+  message Redis {
+    string dsn = 1;
+  }
+  Database database = 1;
+  Redis redis = 2;
+}
+
+message Log {
+  string level = 1;
+  bool JSON = 2;
+  bool showSQL = 3;
+}
+
+message Tracer {
+  message Otlp {
+    string endpoint = 1;
+    bool insecure = 2;
+  }
+  message Stdout {
+    bool prettyPrint = 1;
+  }
+  bool enable = 1;
+  float ratio = 2;
+  Otlp otlp = 3;
+  Stdout stdout = 4;
+}
+
+message Client {
+  bool health = 1;
+  google.protobuf.Duration timeout = 2;
+  string auth = 3;
+}
+
+message Task {
+  string name = 1;
+  string expr = 2;
+  int64 timeout = 3;
+  int64 retry = 4;
+}

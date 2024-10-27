@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package gnboot.v1;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+
+option go_package = "api/gnboot;gnboot";
+option java_multiple_files = true;
+option java_package = "gnboot.v1";
+option java_outer_classname = "GnbootProtoV1";
+
+option (openapi.v3.document) = {
+  info: {
+    title: "Gnboot service";
+    version: "1.0.0";
+    description: "This is gnboot service docs";
+  }
+  components: {
+    security_schemes: {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            security_scheme: {
+              type: "http";
+              scheme: "bearer";
+            }
+          }
+        }
+      ]
+    }
+  }
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+        }
+      ]
+    }
+  ]
+};
+
+service Gnboot {
+  // create one Movie record
+  rpc CreateMovie (CreateMovieRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/movie/create"
+      body: "*"
+    };
+  }
+  // query one Movie record
+  rpc GetMovie (GetMovieRequest) returns (GetMovieReply) {
+    option (google.api.http) = {
+      get: "/movie/get"
+    };
+  }
+  // query Movie list by page
+  rpc FindMovie (FindMovieRequest) returns (FindMovieReply) {
+    option (google.api.http) = {
+      get: "/movie/list"
+    };
+  }
+  // update one Movie record by id
+  rpc UpdateMovie (UpdateMovieRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/movie/update"
+      body: "*",
+      additional_bindings {
+        patch: "/movie/update",
+        body: "*",
+      }
+    };
+  }
+  // delete one or more Movie record by id
+  rpc DeleteMovie (params.IdsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/movie/delete"
+    };
+  }
+}
+
+message MovieReply {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message CreateMovieRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetMovieRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetMovieReply {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message FindMovieRequest {
+  params.Page page = 1;
+  optional string name = 2;
+}
+
+message FindMovieReply {
+  params.Page page = 1;
+  repeated MovieReply list = 2;
+}
+
+message UpdateMovieRequest {
+  uint64 id = 1 [(google.api.field_behavior) = REQUIRED];
+  optional string name = 2;
+}

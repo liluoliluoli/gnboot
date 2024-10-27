@@ -1,0 +1,6 @@
+client:
+  health: false
+  timeout: 20s
+  # service: grpc uri
+  # xxx: ip:port
+  auth: 'auth:6160'

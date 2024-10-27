@@ -1,0 +1,12 @@
+[submodule "api/gnboot-proto"]
+	path = api/gnboot-proto
+	url = https://github.com/go-cinch/gnboot-proto.git
+	branch = main
+[submodule "api/reason-proto"]
+	path = api/reason-proto
+	url = https://github.com/go-cinch/reason-proto.git
+	branch = main
+[submodule "api/auth-proto"]
+	path = api/auth-proto
+	url = https://github.com/go-cinch/auth-proto.git
+	branch = main

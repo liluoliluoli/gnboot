@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-http v2.8.1
 // - protoc             v5.28.3
-// source: gnboot-proto/gnboot.proto
+// source: proto/movie.proto
 
-package gnboot
+package movie
 
 import (
 	context "context"
@@ -21,13 +21,13 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationGnbootCreateMovie = "/gnboot.v1.Gnboot/CreateMovie"
-const OperationGnbootDeleteMovie = "/gnboot.v1.Gnboot/DeleteMovie"
-const OperationGnbootFindMovie = "/gnboot.v1.Gnboot/FindMovie"
-const OperationGnbootGetMovie = "/gnboot.v1.Gnboot/GetMovie"
-const OperationGnbootUpdateMovie = "/gnboot.v1.Gnboot/UpdateMovie"
+const OperationMovieRemoteServiceCreateMovie = "/movie.v1.MovieRemoteService/CreateMovie"
+const OperationMovieRemoteServiceDeleteMovie = "/movie.v1.MovieRemoteService/DeleteMovie"
+const OperationMovieRemoteServiceFindMovie = "/movie.v1.MovieRemoteService/FindMovie"
+const OperationMovieRemoteServiceGetMovie = "/movie.v1.MovieRemoteService/GetMovie"
+const OperationMovieRemoteServiceUpdateMovie = "/movie.v1.MovieRemoteService/UpdateMovie"
 
-type GnbootHTTPServer interface {
+type MovieRemoteServiceHTTPServer interface {
 	// CreateMovie create one Movie record
 	CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error)
 	// DeleteMovie delete one or more Movie record by id
@@ -40,17 +40,17 @@ type GnbootHTTPServer interface {
 	UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error)
 }
 
-func RegisterGnbootHTTPServer(s *http.Server, srv GnbootHTTPServer) {
+func RegisterMovieRemoteServiceHTTPServer(s *http.Server, srv MovieRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/movie/create", _Gnboot_CreateMovie0_HTTP_Handler(srv))
-	r.GET("/movie/get", _Gnboot_GetMovie0_HTTP_Handler(srv))
-	r.GET("/movie/list", _Gnboot_FindMovie0_HTTP_Handler(srv))
-	r.PATCH("/movie/update", _Gnboot_UpdateMovie0_HTTP_Handler(srv))
-	r.PUT("/movie/update", _Gnboot_UpdateMovie1_HTTP_Handler(srv))
-	r.DELETE("/movie/delete", _Gnboot_DeleteMovie0_HTTP_Handler(srv))
+	r.POST("/movie/create", _MovieRemoteService_CreateMovie0_HTTP_Handler(srv))
+	r.GET("/movie/get", _MovieRemoteService_GetMovie0_HTTP_Handler(srv))
+	r.GET("/movie/list", _MovieRemoteService_FindMovie0_HTTP_Handler(srv))
+	r.PATCH("/movie/update", _MovieRemoteService_UpdateMovie0_HTTP_Handler(srv))
+	r.PUT("/movie/update", _MovieRemoteService_UpdateMovie1_HTTP_Handler(srv))
+	r.DELETE("/movie/delete", _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv))
 }
 
-func _Gnboot_CreateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_CreateMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in CreateMovieRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -59,7 +59,7 @@ func _Gnboot_CreateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootCreateMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceCreateMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.CreateMovie(ctx, req.(*CreateMovieRequest))
 		})
@@ -72,13 +72,13 @@ func _Gnboot_CreateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 	}
 }
 
-func _Gnboot_GetMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_GetMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetMovieRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootGetMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceGetMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetMovie(ctx, req.(*GetMovieRequest))
 		})
@@ -91,13 +91,13 @@ func _Gnboot_GetMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context)
 	}
 }
 
-func _Gnboot_FindMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_FindMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FindMovieRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootFindMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceFindMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.FindMovie(ctx, req.(*FindMovieRequest))
 		})
@@ -110,7 +110,7 @@ func _Gnboot_FindMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context
 	}
 }
 
-func _Gnboot_UpdateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_UpdateMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateMovieRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -119,7 +119,7 @@ func _Gnboot_UpdateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootUpdateMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceUpdateMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateMovie(ctx, req.(*UpdateMovieRequest))
 		})
@@ -132,7 +132,7 @@ func _Gnboot_UpdateMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 	}
 }
 
-func _Gnboot_UpdateMovie1_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_UpdateMovie1_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateMovieRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -141,7 +141,7 @@ func _Gnboot_UpdateMovie1_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootUpdateMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceUpdateMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateMovie(ctx, req.(*UpdateMovieRequest))
 		})
@@ -154,13 +154,13 @@ func _Gnboot_UpdateMovie1_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 	}
 }
 
-func _Gnboot_DeleteMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Context) error {
+func _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in params.IdsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGnbootDeleteMovie)
+		http.SetOperation(ctx, OperationMovieRemoteServiceDeleteMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.DeleteMovie(ctx, req.(*params.IdsRequest))
 		})
@@ -173,7 +173,7 @@ func _Gnboot_DeleteMovie0_HTTP_Handler(srv GnbootHTTPServer) func(ctx http.Conte
 	}
 }
 
-type GnbootHTTPClient interface {
+type MovieRemoteServiceHTTPClient interface {
 	CreateMovie(ctx context.Context, req *CreateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteMovie(ctx context.Context, req *params.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	FindMovie(ctx context.Context, req *FindMovieRequest, opts ...http.CallOption) (rsp *FindMovieReply, err error)
@@ -181,19 +181,19 @@ type GnbootHTTPClient interface {
 	UpdateMovie(ctx context.Context, req *UpdateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
-type GnbootHTTPClientImpl struct {
+type MovieRemoteServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewGnbootHTTPClient(client *http.Client) GnbootHTTPClient {
-	return &GnbootHTTPClientImpl{client}
+func NewMovieRemoteServiceHTTPClient(client *http.Client) MovieRemoteServiceHTTPClient {
+	return &MovieRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *GnbootHTTPClientImpl) CreateMovie(ctx context.Context, in *CreateMovieRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) CreateMovie(ctx context.Context, in *CreateMovieRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/movie/create"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationGnbootCreateMovie))
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceCreateMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -202,11 +202,11 @@ func (c *GnbootHTTPClientImpl) CreateMovie(ctx context.Context, in *CreateMovieR
 	return &out, nil
 }
 
-func (c *GnbootHTTPClientImpl) DeleteMovie(ctx context.Context, in *params.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) DeleteMovie(ctx context.Context, in *params.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/movie/delete"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationGnbootDeleteMovie))
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceDeleteMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -215,11 +215,11 @@ func (c *GnbootHTTPClientImpl) DeleteMovie(ctx context.Context, in *params.IdsRe
 	return &out, nil
 }
 
-func (c *GnbootHTTPClientImpl) FindMovie(ctx context.Context, in *FindMovieRequest, opts ...http.CallOption) (*FindMovieReply, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) FindMovie(ctx context.Context, in *FindMovieRequest, opts ...http.CallOption) (*FindMovieReply, error) {
 	var out FindMovieReply
 	pattern := "/movie/list"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationGnbootFindMovie))
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceFindMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -228,11 +228,11 @@ func (c *GnbootHTTPClientImpl) FindMovie(ctx context.Context, in *FindMovieReque
 	return &out, nil
 }
 
-func (c *GnbootHTTPClientImpl) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...http.CallOption) (*GetMovieReply, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...http.CallOption) (*GetMovieReply, error) {
 	var out GetMovieReply
 	pattern := "/movie/get"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationGnbootGetMovie))
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceGetMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -241,11 +241,11 @@ func (c *GnbootHTTPClientImpl) GetMovie(ctx context.Context, in *GetMovieRequest
 	return &out, nil
 }
 
-func (c *GnbootHTTPClientImpl) UpdateMovie(ctx context.Context, in *UpdateMovieRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) UpdateMovie(ctx context.Context, in *UpdateMovieRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/movie/update"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationGnbootUpdateMovie))
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceUpdateMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

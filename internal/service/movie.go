@@ -2,18 +2,18 @@ package service
 
 import (
 	"context"
+	"gnboot/api/movie"
 
 	"github.com/go-cinch/common/copierx"
 	"github.com/go-cinch/common/page"
 	"github.com/go-cinch/common/proto/params"
 	"github.com/go-cinch/common/utils"
-	"gnboot/api/gnboot"
 	"gnboot/internal/biz"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *GnbootService) CreateMovie(ctx context.Context, req *gnboot.CreateMovieRequest) (rp *emptypb.Empty, err error) {
+func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (rp *emptypb.Empty, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "CreateMovie")
 	defer span.End()
@@ -24,11 +24,11 @@ func (s *GnbootService) CreateMovie(ctx context.Context, req *gnboot.CreateMovie
 	return
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *gnboot.GetMovieRequest) (rp *gnboot.GetMovieReply, err error) {
+func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieReply, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "GetMovie")
 	defer span.End()
-	rp = &gnboot.GetMovieReply{}
+	rp = &movie.GetMovieReply{}
 	res, err := s.movie.Get(ctx, req.Id)
 	if err != nil {
 		return
@@ -37,11 +37,11 @@ func (s *GnbootService) GetMovie(ctx context.Context, req *gnboot.GetMovieReques
 	return
 }
 
-func (s *GnbootService) FindMovie(ctx context.Context, req *gnboot.FindMovieRequest) (rp *gnboot.FindMovieReply, err error) {
+func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (rp *movie.FindMovieReply, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "FindMovie")
 	defer span.End()
-	rp = &gnboot.FindMovieReply{}
+	rp = &movie.FindMovieReply{}
 	rp.Page = &params.Page{}
 	r := &biz.FindMovie{}
 	r.Page = page.Page{}
@@ -56,7 +56,7 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *gnboot.FindMovieRequ
 	return
 }
 
-func (s *GnbootService) UpdateMovie(ctx context.Context, req *gnboot.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
+func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "UpdateMovie")
 	defer span.End()

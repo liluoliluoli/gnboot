@@ -59,6 +59,10 @@ CREATE TABLE IF NOT EXISTS `movie`
     file_size      bigint               null comment '文件大小',
     filename       varchar(256)         null comment '文件名',
     ext            varchar(1024)        null comment '扩展参数'
+    platform       varchar(45)          NULL COMMENT '1=i4k',
+    year           varchar(45)          NULL COMMENT '年份',
+    definition     varchar(45)          NULL COMMENT '清晰度（1=720p,2=1080P，3=4k）',
+    promotional    varchar(2048)        NULL COMMENT '封面',
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci comment '电影';
 
 CREATE TABLE IF NOT EXISTS `season`

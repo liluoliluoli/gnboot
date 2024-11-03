@@ -58,9 +58,6 @@ func (ro videoActorMappingRepo) Find(ctx context.Context, condition *biz.FindVid
 	rp = make([]biz.VideoActorMapping, 0)
 	list := make([]model.VideoActorMapping, 0)
 	conditions := make([]gen.Condition, 0, 2)
-	if condition.Name != nil {
-		conditions = append(conditions, p.Name.Like(strings.Join([]string{"%", *condition.Name, "%"}, "")))
-	}
 	condition.Page.Primary = "id"
 	condition.Page.
 		WithContext(ctx).
@@ -89,13 +86,7 @@ func (ro videoActorMappingRepo) Update(ctx context.Context, item *biz.UpdateVide
 		err = biz.ErrDataNotChange(ctx)
 		return
 	}
-	if item.Name != nil && *item.Name != m.Name {
-		err = ro.NameExists(ctx, *item.Name)
-		if err == nil {
-			err = biz.ErrDuplicateField(ctx, "name", *item.Name)
-			return
-		}
-	}
+
 	_, err = db.
 		Where(p.ID.Eq(item.ID)).
 		Updates(&change)

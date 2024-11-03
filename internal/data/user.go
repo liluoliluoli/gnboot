@@ -59,7 +59,7 @@ func (ro userRepo) Find(ctx context.Context, condition *biz.FindUser) (rp []biz.
 	list := make([]model.User, 0)
 	conditions := make([]gen.Condition, 0, 2)
 	if condition.Name != nil {
-		conditions = append(conditions, p.Name.Like(strings.Join([]string{"%", *condition.Name, "%"}, "")))
+		conditions = append(conditions, p.UserName.Like(strings.Join([]string{"%", *condition.Name, "%"}, "")))
 	}
 	condition.Page.Primary = "id"
 	condition.Page.
@@ -89,7 +89,7 @@ func (ro userRepo) Update(ctx context.Context, item *biz.UpdateUser) (err error)
 		err = biz.ErrDataNotChange(ctx)
 		return
 	}
-	if item.Name != nil && *item.Name != m.Name {
+	if item.Name != nil && *item.Name != m.UserName {
 		err = ro.NameExists(ctx, *item.Name)
 		if err == nil {
 			err = biz.ErrDuplicateField(ctx, "name", *item.Name)

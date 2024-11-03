@@ -13,7 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"gnboot/api/gnboot"
+	"gnboot/api/movie"
 	"gnboot/internal/conf"
 	localMiddleware "gnboot/internal/server/middleware"
 	"gnboot/internal/service"
@@ -57,6 +57,7 @@ func NewGRPCServer(
 		opts = append(opts, grpc.Timeout(c.Server.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	gnboot.RegisterGnbootServer(srv, svc)
+	movie.RegisterMovieRemoteServiceServer(srv, svc)
+	//TODO 追加业务注册
 	return srv
 }

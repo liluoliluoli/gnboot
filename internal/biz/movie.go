@@ -24,8 +24,15 @@ type Movie struct {
 }
 
 type FindMovie struct {
-	Page  page.Page `json:"page"`
-	Title *string   `json:"title"`
+	Page   page.Page `json:"page"`
+	Search *string   `json:"search"`
+	Sort   *Sort     `json:"sort"`
+}
+
+type Sort struct {
+	Filter    *string `json:"filter"`
+	Type      *string `json:"type"`
+	Direction *string `json:"direction"`
 }
 
 type FindMovieCache struct {

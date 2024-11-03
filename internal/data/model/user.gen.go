@@ -8,7 +8,9 @@ const TableNameUser = "user"
 
 // User 用户
 type User struct {
-	ID int64 `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id,string"` // 主键
+	ID       uint64 `gorm:"column:id;primaryKey;autoIncrement:true;comment:主键" json:"id,string"` // 主键
+	UserName string `gorm:"column:user_name;not null;comment:用户名" json:"userName"`               // 用户名
+	Nick     string `gorm:"column:nick;not null;comment:用户昵称" json:"nick"`                       // 用户昵称
 }
 
 // TableName User's table name

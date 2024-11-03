@@ -44,7 +44,7 @@ func RegisterMovieRemoteServiceHTTPServer(s *http.Server, srv MovieRemoteService
 	r := s.Route("/")
 	r.POST("/movie/create", _MovieRemoteService_CreateMovie0_HTTP_Handler(srv))
 	r.GET("/movie/get", _MovieRemoteService_GetMovie0_HTTP_Handler(srv))
-	r.GET("/movie/list", _MovieRemoteService_FindMovie0_HTTP_Handler(srv))
+	r.GET("/movie/query/all", _MovieRemoteService_FindMovie0_HTTP_Handler(srv))
 	r.PATCH("/movie/update", _MovieRemoteService_UpdateMovie0_HTTP_Handler(srv))
 	r.PUT("/movie/update", _MovieRemoteService_UpdateMovie1_HTTP_Handler(srv))
 	r.DELETE("/movie/delete", _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv))
@@ -217,7 +217,7 @@ func (c *MovieRemoteServiceHTTPClientImpl) DeleteMovie(ctx context.Context, in *
 
 func (c *MovieRemoteServiceHTTPClientImpl) FindMovie(ctx context.Context, in *FindMovieRequest, opts ...http.CallOption) (*FindMovieReply, error) {
 	var out FindMovieReply
-	pattern := "/movie/list"
+	pattern := "/movie/query/all"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationMovieRemoteServiceFindMovie))
 	opts = append(opts, http.PathTemplate(pattern))

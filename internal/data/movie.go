@@ -58,9 +58,10 @@ func (ro movieRepo) Find(ctx context.Context, condition *biz.FindMovie) (rp []bi
 	rp = make([]biz.Movie, 0)
 	list := make([]model.Movie, 0)
 	conditions := make([]gen.Condition, 0, 2)
-	if condition.Title != nil {
-		conditions = append(conditions, p.OriginalTitle.Like(strings.Join([]string{"%", *condition.Title, "%"}, "")))
+	if condition.Search != nil {
+		conditions = append(conditions, p.OriginalTitle.Like(strings.Join([]string{"%", *condition.Search, "%"}, "")))
 	}
+
 	condition.Page.Primary = "id"
 	condition.Page.
 		WithContext(ctx).

@@ -19,8 +19,18 @@ type CreateMovie struct {
 }
 
 type Movie struct {
-	ID   uint64 `json:"id,string"`
-	Name string `json:"name"`
+	ID            uint64  `json:"id,string"`
+	OriginalTitle string  `json:"originalTitle"` // 标题
+	Status        string  `json:"status"`        // 状态，Returning Series, Ended, Released, Unknown
+	VoteAverage   float32 `json:"voteAverage"`   // 平均评分
+	VoteCount     int64   `json:"voteCount"`     // 评分数
+	Country       string  `json:"country"`       // 国家
+	Trailer       string  `json:"trailer"`       // 预告片地址
+	URL           string  `json:"url"`           // 影片地址
+	Downloaded    bool    `json:"downloaded"`    // 是否可以下载
+	FileSize      int64   `json:"fileSize"`      // 文件大小
+	Filename      string  `json:"filename"`      // 文件名
+	Ext           string  `json:"ext"`
 }
 
 type FindMovie struct {

@@ -11,7 +11,7 @@ server:
   idempotent: true
   validate: true
   # disable biz.Cache or not
-  nocache: false
+  nocache: true
 data:
   database:
     driver: mysql

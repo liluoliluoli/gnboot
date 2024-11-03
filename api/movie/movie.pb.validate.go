@@ -59,9 +59,27 @@ func (m *MovieReply) validate(all bool) error {
 
 	// no validation rules for Id
 
+	// no validation rules for OriginalTitle
+
+	// no validation rules for Status
+
 	// no validation rules for VoteAverage
 
 	// no validation rules for VoteCount
+
+	// no validation rules for Country
+
+	// no validation rules for Trailer
+
+	// no validation rules for URL
+
+	// no validation rules for Downloaded
+
+	// no validation rules for FileSize
+
+	// no validation rules for Filename
+
+	// no validation rules for Ext
 
 	if len(errors) > 0 {
 		return MovieReplyMultiError(errors)

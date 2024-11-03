@@ -88,8 +88,17 @@ additional_properties:
 
   message MovieReply {
     uint64 id = 1;
-    double voteAverage = 2;
-    double voteCount = 3;
+    string originalTitle = 2;
+    string status = 3;
+    float voteAverage = 4;
+    int32 voteCount = 5;
+    string country = 6;
+    string trailer = 7;
+    string URL = 8;
+    bool downloaded = 9;
+    int32 fileSize = 10;
+    string filename = 11;
+    string ext = 12;
   }
 
   message CreateMovieRequest {

@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `movie`
     platform       varchar(45)          NULL COMMENT '1=i4k',
     year           varchar(45)          NULL COMMENT '年份',
     definition     varchar(45)          NULL COMMENT '清晰度（1=720p,2=1080P，3=4k）',
-    promotional    varchar(2048)        NULL COMMENT '封面',
+    promotional    varchar(2048)        NULL COMMENT '封面地址',
     external       varchar(45)          NULL COMMENT '外部id'
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci comment '电影';
 

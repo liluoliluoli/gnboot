@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS `studio`
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci comment '出品方';
 
 CREATE TABLE IF NOT EXISTS `user`
+(
     id        bigint unsigned auto_increment comment '主键' primary key,
     user_name varchar(128) not null comment '用户名',
     nick      varchar(128) not null comment '用户昵称'

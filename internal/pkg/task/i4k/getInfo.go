@@ -7,16 +7,18 @@ import (
 	"strconv"
 )
 
+var host = "http://43.143.112.172:8168"
+
 // 视频列表
-var movieListURL = "http://43.143.112.172:8168/4k/getlist.php?calss=%E7%94%B5%E5%BD%B1&area=&year=&type=&pg="
+var movieListURL = host + "/4k/getlist.php?calss=%E7%94%B5%E5%BD%B1&area=&year=&type=&pg="
 
 // 视频详情页
-var movieDetailURL = "http://43.143.112.172:8168/aliyun/getlist.php?fileid=null&marker=null&token=null&from=&id="
+var movieDetailURL = host + "/aliyun/getlist.php?fileid=null&marker=null&token=null&from=&id="
 
-// var movieDetailURL = "http://43.143.112.172:8168/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
+// var movieDetailURL = host + "/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
 
 // 视频播放
-//var playURL = "http://43.143.112.172:8168/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
+//var playURL = host + "/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
 
 func main() {
 	sum := 1
@@ -43,14 +45,6 @@ func taskList(page string) {
 		log.Info("ID: %s, Title: %s, Year: %s, Remarks: %s, Pic: %s\n",
 			movie.ID, movie.Title, movie.Year, movie.Remarks, movie.Pic)
 	}
-
-}
-
-func taskDetail() {
-
-}
-
-func task() {
 
 }
 

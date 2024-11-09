@@ -3,6 +3,7 @@ module gnboot
 go 1.22
 
 require (
+	github.com/valyala/fasthttp v1.50.0
 	github.com/go-cinch/common/constant v1.0.5
 	github.com/go-cinch/common/copierx v1.0.3
 	github.com/go-cinch/common/i18n v1.0.6

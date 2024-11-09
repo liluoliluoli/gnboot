@@ -63,6 +63,7 @@ func process(t task) (err error) {
 	switch t.payload.UID {
 	case "task1":
 		log.WithContext(ctx).Info("task1: %s", t.payload.Payload)
+
 	case "task2":
 		log.WithContext(ctx).Info("task2: %s", t.payload.Payload)
 	}

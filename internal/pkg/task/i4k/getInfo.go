@@ -23,7 +23,6 @@ func main() {
 	for sum <= 10 {
 		taskList(strconv.Itoa(sum))
 		sum += sum
-
 	}
 }
 
@@ -87,19 +86,8 @@ type Detail struct {
 	List   []File `json:"list"`   // 文件列表
 }
 
-// 原画播放结构体
+// 原画播放结构体&转码结构体
 type DownloadInfo struct {
-	Type     string `json:"model"`    // 下载类型
-	URL      string `json:"url"`      // 下载URL
-	Referer  string `json:"referer"`  // 引用页URL
-	Language string `json:"language"` // 语言信息
-	Subtitle string `json:"subtitle"` // 字幕信息
-	Delfile  int    `json:"delfile"`  // 删除文件标识
-	DeleCopy bool   `json:"delecopy"` // 是否删除副本
-}
-
-// 转码结构体
-type TranscodeInfo struct {
 	Type     string `json:"model"`    // 下载类型
 	URL      string `json:"url"`      // 下载URL
 	Referer  string `json:"referer"`  // 引用页URL

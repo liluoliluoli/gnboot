@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// i4k host
 var host = "http://43.143.112.172:8168"
 
 // 视频列表
@@ -15,13 +16,11 @@ var movieListURL = host + "/4k/getlist.php?calss=%E7%94%B5%E5%BD%B1&area=&year=&
 // 视频详情页
 var movieDetailURL = host + "/aliyun/getlist.php?fileid=null&marker=null&token=null&from=&id="
 
-// var movieDetailURL = host + "/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
-
 // 视频播放
 //var playURL = host + "/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
 
 func main() {
-	sum := 1
+	sum := 0
 	for sum <= 10 {
 		taskList(strconv.Itoa(sum))
 		sum += sum

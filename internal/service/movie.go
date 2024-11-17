@@ -3,11 +3,12 @@ package service
 import (
 	"context"
 	"gnboot/api/movie"
+	"gnboot/internal/utils/page_util"
 
 	"github.com/go-cinch/common/copierx"
-	"github.com/go-cinch/common/page"
 	"github.com/go-cinch/common/proto/params"
 	"github.com/go-cinch/common/utils"
+	"github.com/samber/lo"
 	"gnboot/internal/biz"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -24,11 +25,11 @@ func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieR
 	return
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieReply, err error) {
+func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieResp, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "GetMovie")
 	defer span.End()
-	rp = &movie.GetMovieReply{}
+	rp = &movie.GetMovieResp{}
 	res, err := s.movie.Get(ctx, req.Id)
 	if err != nil {
 		return
@@ -37,23 +38,51 @@ func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest
 	return
 }
 
-func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (rp *movie.FindMovieReply, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "FindMovie")
-	defer span.End()
-	rp = &movie.FindMovieReply{}
-	rp.Page = &params.Page{}
-	r := &biz.FindMovie{}
-	r.Page = page.Page{}
-	copierx.Copy(&r, req)
-	copierx.Copy(&r.Page, req.Page)
-	res, err := s.movie.Find(ctx, r)
-	if err != nil {
-		return
+func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
+	condition := &biz.FindMovie{
+		Page:   lo.FromPtr(page_util.ToDomainPage(req.Page)),
+		Search: req.Search,
+		Sort: &biz.Sort{
+			Filter: lo.TernaryF(req.Sort != nil, func() *string {
+				return req.Sort.Filter
+			}, func() *string {
+				return nil
+			}),
+			Type: lo.TernaryF(req.Sort != nil, func() *string {
+				return req.Sort.Type
+			}, func() *string {
+				return nil
+			}),
+			Direction: lo.TernaryF(req.Sort != nil, func() *string {
+				return req.Sort.Direction
+			}, func() *string {
+				return nil
+			}),
+		},
 	}
-	copierx.Copy(&rp.Page, r.Page)
-	copierx.Copy(&rp.List, res)
-	return
+	res, err := s.movie.Find(ctx, condition)
+	if err != nil {
+		return nil, err
+	}
+	return &movie.FindMovieResp{
+		Page: page_util.ToAdaptorPage(condition.Page),
+		List: lo.Map(res, func(item *biz.Movie, index int) *movie.MovieResp {
+			return &movie.MovieResp{
+				Id:            item.ID,
+				OriginalTitle: item.OriginalTitle,
+				Status:        item.Status,
+				VoteAverage:   item.VoteAverage,
+				VoteCount:     item.VoteCount,
+				Country:       item.Country,
+				Trailer:       item.Trailer,
+				Url:           item.URL,
+				Downloaded:    item.Downloaded,
+				FileSize:      item.FileSize,
+				Filename:      item.Filename,
+				Ext:           item.Ext,
+			}
+		}),
+	}, nil
 }
 
 func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (rp *emptypb.Empty, err error) {

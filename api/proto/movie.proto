@@ -1,12 +1,17 @@
 syntax = "proto3";
 
-package movie.v1;
+package gnboot;
 
 import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "cinch/params/params.proto";
+import "proto/genre.proto";
+import "proto/studio.proto";
+import "proto/keyword.proto";
+import "proto/subtitle.proto";
+import "proto/actor.proto";
 
 option go_package = "api/movie;movie";
 
@@ -52,19 +57,21 @@ additional_properties:
     rpc CreateMovie(CreateMovieRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         post : "/movie/create"
+
         body : "*"
       };
     }
     // query one Movie record
-    rpc GetMovie(GetMovieRequest) returns (GetMovieReply) {
+    rpc GetMovie(GetMovieRequest) returns (GetMovieResp) {
       option (google.api.http) = {
         get : "/movie/get"
       };
     }
     // query Movie list by page
-    rpc FindMovie(FindMovieRequest) returns (FindMovieReply) {
+    rpc FindMovie(FindMovieRequest) returns (FindMovieResp) {
       option (google.api.http) = {
-        get : "/movie/query/all"
+        post : "/movie/query/all"
+        body : "*"
       };
     }
     // update one Movie record by id
@@ -86,19 +93,26 @@ additional_properties:
     }
   }
 
-  message MovieReply {
+  message MovieResp {
     uint64 id = 1;
     string originalTitle = 2;
     string status = 3;
     float voteAverage = 4;
-    int32 voteCount = 5;
+    int64 voteCount = 5;
     string country = 6;
     string trailer = 7;
-    string URL = 8;
+    string url = 8;
     bool downloaded = 9;
-    int32 fileSize = 10;
+    int64 fileSize = 10;
     string filename = 11;
     string ext = 12;
+    repeated gnboot.GenreResp genres = 13;
+    repeated gnboot.StudioResp studios = 14;
+    repeated gnboot.KeywordResp keywords = 15;
+    int64 lastPlayedPosition = 16;
+    string lastPlayedTime = 17;
+    repeated gnboot.SubtitleResp subtitles = 18;
+    repeated gnboot.ActorResp actors = 19;
   }
 
   message CreateMovieRequest {
@@ -109,7 +123,7 @@ additional_properties:
     uint64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
   }
 
-  message GetMovieReply {
+  message GetMovieResp {
     uint64 id = 1;
     string name = 2;
   }
@@ -126,9 +140,9 @@ additional_properties:
     optional string direction = 3;
   }
 
-  message FindMovieReply {
+  message FindMovieResp {
     params.Page page = 1;
-    repeated MovieReply list = 2;
+    repeated MovieResp list = 2;
   }
 
   message UpdateMovieRequest {

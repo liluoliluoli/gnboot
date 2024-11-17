@@ -24,7 +24,7 @@ type Cache interface {
 	// WithRefresh get data from db skip cache and refresh cache
 	WithRefresh() Cache
 	// Get is get cache data by key from redis, do write handler if cache is empty
-	Get(ctx context.Context, action string, write func(context.Context) (string, error)) (string, error)
+	Get(ctx context.Context, action string, write func(string, context.Context) (string, error)) (string, error)
 	// Set is set data to redis
 	Set(ctx context.Context, action, data string, short bool)
 	// Del delete key

@@ -52,10 +52,10 @@ func (ro movieRepo) Get(ctx context.Context, id uint64) (item *biz.Movie, err er
 	return
 }
 
-func (ro movieRepo) Find(ctx context.Context, condition *biz.FindMovie) (rp []biz.Movie) {
+func (ro movieRepo) Find(ctx context.Context, condition *biz.FindMovie) (rp []*biz.Movie) {
 	p := query.Use(ro.data.DB(ctx)).Movie
 	db := p.WithContext(ctx)
-	rp = make([]biz.Movie, 0)
+	rp = make([]*biz.Movie, 0)
 	list := make([]model.Movie, 0)
 	conditions := make([]gen.Condition, 0, 2)
 	if condition.Search != nil {

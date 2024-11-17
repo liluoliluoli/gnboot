@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+
+option go_package = "api/genre;genre";
+
+option (openapi.v3.document) = {
+  info : {title : "genre service";
+version : "1.0.0";
+description : "This is genre service docs";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service GenreRemoteService {
+    rpc FindGenre(FindGenreRequest) returns (FindGenreResp) {
+      option (google.api.http) = {
+        post : "/genre/query/all"
+        body : "*"
+      };
+    }
+  }
+
+  message GenreResp {
+    uint64 id = 1;
+    string name = 2;
+  }
+
+  message FindGenreRequest { params.Page page = 1; }
+
+  message FindGenreResp { params.Page page = 1; }

@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+
+option go_package = "api/subtitle;subtitle";
+
+option (openapi.v3.document) = {
+  info : {title : "genre service";
+version : "1.0.0";
+description : "This is genre service docs";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service SubtitleRemoteService {
+    rpc FindGenre(FindSubtitleRequest) returns (FindSubtitleResp) {
+      option (google.api.http) = {
+        post : "/subtitle/query/all"
+        body : "*"
+      };
+    }
+  }
+
+  message SubtitleResp {
+    uint64 id = 1;
+    string url = 2;
+    string title = 3;
+    string language = 4;
+    string mimeType = 5;
+  }
+
+  message FindSubtitleRequest { params.Page page = 1; }
+
+  message FindSubtitleResp { params.Page page = 1; }

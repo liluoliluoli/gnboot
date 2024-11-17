@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"strconv"
+	"gnboot/internal/utils/cache_util"
 	"strings"
 
 	"github.com/go-cinch/common/constant"
@@ -19,18 +19,25 @@ type CreateMovie struct {
 }
 
 type Movie struct {
-	ID            uint64  `json:"id,string"`
-	OriginalTitle string  `json:"originalTitle"` // 标题
-	Status        string  `json:"status"`        // 状态，Returning Series, Ended, Released, Unknown
-	VoteAverage   float32 `json:"voteAverage"`   // 平均评分
-	VoteCount     int64   `json:"voteCount"`     // 评分数
-	Country       string  `json:"country"`       // 国家
-	Trailer       string  `json:"trailer"`       // 预告片地址
-	URL           string  `json:"url"`           // 影片地址
-	Downloaded    bool    `json:"downloaded"`    // 是否可以下载
-	FileSize      int64   `json:"fileSize"`      // 文件大小
-	Filename      string  `json:"filename"`      // 文件名
-	Ext           string  `json:"ext"`
+	ID                 uint64                 `json:"id,string"`
+	OriginalTitle      string                 `json:"originalTitle"`      // 标题
+	Status             string                 `json:"status"`             // 状态，Returning Series, Ended, Released, Unknown
+	VoteAverage        float32                `json:"voteAverage"`        // 平均评分
+	VoteCount          int64                  `json:"voteCount"`          // 评分数
+	Country            string                 `json:"country"`            // 国家
+	Trailer            string                 `json:"trailer"`            // 预告片地址
+	URL                string                 `json:"url"`                // 影片地址
+	Downloaded         bool                   `json:"downloaded"`         // 是否可以下载
+	FileSize           int64                  `json:"fileSize"`           // 文件大小
+	Filename           string                 `json:"filename"`           // 文件名
+	Ext                string                 `json:"ext"`                //扩展参数
+	Genres             []*Genre               `json:"genres"`             //流派
+	Studios            []*Studio              `json:"studios"`            //出品方
+	Keywords           []string               `json:"keywords"`           //关键词
+	LastPlayedPosition int64                  `json:"lastPlayedPosition"` //上次播放位置
+	LastPlayedTime     string                 `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
+	Subtitles          []VideoSubtitleMapping `json:"subtitles"`          //字幕
+	Actors             []*Actor               `json:"actors"`             //演员
 }
 
 type FindMovie struct {
@@ -47,7 +54,7 @@ type Sort struct {
 
 type FindMovieCache struct {
 	Page page.Page `json:"page"`
-	List []Movie   `json:"list"`
+	List []*Movie  `json:"list"`
 }
 
 type UpdateMovie struct {
@@ -58,7 +65,7 @@ type UpdateMovie struct {
 type MovieRepo interface {
 	Create(ctx context.Context, item *CreateMovie) error
 	Get(ctx context.Context, id uint64) (*Movie, error)
-	Find(ctx context.Context, condition *FindMovie) []Movie
+	Find(ctx context.Context, condition *FindMovie) []*Movie
 	Update(ctx context.Context, item *UpdateMovie) error
 	Delete(ctx context.Context, ids ...uint64) error
 }
@@ -91,8 +98,8 @@ func (uc *MovieUseCase) Create(ctx context.Context, item *CreateMovie) error {
 
 func (uc *MovieUseCase) Get(ctx context.Context, id uint64) (rp *Movie, err error) {
 	rp = &Movie{}
-	action := strings.Join([]string{"get", strconv.FormatUint(id, 10)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+	//action := strings.Join([]string{"get", strconv.FormatUint(id, 10)}, "_")
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (string, error) {
 		return uc.get(ctx, action, id)
 	})
 	if err != nil {
@@ -120,10 +127,9 @@ func (uc *MovieUseCase) get(ctx context.Context, action string, id uint64) (res 
 	return
 }
 
-func (uc *MovieUseCase) Find(ctx context.Context, condition *FindMovie) (rp []Movie, err error) {
-	// use md5 string as cache replay json str, key is short
-	action := strings.Join([]string{"find", utils.StructMd5(condition)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+func (uc *MovieUseCase) Find(ctx context.Context, condition *FindMovie) (rp []*Movie, err error) {
+	//action := strings.Join([]string{"find", utils.StructMd5(condition)}, "_")
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (string, error) {
 		return uc.find(ctx, action, condition)
 	})
 	if err != nil {

@@ -63,10 +63,10 @@ func (c *Cache) WithRefresh() biz.Cache {
 func (c *Cache) Get(
 	ctx context.Context,
 	action string,
-	write func(context.Context) (string, error),
+	write func(string, context.Context) (string, error),
 ) (res string, err error) {
 	if c.disable {
-		return write(ctx)
+		return write(action, ctx)
 	}
 	key := c.getValKey(ctx, action)
 	if !c.refresh {
@@ -94,7 +94,7 @@ func (c *Cache) Get(
 	}
 	// 4. load data from db and write to cache
 	if write != nil {
-		res, err = write(ctx)
+		res, err = write(action, ctx)
 	}
 	return
 }

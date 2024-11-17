@@ -2,7 +2,6 @@ package task
 
 import (
 	"context"
-
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
 	"github.com/google/wire"

@@ -21,11 +21,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	MovieRemoteService_CreateMovie_FullMethodName = "/movie.v1.MovieRemoteService/CreateMovie"
-	MovieRemoteService_GetMovie_FullMethodName    = "/movie.v1.MovieRemoteService/GetMovie"
-	MovieRemoteService_FindMovie_FullMethodName   = "/movie.v1.MovieRemoteService/FindMovie"
-	MovieRemoteService_UpdateMovie_FullMethodName = "/movie.v1.MovieRemoteService/UpdateMovie"
-	MovieRemoteService_DeleteMovie_FullMethodName = "/movie.v1.MovieRemoteService/DeleteMovie"
+	MovieRemoteService_CreateMovie_FullMethodName = "/gnboot.MovieRemoteService/CreateMovie"
+	MovieRemoteService_GetMovie_FullMethodName    = "/gnboot.MovieRemoteService/GetMovie"
+	MovieRemoteService_FindMovie_FullMethodName   = "/gnboot.MovieRemoteService/FindMovie"
+	MovieRemoteService_UpdateMovie_FullMethodName = "/gnboot.MovieRemoteService/UpdateMovie"
+	MovieRemoteService_DeleteMovie_FullMethodName = "/gnboot.MovieRemoteService/DeleteMovie"
 )
 
 // MovieRemoteServiceClient is the client API for MovieRemoteService service.
@@ -35,9 +35,9 @@ type MovieRemoteServiceClient interface {
 	// create one Movie record
 	CreateMovie(ctx context.Context, in *CreateMovieRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// query one Movie record
-	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieReply, error)
+	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieResp, error)
 	// query Movie list by page
-	FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*FindMovieReply, error)
+	FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*FindMovieResp, error)
 	// update one Movie record by id
 	UpdateMovie(ctx context.Context, in *UpdateMovieRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// delete one or more Movie record by id
@@ -61,8 +61,8 @@ func (c *movieRemoteServiceClient) CreateMovie(ctx context.Context, in *CreateMo
 	return out, nil
 }
 
-func (c *movieRemoteServiceClient) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieReply, error) {
-	out := new(GetMovieReply)
+func (c *movieRemoteServiceClient) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieResp, error) {
+	out := new(GetMovieResp)
 	err := c.cc.Invoke(ctx, MovieRemoteService_GetMovie_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,8 +70,8 @@ func (c *movieRemoteServiceClient) GetMovie(ctx context.Context, in *GetMovieReq
 	return out, nil
 }
 
-func (c *movieRemoteServiceClient) FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*FindMovieReply, error) {
-	out := new(FindMovieReply)
+func (c *movieRemoteServiceClient) FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*FindMovieResp, error) {
+	out := new(FindMovieResp)
 	err := c.cc.Invoke(ctx, MovieRemoteService_FindMovie_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -104,9 +104,9 @@ type MovieRemoteServiceServer interface {
 	// create one Movie record
 	CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error)
 	// query one Movie record
-	GetMovie(context.Context, *GetMovieRequest) (*GetMovieReply, error)
+	GetMovie(context.Context, *GetMovieRequest) (*GetMovieResp, error)
 	// query Movie list by page
-	FindMovie(context.Context, *FindMovieRequest) (*FindMovieReply, error)
+	FindMovie(context.Context, *FindMovieRequest) (*FindMovieResp, error)
 	// update one Movie record by id
 	UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error)
 	// delete one or more Movie record by id
@@ -121,10 +121,10 @@ type UnimplementedMovieRemoteServiceServer struct {
 func (UnimplementedMovieRemoteServiceServer) CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMovie not implemented")
 }
-func (UnimplementedMovieRemoteServiceServer) GetMovie(context.Context, *GetMovieRequest) (*GetMovieReply, error) {
+func (UnimplementedMovieRemoteServiceServer) GetMovie(context.Context, *GetMovieRequest) (*GetMovieResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMovie not implemented")
 }
-func (UnimplementedMovieRemoteServiceServer) FindMovie(context.Context, *FindMovieRequest) (*FindMovieReply, error) {
+func (UnimplementedMovieRemoteServiceServer) FindMovie(context.Context, *FindMovieRequest) (*FindMovieResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindMovie not implemented")
 }
 func (UnimplementedMovieRemoteServiceServer) UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error) {
@@ -240,7 +240,7 @@ func _MovieRemoteService_DeleteMovie_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MovieRemoteService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "movie.v1.MovieRemoteService",
+	ServiceName: "gnboot.MovieRemoteService",
 	HandlerType: (*MovieRemoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

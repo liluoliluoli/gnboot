@@ -2,12 +2,14 @@ package task
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"gnboot/internal/conf"
+	"gnboot/internal/pkg/task/i4k/movie"
 	"go.opentelemetry.io/otel"
 )
 
@@ -63,6 +65,11 @@ func process(t task) (err error) {
 	switch t.payload.UID {
 	case "task1":
 		log.WithContext(ctx).Info("task1: %s", t.payload.Payload)
+		sum := 0
+		for sum <= 10 {
+			movie.TaskList(strconv.Itoa(sum))
+			sum += sum
+		}
 
 	case "task2":
 		log.WithContext(ctx).Info("task2: %s", t.payload.Payload)

@@ -22,7 +22,7 @@ require (
 	github.com/go-cinch/common/proto/params v1.0.0
 	github.com/go-cinch/common/utils v1.0.4
 	github.com/go-cinch/common/worker v1.0.7
-	github.com/go-kratos/kratos/v2 v2.7.0
+	github.com/go-kratos/kratos/v2 v2.8.2
 	github.com/golang-module/carbon/v2 v2.3.12
 	github.com/google/gnostic v0.7.0
 	github.com/google/wire v0.6.0
@@ -63,7 +63,7 @@ require (
 	github.com/google/gnostic-models v0.6.9-0.20230804172637-c7be7c783f49 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
 	github.com/hibiken/asynq v0.24.1 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect

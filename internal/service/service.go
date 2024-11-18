@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/go-cinch/common/worker"
 	"github.com/google/wire"
-	"gnboot/api/movie"
+	"gnboot/api/gen"
 	"gnboot/internal/biz"
 )
 
@@ -12,7 +12,7 @@ var ProviderSet = wire.NewSet(NewGnbootService)
 
 // GnbootService is a gnboot service.
 type GnbootService struct {
-	movie.UnimplementedMovieRemoteServiceServer
+	gen.UnimplementedMovieRemoteServiceServer
 
 	task  *worker.Worker
 	movie *biz.MovieUseCase

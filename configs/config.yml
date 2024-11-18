@@ -2,10 +2,10 @@ server:
   prod: false
   machineId: ''
   http:
-    addr: 0.0.0.0:8080
+    addr: 192.168.1.100:8080
     timeout: 20s
   grpc:
-    addr: 0.0.0.0:8180
+    addr: 192.168.1.100:8180
     timeout: 20s
   language: 'en'
   idempotent: true
@@ -17,9 +17,9 @@ data:
     driver: mysql
     # dsn: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
     dsn: ''
-    endpoint: 'localhost:3306'
+    endpoint: '127.0.0.1:3306'
     username: 'root'
-    password: '123456'
+    password: 'sily'
     schema: 'video'
     query: 'charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 #    tenants:
@@ -31,4 +31,4 @@ data:
     # redis dsn like this:
     # redis://[:password@]host[:port][/dbnumber]
     # redis://[:password@]host1[:port][,host2:[:port]][,hostN:[:port]][?master=masterName&sentinel=true]
-    dsn: 'redis://localhost:6379/0'
+    dsn: 'redis://127.0.0.1:6379/0'

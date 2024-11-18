@@ -38,7 +38,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagConf, "c", "/Users/chohotech/GolandProjects/gnboot/configs", "config path, eg: -c config.yml")
+	flag.StringVar(&flagConf, "c", "E:\\IdeaProjects\\GolandProjects\\gnboot\\configs", "config path, eg: -c config.yml")
 }
 
 func newApp(gs *grpc.Server, hs *http.Server) *kratos.App {

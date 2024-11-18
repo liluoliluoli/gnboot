@@ -10,7 +10,7 @@ import (
 /**
  * @Description: 获取http客户端
  * @Author: Sily
- * @Date 2022-04-13 18:53:22
+ * @Date 2024-11-18 18:53:22
 **/
 func getFastReqClient() *fasthttp.Client {
 	reqClient := &fasthttp.Client{

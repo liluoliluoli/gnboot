@@ -1,9 +1,9 @@
 task:
   task1:
     name: 'Geti4k'
-    expr: '0 8 1 * *'
+    expr: '* */12 * * *'
     timeout: 60
-    retry: 5
+    retry: 10
 
 #  task2:
 #    name: 'every3min'

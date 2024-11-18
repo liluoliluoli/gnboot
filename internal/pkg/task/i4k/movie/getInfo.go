@@ -22,12 +22,12 @@ var movieDetailURL = host + "/aliyun/getlist.php?fileid=null&marker=null&token=n
 func main() {
 	sum := 0
 	for sum <= 10 {
-		taskList(strconv.Itoa(sum))
+		TaskList(strconv.Itoa(sum))
 		sum += sum
 	}
 }
 
-func taskList(page string) {
+func TaskList(page string) {
 
 	var movieList MovieList
 	var listRe = "{\"list\": " + utils.FastGetWithDo(movieListURL+page) + "}"

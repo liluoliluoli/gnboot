@@ -1,7 +1,7 @@
 # go install github.com/go-cinch/cinch/cmd/cinch@latest
 # cinch gen gorm
 gen:
-  dsn: 'root:123456@tcp(localhost:3306)/video?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
+  dsn: 'root:sily@tcp(127.0.0.1:3306)/video?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
   tables:
   - actor
   - app_version

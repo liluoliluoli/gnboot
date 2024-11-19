@@ -2,10 +2,10 @@ server:
   prod: false
   machineId: ''
   http:
-    addr: 192.168.1.100:8080
+    addr: 0.0.0.0:8080
     timeout: 20s
   grpc:
-    addr: 192.168.1.100:8180
+    addr: 0.0.0.0:8180
     timeout: 20s
   language: 'en'
   idempotent: true
@@ -15,7 +15,7 @@ server:
 data:
   database:
     driver: mysql
-    # dsn: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
+    # dsn: 'root:root@sily(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
     dsn: ''
     endpoint: '127.0.0.1:3306'
     username: 'root'

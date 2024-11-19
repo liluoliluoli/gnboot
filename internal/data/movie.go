@@ -103,6 +103,63 @@ func (ro movieRepo) Update(ctx context.Context, item *biz.UpdateMovie) (err erro
 	return
 }
 
+func (ro movieRepo) UpsertByExternalID(ctx context.Context, item *biz.UpdateMovie) (err error) {
+	p := query.Use(ro.data.DB(ctx)).Movie // 假设 query 是 ORM 的查询接口
+	db := p.WithContext(ctx)
+
+	// 根据 external_id 查找记录
+	existingMovie, err := db.Where(p.ExternalID.Eq(item.ExternalID)).First()
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) { // 如果记录不存在，执行插入逻辑
+			newMovie := &model.Movie{
+				ExternalID:    item.ExternalID,
+				OriginalTitle: item.OriginalTitle,
+				Status:        item.Status,
+				VoteAverage:   item.VoteAverage,
+				VoteCount:     item.VoteCount,
+				Country:       item.Country,
+				Trailer:       item.Trailer,
+				URL:           item.URL,
+				Downloaded:    item.Downloaded,
+				FileSize:      item.FileSize,
+				Filename:      item.Filename,
+				Ext:           item.Ext,
+				Platform:      item.Platform,
+				Year:          item.Year,
+				Definition:    item.Definition,
+				Promotional:   item.Promotional,
+				CreateTime:    item.CreateTime,
+				UpdateTime:    item.UpdateTime,
+			}
+			// 插入新记录
+			return db.Create(newMovie)
+		}
+		// 返回其他查询错误
+		return err
+	}
+
+	// 如果记录存在，执行更新逻辑
+	change := make(map[string]interface{})
+	utils.CompareDiff(existingMovie, item, &change) // 比较差异生成需要更新的字段
+	if len(change) == 0 {
+		err = biz.ErrDataNotChange(ctx) // 无变更时返回特定错误
+		return
+	}
+
+	// 防止 Title 重复
+	if item.Title != nil && *item.Title != existingMovie.OriginalTitle {
+		err = ro.NameExists(ctx, *item.Title)
+		if err == nil {
+			err = biz.ErrDuplicateField(ctx, "name", *item.Title)
+			return
+		}
+	}
+
+	// 更新记录
+	_, err = db.Where(p.ExternalID.Eq(item.ExternalID)).Updates(&change)
+	return
+}
+
 func (ro movieRepo) Delete(ctx context.Context, ids ...uint64) (err error) {
 	p := query.Use(ro.data.DB(ctx)).Movie
 	db := p.WithContext(ctx)

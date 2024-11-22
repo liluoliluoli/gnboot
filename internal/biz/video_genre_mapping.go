@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"strconv"
+	"gnboot/internal/utils/cache_util"
 	"strings"
 
 	"github.com/go-cinch/common/constant"
@@ -74,8 +74,7 @@ func (uc *VideoGenreMappingUseCase) Create(ctx context.Context, item *CreateVide
 
 func (uc *VideoGenreMappingUseCase) Get(ctx context.Context, id uint64) (rp *VideoGenreMapping, err error) {
 	rp = &VideoGenreMapping{}
-	action := strings.Join([]string{"get", strconv.FormatUint(id, 10)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (string, error) {
 		return uc.get(ctx, action, id)
 	})
 	if err != nil {
@@ -105,8 +104,7 @@ func (uc *VideoGenreMappingUseCase) get(ctx context.Context, action string, id u
 
 func (uc *VideoGenreMappingUseCase) Find(ctx context.Context, condition *FindVideoGenreMapping) (rp []VideoGenreMapping, err error) {
 	// use md5 string as cache replay json str, key is short
-	action := strings.Join([]string{"find", utils.StructMd5(condition)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (string, error) {
 		return uc.find(ctx, action, condition)
 	})
 	if err != nil {

@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"strconv"
+	"gnboot/internal/utils/cache_util"
 	"strings"
 
 	"github.com/go-cinch/common/constant"
@@ -74,8 +74,7 @@ func (uc *EpisodeUseCase) Create(ctx context.Context, item *CreateEpisode) error
 
 func (uc *EpisodeUseCase) Get(ctx context.Context, id uint64) (rp *Episode, err error) {
 	rp = &Episode{}
-	action := strings.Join([]string{"get", strconv.FormatUint(id, 10)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (string, error) {
 		return uc.get(ctx, action, id)
 	})
 	if err != nil {
@@ -105,8 +104,7 @@ func (uc *EpisodeUseCase) get(ctx context.Context, action string, id uint64) (re
 
 func (uc *EpisodeUseCase) Find(ctx context.Context, condition *FindEpisode) (rp []Episode, err error) {
 	// use md5 string as cache replay json str, key is short
-	action := strings.Join([]string{"find", utils.StructMd5(condition)}, "_")
-	str, err := uc.cache.Get(ctx, action, func(ctx context.Context) (string, error) {
+	str, err := uc.cache.Get(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (string, error) {
 		return uc.find(ctx, action, condition)
 	})
 	if err != nil {

@@ -2,7 +2,7 @@ package page_util
 
 import (
 	"github.com/go-cinch/common/page"
-	"gnboot/api/gen/cinch/params"
+	"github.com/go-cinch/common/proto/params"
 )
 
 func ToDomainPage(p *params.Page) *page.Page {

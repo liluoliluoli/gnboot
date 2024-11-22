@@ -7,13 +7,13 @@
 package movie
 
 import (
-	genre "api/genre"
-	keyword "api/keyword"
-	studio "api/studio"
-	subtitle "api/subtitle"
 	params "github.com/go-cinch/common/proto/params"
 	_ "github.com/google/gnostic/openapiv3"
 	actor "gnboot/api/actor"
+	genre "gnboot/api/genre"
+	keyword "gnboot/api/keyword"
+	studio "gnboot/api/studio"
+	subtitle "gnboot/api/subtitle"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

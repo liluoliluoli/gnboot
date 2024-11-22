@@ -14,7 +14,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
-	"gnboot/api/gen"
+	"gnboot/api/movie"
 	"gnboot/internal/conf"
 	localMiddleware "gnboot/internal/server/middleware"
 	"gnboot/internal/service"
@@ -58,7 +58,7 @@ func NewHTTPServer(
 		opts = append(opts, http.Timeout(c.Server.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	gen.RegisterMovieRemoteServiceHTTPServer(srv, svc)
+	movie.RegisterMovieRemoteServiceHTTPServer(srv, svc)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler(svc))

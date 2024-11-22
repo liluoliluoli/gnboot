@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"github.com/go-cinch/common/copierx"
+	"github.com/go-cinch/common/proto/params"
 	"github.com/go-cinch/common/utils"
-	"gnboot/api/gen"
-	"gnboot/api/gen/cinch/params"
+	"gnboot/api/movie"
 	"gnboot/internal/utils/page_util"
 
 	"github.com/samber/lo"
@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *GnbootService) CreateMovie(ctx context.Context, req *gen.CreateMovieRequest) (rp *emptypb.Empty, err error) {
+func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (rp *emptypb.Empty, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "CreateMovie")
 	defer span.End()
@@ -25,11 +25,11 @@ func (s *GnbootService) CreateMovie(ctx context.Context, req *gen.CreateMovieReq
 	return
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *gen.GetMovieRequest) (rp *gen.GetMovieResp, err error) {
+func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieResp, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "GetMovie")
 	defer span.End()
-	rp = &gen.GetMovieResp{}
+	rp = &movie.GetMovieResp{}
 	res, err := s.movie.Get(ctx, req.Id)
 	if err != nil {
 		return
@@ -38,7 +38,7 @@ func (s *GnbootService) GetMovie(ctx context.Context, req *gen.GetMovieRequest) 
 	return
 }
 
-func (s *GnbootService) FindMovie(ctx context.Context, req *gen.FindMovieRequest) (*gen.FindMovieResp, error) {
+func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
 	condition := &biz.FindMovie{
 		Page:   lo.FromPtr(page_util.ToDomainPage(req.Page)),
 		Search: req.Search,
@@ -64,10 +64,10 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *gen.FindMovieRequest
 	if err != nil {
 		return nil, err
 	}
-	return &gen.FindMovieResp{
+	return &movie.FindMovieResp{
 		Page: page_util.ToAdaptorPage(condition.Page),
-		List: lo.Map(res, func(item *biz.Movie, index int) *gen.MovieResp {
-			return &gen.MovieResp{
+		List: lo.Map(res, func(item *biz.Movie, index int) *movie.MovieResp {
+			return &movie.MovieResp{
 				Id:            item.ID,
 				OriginalTitle: item.OriginalTitle,
 				Status:        item.Status,
@@ -85,7 +85,7 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *gen.FindMovieRequest
 	}, nil
 }
 
-func (s *GnbootService) UpdateMovie(ctx context.Context, req *gen.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
+func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "UpdateMovie")
 	defer span.End()

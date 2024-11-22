@@ -69,6 +69,7 @@ github.com/go-cinch/common/plugins/kratos/config/env v1.0.0 h1:eZwWFqvKqlLfHfsf+
 github.com/go-cinch/common/plugins/kratos/config/env v1.0.0/go.mod h1:BdOZMgVNicSy5fjE3LBugbKBU8QerY8AlGeVe8NZd0A=
 github.com/go-cinch/common/plugins/kratos/encoding/yml v1.0.1 h1:rBNT5YOdo2aUGNdgT4gPVh+U0AJs78tmj3nNZ8Q2KPQ=
 github.com/go-cinch/common/plugins/kratos/encoding/yml v1.0.1/go.mod h1:myfM/OAoVraYtdjC0NwFnwajdYfIXRIPENpO+yTfnHI=
+github.com/go-cinch/common/proto/params v1.0.0/go.mod h1:WzU4VNVp9d8XnFko8rygoVrGsU9p4c0z+zFZVpC6o1s=
 github.com/go-cinch/common/utils v1.0.4 h1:RtvOUtwWRhlKfCblY/6m1Hfm0uI8pbkxWGmVYTxig+k=
 github.com/go-cinch/common/utils v1.0.4/go.mod h1:Nkt/2liz09nz0hsDoCVrQx4c3BZnAHQYt+qDEKkief4=
 github.com/go-cinch/common/worker v1.0.7 h1:/qW5BY7xVjZEXZQecEK5WNAZQJshQ3/U8PnK4xlPBWg=

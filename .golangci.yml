@@ -25,11 +25,11 @@ linters-settings:
     - name: bool-literal-in-expr
     - name: constant-logical-expr
     - name: context-as-argument
-    - name: error-return
+    - name: gerror-return
     - name: deep-exit
     - name: defer
     - name: early-return
-    - name: indent-error-flow
+    - name: indent-gerror-flow
     - name: if-return
     - name: superfluous-else
     - name: empty-block

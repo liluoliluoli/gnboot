@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on ActorResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *ActorResp) Validate() error {
 	return m.validate(false)
 }
@@ -78,11 +78,11 @@ func (m *ActorResp) validate(all bool) error {
 	return nil
 }
 
-// ActorRespMultiError is an error wrapping multiple validation errors returned
+// ActorRespMultiError is an gerror wrapping multiple validation errors returned
 // by ActorResp.ValidateAll() if the designated constraints aren't met.
 type ActorRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m ActorRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -94,7 +94,7 @@ func (m ActorRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m ActorRespMultiError) AllErrors() []error { return m }
 
-// ActorRespValidationError is the validation error returned by
+// ActorRespValidationError is the validation gerror returned by
 // ActorResp.Validate if the designated constraints aren't met.
 type ActorRespValidationError struct {
 	field  string
@@ -115,10 +115,10 @@ func (e ActorRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e ActorRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e ActorRespValidationError) ErrorName() string { return "ActorRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e ActorRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -150,7 +150,7 @@ var _ interface {
 
 // Validate checks the field values on FindActorRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
+// first gerror encountered is returned, or nil if there are no violations.
 func (m *FindActorRequest) Validate() error {
 	return m.validate(false)
 }
@@ -206,12 +206,12 @@ func (m *FindActorRequest) validate(all bool) error {
 	return nil
 }
 
-// FindActorRequestMultiError is an error wrapping multiple validation errors
+// FindActorRequestMultiError is an gerror wrapping multiple validation errors
 // returned by FindActorRequest.ValidateAll() if the designated constraints
 // aren't met.
 type FindActorRequestMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindActorRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -223,7 +223,7 @@ func (m FindActorRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindActorRequestMultiError) AllErrors() []error { return m }
 
-// FindActorRequestValidationError is the validation error returned by
+// FindActorRequestValidationError is the validation gerror returned by
 // FindActorRequest.Validate if the designated constraints aren't met.
 type FindActorRequestValidationError struct {
 	field  string
@@ -244,10 +244,10 @@ func (e FindActorRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindActorRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindActorRequestValidationError) ErrorName() string { return "FindActorRequestValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindActorRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -279,7 +279,7 @@ var _ interface {
 
 // Validate checks the field values on FindActorResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *FindActorResp) Validate() error {
 	return m.validate(false)
 }
@@ -335,12 +335,12 @@ func (m *FindActorResp) validate(all bool) error {
 	return nil
 }
 
-// FindActorRespMultiError is an error wrapping multiple validation errors
+// FindActorRespMultiError is an gerror wrapping multiple validation errors
 // returned by FindActorResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindActorRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindActorRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -352,7 +352,7 @@ func (m FindActorRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindActorRespMultiError) AllErrors() []error { return m }
 
-// FindActorRespValidationError is the validation error returned by
+// FindActorRespValidationError is the validation gerror returned by
 // FindActorResp.Validate if the designated constraints aren't met.
 type FindActorRespValidationError struct {
 	field  string
@@ -373,10 +373,10 @@ func (e FindActorRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindActorRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindActorRespValidationError) ErrorName() string { return "FindActorRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindActorRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

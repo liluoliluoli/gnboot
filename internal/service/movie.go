@@ -2,105 +2,150 @@ package service
 
 import (
 	"context"
-	"github.com/go-cinch/common/copierx"
-	"github.com/go-cinch/common/proto/params"
-	"github.com/go-cinch/common/utils"
-	"gnboot/api/movie"
-	"gnboot/internal/utils/page_util"
+	"gnboot/internal/utils/cache_util"
+	"strings"
 
-	"github.com/samber/lo"
-	"gnboot/internal/biz"
-	"go.opentelemetry.io/otel"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/go-cinch/common/page"
+	"github.com/go-cinch/common/utils"
+	"gnboot/internal/conf"
 )
 
-func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "CreateMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	r := &biz.CreateMovie{}
-	copierx.Copy(&r, req)
-	err = s.movie.Create(ctx, r)
+type CreateMovie struct {
+	ID   uint64 `json:"id,string"`
+	Name string `json:"name"`
+}
+
+type Movie struct {
+	ID            uint64  `json:"id,string"`
+	OriginalTitle string  `json:"originalTitle"` // 标题
+	Status        string  `json:"status"`        // 状态，Returning Series, Ended, Released, Unknown
+	VoteAverage   float32 `json:"voteAverage"`   // 平均评分
+	VoteCount     int64   `json:"voteCount"`     // 评分数
+	Country       string  `json:"country"`       // 国家
+	Trailer       string  `json:"trailer"`       // 预告片地址
+	URL           string  `json:"url"`           // 影片地址
+	Downloaded    bool    `json:"downloaded"`    // 是否可以下载
+	FileSize      int64   `json:"fileSize"`      // 文件大小
+	Filename      string  `json:"filename"`      // 文件名
+	Ext           string  `json:"ext"`           //扩展参数
+	//Genres             []*Genre               `json:"genres"`             //流派
+	//Studios            []*Studio              `json:"studios"`            //出品方
+	Keywords           []string `json:"keywords"`           //关键词
+	LastPlayedPosition int64    `json:"lastPlayedPosition"` //上次播放位置
+	LastPlayedTime     string   `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
+	//Subtitles          []VideoSubtitleMapping `json:"subtitles"`          //字幕
+	//Actors             []*Actor               `json:"actors"`             //演员
+}
+
+func (*Movie) ConvertFromRepo() {
+
+}
+
+type FindMovie struct {
+	Page   page.Page `json:"page"`
+	Search *string   `json:"search"`
+	Sort   *Sort     `json:"sort"`
+}
+
+type Sort struct {
+	Filter    *string `json:"filter"`
+	Type      *string `json:"type"`
+	Direction *string `json:"direction"`
+}
+
+type UpdateMovie struct {
+	ID    uint64  `json:"id,string"`
+	Title *string `json:"title,omitempty"`
+}
+
+type MovieRepo interface {
+	Create(ctx context.Context, item *CreateMovie) error
+	Get(ctx context.Context, id uint64) (*Movie, error)
+	Find(ctx context.Context, condition *FindMovie) []*Movie
+	Update(ctx context.Context, item *UpdateMovie) error
+	Delete(ctx context.Context, ids ...uint64) error
+}
+
+type MovieUseCase struct {
+	c     *conf.Bootstrap
+	repo  MovieRepo
+	tx    Transaction
+	cache Cache[*Movie]
+}
+
+func NewMovieUseCase(c *conf.Bootstrap, repo MovieRepo, tx Transaction, cache Cache[*Movie]) *MovieUseCase {
+	return &MovieUseCase{
+		c:    c,
+		repo: repo,
+		tx:   tx,
+		cache: cache.WithPrefix(strings.Join([]string{
+			c.Name, "movie",
+		}, "_")),
+	}
+}
+
+func (uc *MovieUseCase) Create(ctx context.Context, item *CreateMovie) error {
+	return uc.tx.Tx(ctx, func(ctx context.Context) error {
+		return uc.cache.Flush(ctx, func(ctx context.Context) error {
+			return uc.repo.Create(ctx, item)
+		})
+	})
+}
+
+func (uc *MovieUseCase) Get(ctx context.Context, id uint64) (rp *Movie, err error) {
+	rp, err = uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*Movie, error) {
+		return uc.get(ctx, id)
+	})
 	return
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieResp, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "GetMovie")
-	defer span.End()
-	rp = &movie.GetMovieResp{}
-	res, err := s.movie.Get(ctx, req.Id)
-	if err != nil {
-		return
-	}
-	copierx.Copy(&rp, res)
-	return
-}
-
-func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
-	condition := &biz.FindMovie{
-		Page:   lo.FromPtr(page_util.ToDomainPage(req.Page)),
-		Search: req.Search,
-		Sort: &biz.Sort{
-			Filter: lo.TernaryF(req.Sort != nil, func() *string {
-				return req.Sort.Filter
-			}, func() *string {
-				return nil
-			}),
-			Type: lo.TernaryF(req.Sort != nil, func() *string {
-				return req.Sort.Type
-			}, func() *string {
-				return nil
-			}),
-			Direction: lo.TernaryF(req.Sort != nil, func() *string {
-				return req.Sort.Direction
-			}, func() *string {
-				return nil
-			}),
-		},
-	}
-	res, err := s.movie.Find(ctx, condition)
+func (uc *MovieUseCase) get(ctx context.Context, id uint64) (*Movie, error) {
+	item, err := uc.repo.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	return &movie.FindMovieResp{
-		Page: page_util.ToAdaptorPage(condition.Page),
-		List: lo.Map(res, func(item *biz.Movie, index int) *movie.MovieResp {
-			return &movie.MovieResp{
-				Id:            item.ID,
-				OriginalTitle: item.OriginalTitle,
-				Status:        item.Status,
-				VoteAverage:   item.VoteAverage,
-				VoteCount:     item.VoteCount,
-				Country:       item.Country,
-				Trailer:       item.Trailer,
-				Url:           item.URL,
-				Downloaded:    item.Downloaded,
-				FileSize:      item.FileSize,
-				Filename:      item.Filename,
-				Ext:           item.Ext,
-			}
-		}),
-	}, nil
+	return item, nil
 }
 
-func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "UpdateMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	r := &biz.UpdateMovie{}
-	copierx.Copy(&r, req)
-	err = s.movie.Update(ctx, r)
+func (uc *MovieUseCase) Find(ctx context.Context, condition *FindMovie) ([]*Movie, error) {
+	rp, err := uc.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) ([]*Movie, error) {
+		return uc.find(ctx, action, condition)
+	})
+	if err != nil {
+		return nil, err
+	}
+	var cache FindMovieCache
+	utils.Json2Struct(&cache, str)
+	condition.Page = cache.Page
+	rp = cache.List
 	return
 }
 
-func (s *GnbootService) DeleteMovie(ctx context.Context, req *params.IdsRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "DeleteMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	err = s.movie.Delete(ctx, utils.Str2Uint64Arr(req.Ids)...)
+func (uc *MovieUseCase) find(ctx context.Context, action string, condition *FindMovie) (res []*Movie, err error) {
+	// read repo from db and write to cache
+	list := uc.repo.Find(ctx, condition)
+	var cache FindMovieCache
+	cache.List = list
+	cache.Page = condition.Page
+	res = utils.Struct2Json(cache)
+	uc.cache.Set(ctx, action, res, len(list) == 0)
 	return
+}
+
+func (uc *MovieUseCase) Update(ctx context.Context, item *UpdateMovie) error {
+	return uc.tx.Tx(ctx, func(ctx context.Context) error {
+		return uc.cache.Flush(ctx, func(ctx context.Context) (err error) {
+			err = uc.repo.Update(ctx, item)
+			return
+		})
+	})
+}
+
+func (uc *MovieUseCase) Delete(ctx context.Context, ids ...uint64) error {
+	return uc.tx.Tx(ctx, func(ctx context.Context) error {
+		return uc.cache.Flush(ctx, func(ctx context.Context) (err error) {
+			err = uc.repo.Delete(ctx, ids...)
+			return
+		})
+	})
 }

@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on GenreResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *GenreResp) Validate() error {
 	return m.validate(false)
 }
@@ -68,11 +68,11 @@ func (m *GenreResp) validate(all bool) error {
 	return nil
 }
 
-// GenreRespMultiError is an error wrapping multiple validation errors returned
+// GenreRespMultiError is an gerror wrapping multiple validation errors returned
 // by GenreResp.ValidateAll() if the designated constraints aren't met.
 type GenreRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m GenreRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -84,7 +84,7 @@ func (m GenreRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m GenreRespMultiError) AllErrors() []error { return m }
 
-// GenreRespValidationError is the validation error returned by
+// GenreRespValidationError is the validation gerror returned by
 // GenreResp.Validate if the designated constraints aren't met.
 type GenreRespValidationError struct {
 	field  string
@@ -105,10 +105,10 @@ func (e GenreRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e GenreRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e GenreRespValidationError) ErrorName() string { return "GenreRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e GenreRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -140,7 +140,7 @@ var _ interface {
 
 // Validate checks the field values on FindGenreRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
+// first gerror encountered is returned, or nil if there are no violations.
 func (m *FindGenreRequest) Validate() error {
 	return m.validate(false)
 }
@@ -196,12 +196,12 @@ func (m *FindGenreRequest) validate(all bool) error {
 	return nil
 }
 
-// FindGenreRequestMultiError is an error wrapping multiple validation errors
+// FindGenreRequestMultiError is an gerror wrapping multiple validation errors
 // returned by FindGenreRequest.ValidateAll() if the designated constraints
 // aren't met.
 type FindGenreRequestMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindGenreRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -213,7 +213,7 @@ func (m FindGenreRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindGenreRequestMultiError) AllErrors() []error { return m }
 
-// FindGenreRequestValidationError is the validation error returned by
+// FindGenreRequestValidationError is the validation gerror returned by
 // FindGenreRequest.Validate if the designated constraints aren't met.
 type FindGenreRequestValidationError struct {
 	field  string
@@ -234,10 +234,10 @@ func (e FindGenreRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindGenreRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindGenreRequestValidationError) ErrorName() string { return "FindGenreRequestValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindGenreRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -269,7 +269,7 @@ var _ interface {
 
 // Validate checks the field values on FindGenreResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *FindGenreResp) Validate() error {
 	return m.validate(false)
 }
@@ -325,12 +325,12 @@ func (m *FindGenreResp) validate(all bool) error {
 	return nil
 }
 
-// FindGenreRespMultiError is an error wrapping multiple validation errors
+// FindGenreRespMultiError is an gerror wrapping multiple validation errors
 // returned by FindGenreResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindGenreRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindGenreRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -342,7 +342,7 @@ func (m FindGenreRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindGenreRespMultiError) AllErrors() []error { return m }
 
-// FindGenreRespValidationError is the validation error returned by
+// FindGenreRespValidationError is the validation gerror returned by
 // FindGenreResp.Validate if the designated constraints aren't met.
 type FindGenreRespValidationError struct {
 	field  string
@@ -363,10 +363,10 @@ func (e FindGenreRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindGenreRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindGenreRespValidationError) ErrorName() string { return "FindGenreRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindGenreRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

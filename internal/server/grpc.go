@@ -14,16 +14,16 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"gnboot/api/movie"
+	"gnboot/internal/adaptor"
 	"gnboot/internal/conf"
 	localMiddleware "gnboot/internal/server/middleware"
-	"gnboot/internal/service"
 	"golang.org/x/text/language"
 )
 
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(
 	c *conf.Bootstrap,
-	svc *service.GnbootService,
+	svc *adaptor.GnbootService,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),

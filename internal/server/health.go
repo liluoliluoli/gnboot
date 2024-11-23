@@ -3,10 +3,10 @@ package server
 import (
 	"net/http"
 
-	"gnboot/internal/service"
+	"gnboot/internal/adaptor"
 )
 
-func HealthHandler(svc *service.GnbootService) *http.ServeMux {
+func HealthHandler(svc *adaptor.GnbootService) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/pub/healthcheck", svc.HealthCheck)
 	return mux

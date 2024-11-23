@@ -22,7 +22,7 @@ const (
 	KeywordRemoteService_FindGenre_FullMethodName = "/gnboot.KeywordRemoteService/FindGenre"
 )
 
-// KeywordRemoteServiceClient is the client API for KeywordRemoteService service.
+// KeywordRemoteServiceClient is the client API for KeywordRemoteService adaptor.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KeywordRemoteServiceClient interface {
@@ -46,7 +46,7 @@ func (c *keywordRemoteServiceClient) FindGenre(ctx context.Context, in *FindKeyw
 	return out, nil
 }
 
-// KeywordRemoteServiceServer is the server API for KeywordRemoteService service.
+// KeywordRemoteServiceServer is the server API for KeywordRemoteService adaptor.
 // All implementations must embed UnimplementedKeywordRemoteServiceServer
 // for forward compatibility
 type KeywordRemoteServiceServer interface {
@@ -63,7 +63,7 @@ func (UnimplementedKeywordRemoteServiceServer) FindGenre(context.Context, *FindK
 }
 func (UnimplementedKeywordRemoteServiceServer) mustEmbedUnimplementedKeywordRemoteServiceServer() {}
 
-// UnsafeKeywordRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeKeywordRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
 // Use of this interface is not recommended, as added methods to KeywordRemoteServiceServer will
 // result in compilation errors.
 type UnsafeKeywordRemoteServiceServer interface {
@@ -92,7 +92,7 @@ func _KeywordRemoteService_FindGenre_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-// KeywordRemoteService_ServiceDesc is the grpc.ServiceDesc for KeywordRemoteService service.
+// KeywordRemoteService_ServiceDesc is the grpc.ServiceDesc for KeywordRemoteService adaptor.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var KeywordRemoteService_ServiceDesc = grpc.ServiceDesc{

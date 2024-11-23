@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on StudioResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *StudioResp) Validate() error {
 	return m.validate(false)
 }
@@ -72,11 +72,11 @@ func (m *StudioResp) validate(all bool) error {
 	return nil
 }
 
-// StudioRespMultiError is an error wrapping multiple validation errors
+// StudioRespMultiError is an gerror wrapping multiple validation errors
 // returned by StudioResp.ValidateAll() if the designated constraints aren't met.
 type StudioRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m StudioRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -88,7 +88,7 @@ func (m StudioRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m StudioRespMultiError) AllErrors() []error { return m }
 
-// StudioRespValidationError is the validation error returned by
+// StudioRespValidationError is the validation gerror returned by
 // StudioResp.Validate if the designated constraints aren't met.
 type StudioRespValidationError struct {
 	field  string
@@ -109,10 +109,10 @@ func (e StudioRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e StudioRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e StudioRespValidationError) ErrorName() string { return "StudioRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e StudioRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -144,7 +144,7 @@ var _ interface {
 
 // Validate checks the field values on FindStudioRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
+// first gerror encountered is returned, or nil if there are no violations.
 func (m *FindStudioRequest) Validate() error {
 	return m.validate(false)
 }
@@ -200,12 +200,12 @@ func (m *FindStudioRequest) validate(all bool) error {
 	return nil
 }
 
-// FindStudioRequestMultiError is an error wrapping multiple validation errors
+// FindStudioRequestMultiError is an gerror wrapping multiple validation errors
 // returned by FindStudioRequest.ValidateAll() if the designated constraints
 // aren't met.
 type FindStudioRequestMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindStudioRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -217,7 +217,7 @@ func (m FindStudioRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindStudioRequestMultiError) AllErrors() []error { return m }
 
-// FindStudioRequestValidationError is the validation error returned by
+// FindStudioRequestValidationError is the validation gerror returned by
 // FindStudioRequest.Validate if the designated constraints aren't met.
 type FindStudioRequestValidationError struct {
 	field  string
@@ -238,12 +238,12 @@ func (e FindStudioRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindStudioRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindStudioRequestValidationError) ErrorName() string {
 	return "FindStudioRequestValidationError"
 }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindStudioRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -275,7 +275,7 @@ var _ interface {
 
 // Validate checks the field values on FindStudioResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// gerror encountered is returned, or nil if there are no violations.
 func (m *FindStudioResp) Validate() error {
 	return m.validate(false)
 }
@@ -331,12 +331,12 @@ func (m *FindStudioResp) validate(all bool) error {
 	return nil
 }
 
-// FindStudioRespMultiError is an error wrapping multiple validation errors
+// FindStudioRespMultiError is an gerror wrapping multiple validation errors
 // returned by FindStudioResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindStudioRespMultiError []error
 
-// Error returns a concatenation of all the error messages it wraps.
+// Error returns a concatenation of all the gerror messages it wraps.
 func (m FindStudioRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -348,7 +348,7 @@ func (m FindStudioRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindStudioRespMultiError) AllErrors() []error { return m }
 
-// FindStudioRespValidationError is the validation error returned by
+// FindStudioRespValidationError is the validation gerror returned by
 // FindStudioResp.Validate if the designated constraints aren't met.
 type FindStudioRespValidationError struct {
 	field  string
@@ -369,10 +369,10 @@ func (e FindStudioRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindStudioRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns error name.
+// ErrorName returns gerror name.
 func (e FindStudioRespValidationError) ErrorName() string { return "FindStudioRespValidationError" }
 
-// Error satisfies the builtin error interface
+// Error satisfies the builtin gerror interface
 func (e FindStudioRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

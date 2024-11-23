@@ -11,9 +11,9 @@ import "cinch/params/params.proto";
 option go_package = "gnboot/api/studio;studio";
 
 option (openapi.v3.document) = {
-  info : {title : "genre service";
+  info : {title : "genre adaptor";
 version : "1.0.0";
-description : "This is genre service docs";
+description : "This is genre adaptor docs";
 }
 components : {
 security_schemes: {

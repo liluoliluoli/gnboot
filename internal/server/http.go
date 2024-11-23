@@ -15,16 +15,16 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
 	"gnboot/api/movie"
+	"gnboot/internal/adaptor"
 	"gnboot/internal/conf"
 	localMiddleware "gnboot/internal/server/middleware"
-	"gnboot/internal/service"
 	"golang.org/x/text/language"
 )
 
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(
 	c *conf.Bootstrap,
-	svc *service.GnbootService,
+	svc *adaptor.GnbootService,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),

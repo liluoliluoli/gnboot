@@ -8,10 +8,10 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2"
-	"gnboot/internal/biz"
+	"gnboot/internal/adaptor"
 	"gnboot/internal/conf"
-	"gnboot/internal/data"
 	"gnboot/internal/pkg/task"
+	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
 )
@@ -29,28 +29,28 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	universalClient, err := data.NewRedis(c)
+	universalClient, err := repo.NewRedis(c)
 	if err != nil {
 		return nil, nil, err
 	}
-	tenant, err := data.NewDB(c)
+	tenant, err := repo.NewDB(c)
 	if err != nil {
 		return nil, nil, err
 	}
-	sonyflake, err := data.NewSonyflake(c)
+	sonyflake, err := repo.NewSonyflake(c)
 	if err != nil {
 		return nil, nil, err
 	}
-	tracerProvider, err := data.NewTracer(c)
+	tracerProvider, err := repo.NewTracer(c)
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData, cleanup := data.NewData(universalClient, tenant, sonyflake, tracerProvider)
-	movieRepo := data.NewMovieRepo(dataData)
-	transaction := data.NewTransaction(dataData)
-	cache := data.NewCache(c, universalClient)
-	movieUseCase := biz.NewMovieUseCase(c, movieRepo, transaction, cache)
-	gnbootService := service.NewGnbootService(worker, movieUseCase)
+	dataData, cleanup := repo.NewData(universalClient, tenant, sonyflake, tracerProvider)
+	movieRepo := repo.NewMovieRepo(dataData)
+	transaction := repo.NewTransaction(dataData)
+	cache := repo.NewCache(c, universalClient)
+	movieUseCase := service.NewMovieUseCase(c, movieRepo, transaction, cache)
+	gnbootService := adaptor.NewGnbootService(worker, movieUseCase)
 	grpcServer := server.NewGRPCServer(c, gnbootService)
 	httpServer := server.NewHTTPServer(c, gnbootService)
 	app := newApp(grpcServer, httpServer)

@@ -29,7 +29,7 @@ type Bootstrap struct {
 	Name    string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Version string           `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
 	Server  *Server          `protobuf:"bytes,3,opt,name=server,proto3" json:"server,omitempty"`
-	Data    *Data            `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`
+	Data    *Data            `protobuf:"bytes,4,opt,name=repo,proto3" json:"repo,omitempty"`
 	Tracer  *Tracer          `protobuf:"bytes,5,opt,name=tracer,proto3" json:"tracer,omitempty"`
 	Task    map[string]*Task `protobuf:"bytes,6,rep,name=task,proto3" json:"task,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Client  *Client          `protobuf:"bytes,7,opt,name=client,proto3" json:"client,omitempty"`
@@ -233,7 +233,7 @@ type Data struct {
 	unknownFields protoimpl.UnknownFields
 
 	Database *Data_Database `protobuf:"bytes,1,opt,name=database,proto3" json:"database,omitempty"`
-	Redis    *Data_Redis    `protobuf:"bytes,2,opt,name=redis,proto3" json:"redis,omitempty"`
+	Redis    *Data_Redis    `protobuf:"bytes,2,opt,name=gredis,proto3" json:"gredis,omitempty"`
 }
 
 func (x *Data) Reset() {
@@ -1089,7 +1089,7 @@ var file_conf_conf_proto_goTypes = []interface{}{
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	1,  // 0: cinch.conf.Bootstrap.server:type_name -> cinch.conf.Server
-	2,  // 1: cinch.conf.Bootstrap.data:type_name -> cinch.conf.Data
+	2,  // 1: cinch.conf.Bootstrap.repo:type_name -> cinch.conf.Data
 	4,  // 2: cinch.conf.Bootstrap.tracer:type_name -> cinch.conf.Tracer
 	7,  // 3: cinch.conf.Bootstrap.task:type_name -> cinch.conf.Bootstrap.TaskEntry
 	5,  // 4: cinch.conf.Bootstrap.client:type_name -> cinch.conf.Client
@@ -1097,7 +1097,7 @@ var file_conf_conf_proto_depIdxs = []int32{
 	8,  // 6: cinch.conf.Server.http:type_name -> cinch.conf.Server.HTTP
 	9,  // 7: cinch.conf.Server.grpc:type_name -> cinch.conf.Server.GRPC
 	10, // 8: cinch.conf.Data.database:type_name -> cinch.conf.Data.Database
-	11, // 9: cinch.conf.Data.redis:type_name -> cinch.conf.Data.Redis
+	11, // 9: cinch.conf.Data.gredis:type_name -> cinch.conf.Data.Redis
 	13, // 10: cinch.conf.Tracer.otlp:type_name -> cinch.conf.Tracer.Otlp
 	14, // 11: cinch.conf.Tracer.stdout:type_name -> cinch.conf.Tracer.Stdout
 	15, // 12: cinch.conf.Client.timeout:type_name -> google.protobuf.Duration

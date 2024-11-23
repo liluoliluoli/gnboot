@@ -16,9 +16,9 @@ import "proto/actor.proto";
 option go_package = "gnboot/api/movie;movie";
 
 option (openapi.v3.document) = {
-  info : {title : "movie service";
+  info : {title : "movie adaptor";
 version : "1.0.0";
-description : "This is movie service docs";
+description : "This is movie adaptor docs";
 }
 components : {
 security_schemes: {

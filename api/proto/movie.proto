@@ -94,7 +94,7 @@ additional_properties:
   }
 
   message MovieResp {
-    uint64 id = 1;
+    int64 id = 1;
     string originalTitle = 2;
     string status = 3;
     float voteAverage = 4;
@@ -120,11 +120,11 @@ additional_properties:
   }
 
   message GetMovieRequest {
-    uint64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
+    int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
   }
 
   message GetMovieResp {
-    uint64 id = 1;
+    int64 id = 1;
     string name = 2;
   }
 
@@ -146,6 +146,6 @@ additional_properties:
   }
 
   message UpdateMovieRequest {
-    uint64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
+    int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
     optional string name = 2;
   }

@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
-	"github.com/go-cinch/common/page"
+	"gnboot/internal/service/sdomain"
 	"gnboot/internal/utils/json_util"
 	"math/rand"
 	"strings"
@@ -16,11 +16,6 @@ import (
 	"gnboot/internal/service"
 	"go.opentelemetry.io/otel/trace"
 )
-
-type PageCache[T any] struct {
-	Page page.Page `json:"page"`
-	List []T       `json:"list"`
-}
 
 // Cache .
 type Cache[T any] struct {
@@ -106,9 +101,9 @@ func (c *Cache[T]) Get(
 func (c *Cache[T]) GetPage(
 	ctx context.Context,
 	action string,
-	write func(string, context.Context) (PageCache[T], error),
-) (PageCache[T], error) {
-	var _res PageCache[T]
+	write func(string, context.Context) (*sdomain.PageResult[T], error),
+) (*sdomain.PageResult[T], error) {
+	var _res *sdomain.PageResult[T]
 	if c.disable {
 		return write(action, ctx)
 	}
@@ -118,7 +113,7 @@ func (c *Cache[T]) GetPage(
 		rs, err := c.redis.Get(ctx, key).Result()
 		if err == nil {
 			// cache exists
-			res, err := json_util.Unmarshal[PageCache[T]](rs)
+			res, err := json_util.Unmarshal[*sdomain.PageResult[T]](rs)
 			return res, err
 		}
 	}

@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"gnboot/internal/common/gerror"
 	"net/url"
 	"strconv"
 	"time"
@@ -201,4 +202,14 @@ func NewSonyflake(c *conf.Bootstrap) (sf *id.Sonyflake, err error) {
 		WithField("machine.id", machineId).
 		Info("initialize sonyflake success")
 	return
+}
+
+func handleQueryError(queryErr error) error {
+	if queryErr == nil {
+		return nil
+	}
+	if errors.Is(queryErr, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	return gerror.NewBizErrorWithCause(gerror.DbError, queryErr)
 }

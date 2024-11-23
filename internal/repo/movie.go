@@ -2,129 +2,84 @@ package repo
 
 import (
 	"context"
-	"strings"
-
-	"github.com/go-cinch/common/constant"
-	"github.com/go-cinch/common/copierx"
-	"github.com/go-cinch/common/log"
-	"github.com/go-cinch/common/utils"
+	"github.com/go-cinch/common/page"
+	"github.com/samber/lo"
+	"gnboot/internal/repo/gen"
 	"gnboot/internal/repo/model"
-	"gnboot/internal/repo/query"
-	"gnboot/internal/service"
-	"gorm.io/gen"
+	"gnboot/internal/service/sdomain"
+	"gorm.io/gorm"
 )
 
-type movieRepo struct {
-	data *Data
+type MovieRepo struct {
+	Data *Data
 }
 
-func NewMovieRepo(data *Data) service.MovieRepo {
-	return &movieRepo{
-		data: data,
+func NewMovieRepo(data *Data) *MovieRepo {
+	return &MovieRepo{
+		Data: data,
 	}
 }
 
-func (ro movieRepo) Create(ctx context.Context, item *service.CreateMovie) (err error) {
-	err = ro.NameExists(ctx, item.Name)
-	if err == nil {
-		err = service.ErrDuplicateField(ctx, "name", item.Name)
-		return
+func (r *MovieRepo) do(ctx context.Context, tx *gen.Query) gen.IMovieDo {
+	if tx == nil {
+		return gen.Use(r.Data.DB(ctx)).Movie.WithContext(ctx)
+	} else {
+		return tx.Movie.WithContext(ctx)
 	}
-	var m model.Movie
-	copierx.Copy(&m, item)
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	m.ID = ro.data.ID(ctx)
-	err = db.Create(&m)
-	return
 }
 
-func (ro movieRepo) Get(ctx context.Context, id uint64) (item *service.Movie, err error) {
-	item = &service.Movie{}
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	m := db.GetByID(id)
-	if m.ID == constant.UI0 {
-		err = service.ErrRecordNotFound(ctx)
-		return
+func (r *MovieRepo) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+	find, err := r.do(ctx, nil).Where(gen.Movie.ID.Eq(id)).First()
+	if err != nil {
+		return nil, handleQueryError(err)
 	}
-	copierx.Copy(&item, m)
-	return
+	return (&sdomain.Movie{}).ConvertFromRepo(find), nil
 }
 
-func (ro movieRepo) Find(ctx context.Context, condition *service.FindMovie) (rp []*service.Movie) {
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	rp = make([]*service.Movie, 0)
-	list := make([]model.Movie, 0)
-	conditions := make([]gen.Condition, 0, 2)
+func (r *MovieRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+	do := r.do(ctx, nil)
 	if condition.Search != nil {
-		conditions = append(conditions, p.OriginalTitle.Like(strings.Join([]string{"%", *condition.Search, "%"}, "")))
+		do = do.Where(gen.Movie.OriginalTitle.Like("%" + *condition.Search + "%"))
 	}
-
-	condition.Page.Primary = "id"
-	condition.Page.
-		WithContext(ctx).
-		Query(
-			db.
-				Order(p.ID.Desc()).
-				Where(conditions...).
-				UnderlyingDB(),
-		).
-		Find(&list)
-	copierx.Copy(&rp, list)
-	return
+	list, total, err := do.Order(gen.Movie.ID.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return &sdomain.PageResult[*sdomain.Movie]{
+		Page: &page.Page{
+			Num:   condition.Page.Num,
+			Size:  condition.Page.Size,
+			Total: total,
+		},
+		List: lo.Map(list, func(item *model.Movie, index int) *sdomain.Movie {
+			return (&sdomain.Movie{}).ConvertFromRepo(item)
+		}),
+	}, nil
 }
 
-func (ro movieRepo) Update(ctx context.Context, item *service.UpdateMovie) (err error) {
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	m := db.GetByID(item.ID)
-	if m.ID == constant.UI0 {
-		err = service.ErrRecordNotFound(ctx)
-		return
+func (r *MovieRepo) Create(ctx context.Context, tx *gen.Query, movie *sdomain.CreateMovie) error {
+	err := r.do(ctx, tx).Save(movie.ConvertToRepo())
+	if err != nil {
+		return err
 	}
-	change := make(map[string]interface{})
-	utils.CompareDiff(m, item, &change)
-	if len(change) == 0 {
-		err = service.ErrDataNotChange(ctx)
-		return
-	}
-	if item.Title != nil && *item.Title != m.OriginalTitle {
-		err = ro.NameExists(ctx, *item.Title)
-		if err == nil {
-			err = service.ErrDuplicateField(ctx, "name", *item.Title)
-			return
-		}
-	}
-	_, err = db.
-		Where(p.ID.Eq(item.ID)).
-		Updates(&change)
-	return
+	return nil
 }
 
-func (ro movieRepo) Delete(ctx context.Context, ids ...uint64) (err error) {
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	_, err = db.
-		Where(p.ID.In(ids...)).
-		Delete()
-	return
+func (r *MovieRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateMovie) error {
+	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
+	if err != nil {
+		return err
+	}
+	if updates.RowsAffected != 1 {
+		return gorm.ErrDuplicatedKey
+	}
+	return nil
 }
 
-func (ro movieRepo) NameExists(ctx context.Context, name string) (err error) {
-	p := query.Use(ro.data.DB(ctx)).Movie
-	db := p.WithContext(ctx)
-	arr := strings.Split(name, ",")
-	for _, item := range arr {
-		res := db.GetByCol("name", item)
-		if res.ID == constant.UI0 {
-			err = service.ErrRecordNotFound(ctx)
-			log.
-				WithError(err).
-				Warn("invalid `name`: %s", name)
-			return
-		}
+func (r *MovieRepo) Delete(ctx context.Context, tx *gen.Query, ids ...int64) error {
+	_, err := r.do(ctx, tx).Where(gen.Movie.ID.In(ids...)).Delete()
+	if err != nil {
+		return err
 	}
-	return
+	return nil
 }

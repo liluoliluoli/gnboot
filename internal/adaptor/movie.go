@@ -2,47 +2,35 @@ package adaptor
 
 import (
 	"context"
-	"github.com/go-cinch/common/copierx"
 	"github.com/go-cinch/common/proto/params"
-	"github.com/go-cinch/common/utils"
 	"gnboot/api/movie"
+	"gnboot/internal/service/sdomain"
 	"gnboot/internal/utils/page_util"
+	"strconv"
+	"strings"
 
 	"github.com/samber/lo"
-	"gnboot/internal/service"
-	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "CreateMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	r := &service.CreateMovie{}
-	copierx.Copy(&r, req)
-	err = s.movie.Create(ctx, r)
-	return
+func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (*emptypb.Empty, error) {
+	err := s.movie.Create(ctx, (&sdomain.CreateMovie{}).ConvertFromDto(req))
+	return &emptypb.Empty{}, err
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (rp *movie.GetMovieResp, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "GetMovie")
-	defer span.End()
-	rp = &movie.GetMovieResp{}
-	res, err := s.movie.Get(ctx, req.Id)
+func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (*movie.GetMovieResp, error) {
+	res, err := s.movie.Get(ctx, int64(req.Id))
 	if err != nil {
-		return
+		return nil, err
 	}
-	copierx.Copy(&rp, res)
-	return
+	return res.ConvertFromDto(), nil
 }
 
 func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
-	condition := &service.FindMovie{
+	condition := &sdomain.FindMovie{
 		Page:   lo.FromPtr(page_util.ToDomainPage(req.Page)),
 		Search: req.Search,
-		Sort: &service.Sort{
+		Sort: &sdomain.Sort{
 			Filter: lo.TernaryF(req.Sort != nil, func() *string {
 				return req.Sort.Filter
 			}, func() *string {
@@ -60,15 +48,15 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieReque
 			}),
 		},
 	}
-	res, err := s.movie.Find(ctx, condition)
+	res, err := s.movie.Page(ctx, condition)
 	if err != nil {
 		return nil, err
 	}
 	return &movie.FindMovieResp{
-		Page: page_util.ToAdaptorPage(condition.Page),
-		List: lo.Map(res, func(item *service.Movie, index int) *movie.MovieResp {
+		Page: page_util.ToAdaptorPage(res.Page),
+		List: lo.Map(res.List, func(item *sdomain.Movie, index int) *movie.MovieResp {
 			return &movie.MovieResp{
-				Id:            item.ID,
+				Id:            uint64(item.ID),
 				OriginalTitle: item.OriginalTitle,
 				Status:        item.Status,
 				VoteAverage:   item.VoteAverage,
@@ -85,22 +73,18 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieReque
 	}, nil
 }
 
-func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "UpdateMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	r := &service.UpdateMovie{}
-	copierx.Copy(&r, req)
-	err = s.movie.Update(ctx, r)
-	return
+func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (*emptypb.Empty, error) {
+	err := s.movie.Update(ctx, (&sdomain.UpdateMovie{}).ConvertFromDto(req))
+	return &emptypb.Empty{}, err
 }
 
-func (s *GnbootService) DeleteMovie(ctx context.Context, req *params.IdsRequest) (rp *emptypb.Empty, err error) {
-	tr := otel.Tracer("api")
-	ctx, span := tr.Start(ctx, "DeleteMovie")
-	defer span.End()
-	rp = &emptypb.Empty{}
-	err = s.movie.Delete(ctx, utils.Str2Uint64Arr(req.Ids)...)
-	return
+func (s *GnbootService) DeleteMovie(ctx context.Context, req *params.IdsRequest) (*emptypb.Empty, error) {
+	err := s.movie.Delete(ctx, lo.Map(strings.Split(req.Ids, ","), func(item string, index int) int64 {
+		id, err := strconv.ParseInt(item, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return id
+	})...)
+	return &emptypb.Empty{}, err
 }

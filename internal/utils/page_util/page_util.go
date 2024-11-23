@@ -18,7 +18,7 @@ func ToDomainPage(p *params.Page) *page.Page {
 	}
 }
 
-func ToAdaptorPage(p page.Page) *params.Page {
+func ToAdaptorPage(p *page.Page) *params.Page {
 	return &params.Page{
 		Num:   p.Num,
 		Size:  p.Size,

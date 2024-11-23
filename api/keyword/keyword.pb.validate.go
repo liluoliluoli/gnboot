@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on KeywordResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// gerror encountered is returned, or nil if there are no violations.
+// error encountered is returned, or nil if there are no violations.
 func (m *KeywordResp) Validate() error {
 	return m.validate(false)
 }
@@ -68,11 +68,11 @@ func (m *KeywordResp) validate(all bool) error {
 	return nil
 }
 
-// KeywordRespMultiError is an gerror wrapping multiple validation errors
+// KeywordRespMultiError is an error wrapping multiple validation errors
 // returned by KeywordResp.ValidateAll() if the designated constraints aren't met.
 type KeywordRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m KeywordRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -84,7 +84,7 @@ func (m KeywordRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m KeywordRespMultiError) AllErrors() []error { return m }
 
-// KeywordRespValidationError is the validation gerror returned by
+// KeywordRespValidationError is the validation error returned by
 // KeywordResp.Validate if the designated constraints aren't met.
 type KeywordRespValidationError struct {
 	field  string
@@ -105,10 +105,10 @@ func (e KeywordRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e KeywordRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e KeywordRespValidationError) ErrorName() string { return "KeywordRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e KeywordRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -140,7 +140,7 @@ var _ interface {
 
 // Validate checks the field values on FindKeywordRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, the first gerror encountered is returned, or nil if there are no violations.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *FindKeywordRequest) Validate() error {
 	return m.validate(false)
 }
@@ -196,12 +196,12 @@ func (m *FindKeywordRequest) validate(all bool) error {
 	return nil
 }
 
-// FindKeywordRequestMultiError is an gerror wrapping multiple validation errors
+// FindKeywordRequestMultiError is an error wrapping multiple validation errors
 // returned by FindKeywordRequest.ValidateAll() if the designated constraints
 // aren't met.
 type FindKeywordRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindKeywordRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -213,7 +213,7 @@ func (m FindKeywordRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindKeywordRequestMultiError) AllErrors() []error { return m }
 
-// FindKeywordRequestValidationError is the validation gerror returned by
+// FindKeywordRequestValidationError is the validation error returned by
 // FindKeywordRequest.Validate if the designated constraints aren't met.
 type FindKeywordRequestValidationError struct {
 	field  string
@@ -234,12 +234,12 @@ func (e FindKeywordRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindKeywordRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindKeywordRequestValidationError) ErrorName() string {
 	return "FindKeywordRequestValidationError"
 }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindKeywordRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -271,7 +271,7 @@ var _ interface {
 
 // Validate checks the field values on FindKeywordResp with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first gerror encountered is returned, or nil if there are no violations.
+// first error encountered is returned, or nil if there are no violations.
 func (m *FindKeywordResp) Validate() error {
 	return m.validate(false)
 }
@@ -327,12 +327,12 @@ func (m *FindKeywordResp) validate(all bool) error {
 	return nil
 }
 
-// FindKeywordRespMultiError is an gerror wrapping multiple validation errors
+// FindKeywordRespMultiError is an error wrapping multiple validation errors
 // returned by FindKeywordResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindKeywordRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindKeywordRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -344,7 +344,7 @@ func (m FindKeywordRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindKeywordRespMultiError) AllErrors() []error { return m }
 
-// FindKeywordRespValidationError is the validation gerror returned by
+// FindKeywordRespValidationError is the validation error returned by
 // FindKeywordResp.Validate if the designated constraints aren't met.
 type FindKeywordRespValidationError struct {
 	field  string
@@ -365,10 +365,10 @@ func (e FindKeywordRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindKeywordRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindKeywordRespValidationError) ErrorName() string { return "FindKeywordRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindKeywordRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

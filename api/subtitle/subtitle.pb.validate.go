@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on SubtitleResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// gerror encountered is returned, or nil if there are no violations.
+// error encountered is returned, or nil if there are no violations.
 func (m *SubtitleResp) Validate() error {
 	return m.validate(false)
 }
@@ -74,11 +74,11 @@ func (m *SubtitleResp) validate(all bool) error {
 	return nil
 }
 
-// SubtitleRespMultiError is an gerror wrapping multiple validation errors
+// SubtitleRespMultiError is an error wrapping multiple validation errors
 // returned by SubtitleResp.ValidateAll() if the designated constraints aren't met.
 type SubtitleRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m SubtitleRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -90,7 +90,7 @@ func (m SubtitleRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m SubtitleRespMultiError) AllErrors() []error { return m }
 
-// SubtitleRespValidationError is the validation gerror returned by
+// SubtitleRespValidationError is the validation error returned by
 // SubtitleResp.Validate if the designated constraints aren't met.
 type SubtitleRespValidationError struct {
 	field  string
@@ -111,10 +111,10 @@ func (e SubtitleRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e SubtitleRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e SubtitleRespValidationError) ErrorName() string { return "SubtitleRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e SubtitleRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -146,7 +146,7 @@ var _ interface {
 
 // Validate checks the field values on FindSubtitleRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, the first gerror encountered is returned, or nil if there are no violations.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *FindSubtitleRequest) Validate() error {
 	return m.validate(false)
 }
@@ -202,12 +202,12 @@ func (m *FindSubtitleRequest) validate(all bool) error {
 	return nil
 }
 
-// FindSubtitleRequestMultiError is an gerror wrapping multiple validation
+// FindSubtitleRequestMultiError is an error wrapping multiple validation
 // errors returned by FindSubtitleRequest.ValidateAll() if the designated
 // constraints aren't met.
 type FindSubtitleRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindSubtitleRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -219,7 +219,7 @@ func (m FindSubtitleRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindSubtitleRequestMultiError) AllErrors() []error { return m }
 
-// FindSubtitleRequestValidationError is the validation gerror returned by
+// FindSubtitleRequestValidationError is the validation error returned by
 // FindSubtitleRequest.Validate if the designated constraints aren't met.
 type FindSubtitleRequestValidationError struct {
 	field  string
@@ -240,12 +240,12 @@ func (e FindSubtitleRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindSubtitleRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindSubtitleRequestValidationError) ErrorName() string {
 	return "FindSubtitleRequestValidationError"
 }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindSubtitleRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -277,7 +277,7 @@ var _ interface {
 
 // Validate checks the field values on FindSubtitleResp with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first gerror encountered is returned, or nil if there are no violations.
+// first error encountered is returned, or nil if there are no violations.
 func (m *FindSubtitleResp) Validate() error {
 	return m.validate(false)
 }
@@ -333,12 +333,12 @@ func (m *FindSubtitleResp) validate(all bool) error {
 	return nil
 }
 
-// FindSubtitleRespMultiError is an gerror wrapping multiple validation errors
+// FindSubtitleRespMultiError is an error wrapping multiple validation errors
 // returned by FindSubtitleResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindSubtitleRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindSubtitleRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -350,7 +350,7 @@ func (m FindSubtitleRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindSubtitleRespMultiError) AllErrors() []error { return m }
 
-// FindSubtitleRespValidationError is the validation gerror returned by
+// FindSubtitleRespValidationError is the validation error returned by
 // FindSubtitleResp.Validate if the designated constraints aren't met.
 type FindSubtitleRespValidationError struct {
 	field  string
@@ -371,10 +371,10 @@ func (e FindSubtitleRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindSubtitleRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindSubtitleRespValidationError) ErrorName() string { return "FindSubtitleRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindSubtitleRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

@@ -22,7 +22,7 @@ const (
 	ActorRemoteService_FindGenre_FullMethodName = "/gnboot.ActorRemoteService/FindGenre"
 )
 
-// ActorRemoteServiceClient is the client API for ActorRemoteService adaptor.
+// ActorRemoteServiceClient is the client API for ActorRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ActorRemoteServiceClient interface {
@@ -46,7 +46,7 @@ func (c *actorRemoteServiceClient) FindGenre(ctx context.Context, in *FindActorR
 	return out, nil
 }
 
-// ActorRemoteServiceServer is the server API for ActorRemoteService adaptor.
+// ActorRemoteServiceServer is the server API for ActorRemoteService service.
 // All implementations must embed UnimplementedActorRemoteServiceServer
 // for forward compatibility
 type ActorRemoteServiceServer interface {
@@ -63,7 +63,7 @@ func (UnimplementedActorRemoteServiceServer) FindGenre(context.Context, *FindAct
 }
 func (UnimplementedActorRemoteServiceServer) mustEmbedUnimplementedActorRemoteServiceServer() {}
 
-// UnsafeActorRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
+// UnsafeActorRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to ActorRemoteServiceServer will
 // result in compilation errors.
 type UnsafeActorRemoteServiceServer interface {
@@ -92,7 +92,7 @@ func _ActorRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// ActorRemoteService_ServiceDesc is the grpc.ServiceDesc for ActorRemoteService adaptor.
+// ActorRemoteService_ServiceDesc is the grpc.ServiceDesc for ActorRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ActorRemoteService_ServiceDesc = grpc.ServiceDesc{

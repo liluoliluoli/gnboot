@@ -28,7 +28,7 @@ const (
 	MovieRemoteService_DeleteMovie_FullMethodName = "/gnboot.MovieRemoteService/DeleteMovie"
 )
 
-// MovieRemoteServiceClient is the client API for MovieRemoteService adaptor.
+// MovieRemoteServiceClient is the client API for MovieRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MovieRemoteServiceClient interface {
@@ -97,7 +97,7 @@ func (c *movieRemoteServiceClient) DeleteMovie(ctx context.Context, in *params.I
 	return out, nil
 }
 
-// MovieRemoteServiceServer is the server API for MovieRemoteService adaptor.
+// MovieRemoteServiceServer is the server API for MovieRemoteService service.
 // All implementations must embed UnimplementedMovieRemoteServiceServer
 // for forward compatibility
 type MovieRemoteServiceServer interface {
@@ -135,7 +135,7 @@ func (UnimplementedMovieRemoteServiceServer) DeleteMovie(context.Context, *param
 }
 func (UnimplementedMovieRemoteServiceServer) mustEmbedUnimplementedMovieRemoteServiceServer() {}
 
-// UnsafeMovieRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
+// UnsafeMovieRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MovieRemoteServiceServer will
 // result in compilation errors.
 type UnsafeMovieRemoteServiceServer interface {
@@ -236,7 +236,7 @@ func _MovieRemoteService_DeleteMovie_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-// MovieRemoteService_ServiceDesc is the grpc.ServiceDesc for MovieRemoteService adaptor.
+// MovieRemoteService_ServiceDesc is the grpc.ServiceDesc for MovieRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MovieRemoteService_ServiceDesc = grpc.ServiceDesc{

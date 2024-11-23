@@ -22,7 +22,7 @@ const (
 	GenreRemoteService_FindGenre_FullMethodName = "/gnboot.GenreRemoteService/FindGenre"
 )
 
-// GenreRemoteServiceClient is the client API for GenreRemoteService adaptor.
+// GenreRemoteServiceClient is the client API for GenreRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GenreRemoteServiceClient interface {
@@ -46,7 +46,7 @@ func (c *genreRemoteServiceClient) FindGenre(ctx context.Context, in *FindGenreR
 	return out, nil
 }
 
-// GenreRemoteServiceServer is the server API for GenreRemoteService adaptor.
+// GenreRemoteServiceServer is the server API for GenreRemoteService service.
 // All implementations must embed UnimplementedGenreRemoteServiceServer
 // for forward compatibility
 type GenreRemoteServiceServer interface {
@@ -63,7 +63,7 @@ func (UnimplementedGenreRemoteServiceServer) FindGenre(context.Context, *FindGen
 }
 func (UnimplementedGenreRemoteServiceServer) mustEmbedUnimplementedGenreRemoteServiceServer() {}
 
-// UnsafeGenreRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
+// UnsafeGenreRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to GenreRemoteServiceServer will
 // result in compilation errors.
 type UnsafeGenreRemoteServiceServer interface {
@@ -92,7 +92,7 @@ func _GenreRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// GenreRemoteService_ServiceDesc is the grpc.ServiceDesc for GenreRemoteService adaptor.
+// GenreRemoteService_ServiceDesc is the grpc.ServiceDesc for GenreRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GenreRemoteService_ServiceDesc = grpc.ServiceDesc{

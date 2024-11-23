@@ -22,7 +22,7 @@ const (
 	StudioRemoteService_FindGenre_FullMethodName = "/gnboot.StudioRemoteService/FindGenre"
 )
 
-// StudioRemoteServiceClient is the client API for StudioRemoteService adaptor.
+// StudioRemoteServiceClient is the client API for StudioRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StudioRemoteServiceClient interface {
@@ -46,7 +46,7 @@ func (c *studioRemoteServiceClient) FindGenre(ctx context.Context, in *FindStudi
 	return out, nil
 }
 
-// StudioRemoteServiceServer is the server API for StudioRemoteService adaptor.
+// StudioRemoteServiceServer is the server API for StudioRemoteService service.
 // All implementations must embed UnimplementedStudioRemoteServiceServer
 // for forward compatibility
 type StudioRemoteServiceServer interface {
@@ -63,7 +63,7 @@ func (UnimplementedStudioRemoteServiceServer) FindGenre(context.Context, *FindSt
 }
 func (UnimplementedStudioRemoteServiceServer) mustEmbedUnimplementedStudioRemoteServiceServer() {}
 
-// UnsafeStudioRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
+// UnsafeStudioRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to StudioRemoteServiceServer will
 // result in compilation errors.
 type UnsafeStudioRemoteServiceServer interface {
@@ -92,7 +92,7 @@ func _StudioRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-// StudioRemoteService_ServiceDesc is the grpc.ServiceDesc for StudioRemoteService adaptor.
+// StudioRemoteService_ServiceDesc is the grpc.ServiceDesc for StudioRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var StudioRemoteService_ServiceDesc = grpc.ServiceDesc{

@@ -22,7 +22,7 @@ const (
 	SubtitleRemoteService_FindGenre_FullMethodName = "/gnboot.SubtitleRemoteService/FindGenre"
 )
 
-// SubtitleRemoteServiceClient is the client API for SubtitleRemoteService adaptor.
+// SubtitleRemoteServiceClient is the client API for SubtitleRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SubtitleRemoteServiceClient interface {
@@ -46,7 +46,7 @@ func (c *subtitleRemoteServiceClient) FindGenre(ctx context.Context, in *FindSub
 	return out, nil
 }
 
-// SubtitleRemoteServiceServer is the server API for SubtitleRemoteService adaptor.
+// SubtitleRemoteServiceServer is the server API for SubtitleRemoteService service.
 // All implementations must embed UnimplementedSubtitleRemoteServiceServer
 // for forward compatibility
 type SubtitleRemoteServiceServer interface {
@@ -63,7 +63,7 @@ func (UnimplementedSubtitleRemoteServiceServer) FindGenre(context.Context, *Find
 }
 func (UnimplementedSubtitleRemoteServiceServer) mustEmbedUnimplementedSubtitleRemoteServiceServer() {}
 
-// UnsafeSubtitleRemoteServiceServer may be embedded to opt out of forward compatibility for this adaptor.
+// UnsafeSubtitleRemoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to SubtitleRemoteServiceServer will
 // result in compilation errors.
 type UnsafeSubtitleRemoteServiceServer interface {
@@ -92,7 +92,7 @@ func _SubtitleRemoteService_FindGenre_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-// SubtitleRemoteService_ServiceDesc is the grpc.ServiceDesc for SubtitleRemoteService adaptor.
+// SubtitleRemoteService_ServiceDesc is the grpc.ServiceDesc for SubtitleRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SubtitleRemoteService_ServiceDesc = grpc.ServiceDesc{

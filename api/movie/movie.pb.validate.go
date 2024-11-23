@@ -37,7 +37,7 @@ var (
 
 // Validate checks the field values on MovieResp with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
-// gerror encountered is returned, or nil if there are no violations.
+// error encountered is returned, or nil if there are no violations.
 func (m *MovieResp) Validate() error {
 	return m.validate(false)
 }
@@ -262,11 +262,11 @@ func (m *MovieResp) validate(all bool) error {
 	return nil
 }
 
-// MovieRespMultiError is an gerror wrapping multiple validation errors returned
+// MovieRespMultiError is an error wrapping multiple validation errors returned
 // by MovieResp.ValidateAll() if the designated constraints aren't met.
 type MovieRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m MovieRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -278,7 +278,7 @@ func (m MovieRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m MovieRespMultiError) AllErrors() []error { return m }
 
-// MovieRespValidationError is the validation gerror returned by
+// MovieRespValidationError is the validation error returned by
 // MovieResp.Validate if the designated constraints aren't met.
 type MovieRespValidationError struct {
 	field  string
@@ -299,10 +299,10 @@ func (e MovieRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e MovieRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e MovieRespValidationError) ErrorName() string { return "MovieRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e MovieRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -334,7 +334,7 @@ var _ interface {
 
 // Validate checks the field values on CreateMovieRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, the first gerror encountered is returned, or nil if there are no violations.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *CreateMovieRequest) Validate() error {
 	return m.validate(false)
 }
@@ -363,12 +363,12 @@ func (m *CreateMovieRequest) validate(all bool) error {
 	return nil
 }
 
-// CreateMovieRequestMultiError is an gerror wrapping multiple validation errors
+// CreateMovieRequestMultiError is an error wrapping multiple validation errors
 // returned by CreateMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
 type CreateMovieRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m CreateMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -380,7 +380,7 @@ func (m CreateMovieRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m CreateMovieRequestMultiError) AllErrors() []error { return m }
 
-// CreateMovieRequestValidationError is the validation gerror returned by
+// CreateMovieRequestValidationError is the validation error returned by
 // CreateMovieRequest.Validate if the designated constraints aren't met.
 type CreateMovieRequestValidationError struct {
 	field  string
@@ -401,12 +401,12 @@ func (e CreateMovieRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e CreateMovieRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e CreateMovieRequestValidationError) ErrorName() string {
 	return "CreateMovieRequestValidationError"
 }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e CreateMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -438,7 +438,7 @@ var _ interface {
 
 // Validate checks the field values on GetMovieRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first gerror encountered is returned, or nil if there are no violations.
+// first error encountered is returned, or nil if there are no violations.
 func (m *GetMovieRequest) Validate() error {
 	return m.validate(false)
 }
@@ -467,12 +467,12 @@ func (m *GetMovieRequest) validate(all bool) error {
 	return nil
 }
 
-// GetMovieRequestMultiError is an gerror wrapping multiple validation errors
+// GetMovieRequestMultiError is an error wrapping multiple validation errors
 // returned by GetMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
 type GetMovieRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m GetMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -484,7 +484,7 @@ func (m GetMovieRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m GetMovieRequestMultiError) AllErrors() []error { return m }
 
-// GetMovieRequestValidationError is the validation gerror returned by
+// GetMovieRequestValidationError is the validation error returned by
 // GetMovieRequest.Validate if the designated constraints aren't met.
 type GetMovieRequestValidationError struct {
 	field  string
@@ -505,10 +505,10 @@ func (e GetMovieRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e GetMovieRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e GetMovieRequestValidationError) ErrorName() string { return "GetMovieRequestValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e GetMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -540,7 +540,7 @@ var _ interface {
 
 // Validate checks the field values on GetMovieResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// gerror encountered is returned, or nil if there are no violations.
+// error encountered is returned, or nil if there are no violations.
 func (m *GetMovieResp) Validate() error {
 	return m.validate(false)
 }
@@ -571,11 +571,11 @@ func (m *GetMovieResp) validate(all bool) error {
 	return nil
 }
 
-// GetMovieRespMultiError is an gerror wrapping multiple validation errors
+// GetMovieRespMultiError is an error wrapping multiple validation errors
 // returned by GetMovieResp.ValidateAll() if the designated constraints aren't met.
 type GetMovieRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m GetMovieRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -587,7 +587,7 @@ func (m GetMovieRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m GetMovieRespMultiError) AllErrors() []error { return m }
 
-// GetMovieRespValidationError is the validation gerror returned by
+// GetMovieRespValidationError is the validation error returned by
 // GetMovieResp.Validate if the designated constraints aren't met.
 type GetMovieRespValidationError struct {
 	field  string
@@ -608,10 +608,10 @@ func (e GetMovieRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e GetMovieRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e GetMovieRespValidationError) ErrorName() string { return "GetMovieRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e GetMovieRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -643,7 +643,7 @@ var _ interface {
 
 // Validate checks the field values on FindMovieRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// first gerror encountered is returned, or nil if there are no violations.
+// first error encountered is returned, or nil if there are no violations.
 func (m *FindMovieRequest) Validate() error {
 	return m.validate(false)
 }
@@ -736,12 +736,12 @@ func (m *FindMovieRequest) validate(all bool) error {
 	return nil
 }
 
-// FindMovieRequestMultiError is an gerror wrapping multiple validation errors
+// FindMovieRequestMultiError is an error wrapping multiple validation errors
 // returned by FindMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
 type FindMovieRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -753,7 +753,7 @@ func (m FindMovieRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindMovieRequestMultiError) AllErrors() []error { return m }
 
-// FindMovieRequestValidationError is the validation gerror returned by
+// FindMovieRequestValidationError is the validation error returned by
 // FindMovieRequest.Validate if the designated constraints aren't met.
 type FindMovieRequestValidationError struct {
 	field  string
@@ -774,10 +774,10 @@ func (e FindMovieRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindMovieRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindMovieRequestValidationError) ErrorName() string { return "FindMovieRequestValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -808,7 +808,7 @@ var _ interface {
 } = FindMovieRequestValidationError{}
 
 // Validate checks the field values on Sort with the rules defined in the proto
-// definition for this message. If any rules are violated, the first gerror
+// definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.
 func (m *Sort) Validate() error {
 	return m.validate(false)
@@ -847,11 +847,11 @@ func (m *Sort) validate(all bool) error {
 	return nil
 }
 
-// SortMultiError is an gerror wrapping multiple validation errors returned by
+// SortMultiError is an error wrapping multiple validation errors returned by
 // Sort.ValidateAll() if the designated constraints aren't met.
 type SortMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m SortMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -863,7 +863,7 @@ func (m SortMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m SortMultiError) AllErrors() []error { return m }
 
-// SortValidationError is the validation gerror returned by Sort.Validate if the
+// SortValidationError is the validation error returned by Sort.Validate if the
 // designated constraints aren't met.
 type SortValidationError struct {
 	field  string
@@ -884,10 +884,10 @@ func (e SortValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e SortValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e SortValidationError) ErrorName() string { return "SortValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e SortValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -919,7 +919,7 @@ var _ interface {
 
 // Validate checks the field values on FindMovieResp with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
-// gerror encountered is returned, or nil if there are no violations.
+// error encountered is returned, or nil if there are no violations.
 func (m *FindMovieResp) Validate() error {
 	return m.validate(false)
 }
@@ -1009,12 +1009,12 @@ func (m *FindMovieResp) validate(all bool) error {
 	return nil
 }
 
-// FindMovieRespMultiError is an gerror wrapping multiple validation errors
+// FindMovieRespMultiError is an error wrapping multiple validation errors
 // returned by FindMovieResp.ValidateAll() if the designated constraints
 // aren't met.
 type FindMovieRespMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m FindMovieRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -1026,7 +1026,7 @@ func (m FindMovieRespMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m FindMovieRespMultiError) AllErrors() []error { return m }
 
-// FindMovieRespValidationError is the validation gerror returned by
+// FindMovieRespValidationError is the validation error returned by
 // FindMovieResp.Validate if the designated constraints aren't met.
 type FindMovieRespValidationError struct {
 	field  string
@@ -1047,10 +1047,10 @@ func (e FindMovieRespValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e FindMovieRespValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e FindMovieRespValidationError) ErrorName() string { return "FindMovieRespValidationError" }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e FindMovieRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
@@ -1082,7 +1082,7 @@ var _ interface {
 
 // Validate checks the field values on UpdateMovieRequest with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, the first gerror encountered is returned, or nil if there are no violations.
+// violated, the first error encountered is returned, or nil if there are no violations.
 func (m *UpdateMovieRequest) Validate() error {
 	return m.validate(false)
 }
@@ -1115,12 +1115,12 @@ func (m *UpdateMovieRequest) validate(all bool) error {
 	return nil
 }
 
-// UpdateMovieRequestMultiError is an gerror wrapping multiple validation errors
+// UpdateMovieRequestMultiError is an error wrapping multiple validation errors
 // returned by UpdateMovieRequest.ValidateAll() if the designated constraints
 // aren't met.
 type UpdateMovieRequestMultiError []error
 
-// Error returns a concatenation of all the gerror messages it wraps.
+// Error returns a concatenation of all the error messages it wraps.
 func (m UpdateMovieRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
@@ -1132,7 +1132,7 @@ func (m UpdateMovieRequestMultiError) Error() string {
 // AllErrors returns a list of validation violation errors.
 func (m UpdateMovieRequestMultiError) AllErrors() []error { return m }
 
-// UpdateMovieRequestValidationError is the validation gerror returned by
+// UpdateMovieRequestValidationError is the validation error returned by
 // UpdateMovieRequest.Validate if the designated constraints aren't met.
 type UpdateMovieRequestValidationError struct {
 	field  string
@@ -1153,12 +1153,12 @@ func (e UpdateMovieRequestValidationError) Cause() error { return e.cause }
 // Key function returns key value.
 func (e UpdateMovieRequestValidationError) Key() bool { return e.key }
 
-// ErrorName returns gerror name.
+// ErrorName returns error name.
 func (e UpdateMovieRequestValidationError) ErrorName() string {
 	return "UpdateMovieRequestValidationError"
 }
 
-// Error satisfies the builtin gerror interface
+// Error satisfies the builtin error interface
 func (e UpdateMovieRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {

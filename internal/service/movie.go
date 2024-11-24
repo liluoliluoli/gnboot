@@ -12,20 +12,40 @@ import (
 )
 
 type MovieService struct {
-	c                     *conf.Bootstrap
-	movieRepo             *repo.MovieRepo
-	genreRepo             *repo.GenreRepo
-	videoGenreMappingRepo *repo.VideoGenreMappingRepo
-	cache                 sdomain.Cache[*sdomain.Movie]
+	c                        *conf.Bootstrap
+	movieRepo                *repo.MovieRepo
+	genreRepo                *repo.GenreRepo
+	videoGenreMappingRepo    *repo.VideoGenreMappingRepo
+	actorRepo                *repo.ActorRepo
+	videoActorMappingRepo    *repo.VideoActorMappingRepo
+	studioRepo               *repo.StudioRepo
+	videoStudioMappingRepo   *repo.VideoStudioMappingRepo
+	keywordRepo              *repo.KeywordRepo
+	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
+	cache                    sdomain.Cache[*sdomain.Movie]
 }
 
-func NewMovieService(c *conf.Bootstrap, movieRepo *repo.MovieRepo, genreRepo *repo.GenreRepo, videoGenreMappingRepo *repo.VideoGenreMappingRepo) *MovieService {
+func NewMovieService(c *conf.Bootstrap,
+	movieRepo *repo.MovieRepo,
+	genreRepo *repo.GenreRepo, videoGenreMappingRepo *repo.VideoGenreMappingRepo,
+	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
+	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
+	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *MovieService {
 	return &MovieService{
-		c:                     c,
-		movieRepo:             movieRepo,
-		genreRepo:             genreRepo,
-		videoGenreMappingRepo: videoGenreMappingRepo,
-		cache:                 repo.NewCache[*sdomain.Movie](c, movieRepo.Data.Cache()),
+		c:                        c,
+		movieRepo:                movieRepo,
+		genreRepo:                genreRepo,
+		videoGenreMappingRepo:    videoGenreMappingRepo,
+		actorRepo:                actorRepo,
+		videoActorMappingRepo:    videoActorMappingRepo,
+		studioRepo:               studioRepo,
+		videoStudioMappingRepo:   videoStudioMappingRepo,
+		keywordRepo:              keywordRepo,
+		videoKeywordMappingRepo:  videoKeywordMappingRepo,
+		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
+		cache:                    repo.NewCache[*sdomain.Movie](c, movieRepo.Data.Cache()),
 	}
 }
 
@@ -73,19 +93,70 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.FindMovie) (
 	}
 	if pageResult != nil && len(pageResult.List) != 0 {
 		for _, item := range pageResult.List {
-			mappings, err := s.videoGenreMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+			//补齐genre
+			genreMappings, err := s.videoGenreMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
 				return item.ID
 			}), constant.VideoType_movie)
 			if err != nil {
 				return nil, err
 			}
-			genres, err := s.genreRepo.FindByIds(ctx, lo.Map(mappings, func(item *sdomain.VideoGenreMapping, index int) int64 {
+			genres, err := s.genreRepo.FindByIds(ctx, lo.Map(genreMappings, func(item *sdomain.VideoGenreMapping, index int) int64 {
 				return item.GenreId
 			}))
 			if err != nil {
 				return nil, err
 			}
 			item.Genres = genres
+			//补齐actor
+			actorMappings, err := s.videoActorMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+				return item.ID
+			}), constant.VideoType_movie)
+			if err != nil {
+				return nil, err
+			}
+			actors, err := s.actorRepo.FindByIds(ctx, lo.Map(actorMappings, func(item *sdomain.VideoActorMapping, index int) int64 {
+				return item.ActorId
+			}))
+			if err != nil {
+				return nil, err
+			}
+			item.Actors = actors
+			//补齐keyword
+			keywordMappings, err := s.videoKeywordMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+				return item.ID
+			}), constant.VideoType_movie)
+			if err != nil {
+				return nil, err
+			}
+			keywords, err := s.keywordRepo.FindByIds(ctx, lo.Map(keywordMappings, func(item *sdomain.VideoKeywordMapping, index int) int64 {
+				return item.KeywordId
+			}))
+			if err != nil {
+				return nil, err
+			}
+			item.Keywords = keywords
+			//补齐studio
+			studioMappings, err := s.videoStudioMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+				return item.ID
+			}), constant.VideoType_movie)
+			if err != nil {
+				return nil, err
+			}
+			studios, err := s.studioRepo.FindByIds(ctx, lo.Map(studioMappings, func(item *sdomain.VideoStudioMapping, index int) int64 {
+				return item.StudioId
+			}))
+			if err != nil {
+				return nil, err
+			}
+			item.Studios = studios
+			//补齐subtitle
+			subtitleMappings, err := s.videoSubtitleMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+				return item.ID
+			}), constant.VideoType_movie)
+			if err != nil {
+				return nil, err
+			}
+			item.Subtitles = subtitleMappings
 		}
 	}
 	return pageResult, nil

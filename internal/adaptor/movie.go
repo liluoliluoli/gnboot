@@ -3,7 +3,12 @@ package adaptor
 import (
 	"context"
 	"github.com/go-cinch/common/proto/params"
+	"gnboot/api/actor"
+	"gnboot/api/genre"
+	"gnboot/api/keyword"
 	"gnboot/api/movie"
+	"gnboot/api/studio"
+	"gnboot/api/subtitle"
 	"gnboot/internal/service"
 	"gnboot/internal/service/sdomain"
 	"gnboot/internal/utils/page_util"
@@ -78,6 +83,21 @@ func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieReque
 				FileSize:      item.FileSize,
 				Filename:      item.Filename,
 				Ext:           item.Ext,
+				Genres: lo.Map(item.Genres, func(item *sdomain.Genre, index int) *genre.GenreResp {
+					return item.ConvertToDto()
+				}),
+				Studios: lo.Map(item.Studios, func(item *sdomain.Studio, index int) *studio.StudioResp {
+					return item.ConvertToDto()
+				}),
+				Keywords: lo.Map(item.Keywords, func(item *sdomain.Keyword, index int) *keyword.KeywordResp {
+					return item.ConvertToDto()
+				}),
+				Actors: lo.Map(item.Actors, func(item *sdomain.Actor, index int) *actor.ActorResp {
+					return item.ConvertToDto()
+				}),
+				Subtitles: lo.Map(item.Subtitles, func(item *sdomain.VideoSubtitleMapping, index int) *subtitle.SubtitleResp {
+					return item.ConvertToDto()
+				}),
 			}
 		}),
 	}, nil

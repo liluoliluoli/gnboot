@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gnboot/internal/common/gerror"
+	"gnboot/internal/service/sdomain"
 	"net/url"
 	"strconv"
 	"time"
@@ -18,7 +19,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gnboot/internal/conf"
 	"gnboot/internal/db"
-	"gnboot/internal/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -26,7 +26,7 @@ import (
 
 // ProviderSet is repo providers.
 var ProviderSet = wire.NewSet(
-	NewRedis, NewDB, NewSonyflake, NewTracer, NewData, NewTransaction, NewCache,
+	NewRedis, NewDB, NewSonyflake, NewData, NewTransaction, NewCache,
 	NewMovieRepo,
 )
 
@@ -94,7 +94,7 @@ func (d *Data) ID(ctx context.Context) uint64 {
 }
 
 // NewTransaction .
-func NewTransaction(d *Data) service.Transaction {
+func NewTransaction(d *Data) sdomain.Transaction {
 	return d
 }
 

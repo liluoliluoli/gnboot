@@ -13,7 +13,6 @@ import (
 	"github.com/go-cinch/common/plugins/gorm/tenant"
 	"github.com/redis/go-redis/v9"
 	"gnboot/internal/conf"
-	"gnboot/internal/service"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -28,7 +27,7 @@ type Cache[T any] struct {
 }
 
 // NewCache .
-func NewCache[T any](c *conf.Bootstrap, client redis.UniversalClient, val T) service.Cache[T] {
+func NewCache[T any](c *conf.Bootstrap, client redis.UniversalClient, val T) sdomain.Cache[T] {
 	return &Cache[T]{
 		redis:   client,
 		disable: c.Server.Nocache,
@@ -40,7 +39,7 @@ func (c *Cache[T]) Cache() redis.UniversalClient {
 	return c.redis
 }
 
-func (c *Cache[T]) WithPrefix(prefix string) service.Cache[T] {
+func (c *Cache[T]) WithPrefix(prefix string) sdomain.Cache[T] {
 	return &Cache[T]{
 		redis:   c.redis,
 		disable: c.disable,
@@ -50,7 +49,7 @@ func (c *Cache[T]) WithPrefix(prefix string) service.Cache[T] {
 	}
 }
 
-func (c *Cache[T]) WithRefresh() service.Cache[T] {
+func (c *Cache[T]) WithRefresh() sdomain.Cache[T] {
 	return &Cache[T]{
 		redis:   c.redis,
 		disable: c.disable,
@@ -83,7 +82,7 @@ func (c *Cache[T]) Get(
 	// 2. get lock before read db
 	ok := c.Lock(ctx, action)
 	if !ok {
-		return _res, service.ErrTooManyRequests(ctx)
+		return _res, sdomain.ErrTooManyRequests(ctx)
 	}
 	defer c.Unlock(ctx, action)
 	// 3. load repo from db and write to cache
@@ -120,7 +119,7 @@ func (c *Cache[T]) GetPage(
 	// 2. get lock before read db
 	ok := c.Lock(ctx, action)
 	if !ok {
-		return _res, service.ErrTooManyRequests(ctx)
+		return _res, sdomain.ErrTooManyRequests(ctx)
 	}
 	defer c.Unlock(ctx, action)
 	// 3. load repo from db and write to cache

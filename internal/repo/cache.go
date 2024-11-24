@@ -27,7 +27,7 @@ type Cache[T any] struct {
 }
 
 // NewCache .
-func NewCache[T any](c *conf.Bootstrap, client redis.UniversalClient, val T) sdomain.Cache[T] {
+func NewCache[T any](c *conf.Bootstrap, client redis.UniversalClient) sdomain.Cache[T] {
 	return &Cache[T]{
 		redis:   client,
 		disable: c.Server.Nocache,

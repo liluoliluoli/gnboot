@@ -19,14 +19,13 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gnboot/internal/conf"
 	"gnboot/internal/db"
-	"go.opentelemetry.io/otel/sdk/trace"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 // ProviderSet is repo providers.
 var ProviderSet = wire.NewSet(
-	NewRedis, NewDB, NewSonyflake, NewData, NewTransaction, NewCache,
+	NewRedis, NewDB, NewSonyflake, NewData, NewTransaction,
 	NewMovieRepo,
 )
 
@@ -42,7 +41,6 @@ func NewData(
 	redis redis.UniversalClient,
 	gormTenant *tenant.Tenant,
 	sonyflake *id.Sonyflake,
-	tp *trace.TracerProvider,
 ) (d *Data, cleanup func()) {
 	d = &Data{
 		redis:     redis,
@@ -50,9 +48,9 @@ func NewData(
 		sonyflake: sonyflake,
 	}
 	cleanup = func() {
-		if tp != nil {
-			tp.Shutdown(context.Background())
-		}
+		//if tp != nil {
+		//	tp.Shutdown(context.Background())
+		//}
 		log.Info("clean repo")
 	}
 	return

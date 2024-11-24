@@ -2,28 +2,24 @@ package service
 
 import (
 	"context"
+	"gnboot/internal/conf"
 	"gnboot/internal/repo"
 	"gnboot/internal/repo/gen"
 	"gnboot/internal/service/sdomain"
 	"gnboot/internal/utils/cache_util"
-	"strings"
-
-	"gnboot/internal/conf"
 )
 
 type MovieUseCase struct {
 	c     *conf.Bootstrap
 	repo  *repo.MovieRepo
-	cache Cache[*sdomain.Movie]
+	cache sdomain.Cache[*sdomain.Movie]
 }
 
-func NewMovieUseCase(c *conf.Bootstrap, repo *repo.MovieRepo, cache Cache[*sdomain.Movie]) *MovieUseCase {
+func NewMovieUseCase(c *conf.Bootstrap, rp *repo.MovieRepo) *MovieUseCase {
 	return &MovieUseCase{
-		c:    c,
-		repo: repo,
-		cache: cache.WithPrefix(strings.Join([]string{
-			c.Name, "movie",
-		}, "_")),
+		c:     c,
+		repo:  rp,
+		cache: repo.NewCache[*sdomain.Movie](c, rp.Data.Cache()),
 	}
 }
 

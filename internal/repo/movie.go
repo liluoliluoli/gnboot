@@ -39,9 +39,9 @@ func (r *MovieRepo) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
 func (r *MovieRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
 	do := r.do(ctx, nil)
 	if condition.Search != nil {
-		do = do.Where(gen.Q.Movie.OriginalTitle.Like("%" + *condition.Search + "%"))
+		do = do.Where(gen.Movie.OriginalTitle.Like("%" + *condition.Search + "%"))
 	}
-	list, total, err := do.Order(gen.Q.Movie.UpdateTime.Desc()).FindByPage(0, 10)
+	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
 	if err != nil {
 		return nil, handleQueryError(err)
 	}

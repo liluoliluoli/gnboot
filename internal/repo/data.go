@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gnboot/internal/common/gerror"
+	"gnboot/internal/repo/gen"
 	"net/url"
 	"strconv"
 	"time"
@@ -176,6 +177,7 @@ func NewDB(c *conf.Bootstrap) (gormTenant *tenant.Tenant, err error) {
 		err = errors.New("initialize db failed")
 		return
 	}
+	gen.SetDefault(gormTenant.DB(context.Background()))
 	log.Info("initialize db success")
 	return
 }

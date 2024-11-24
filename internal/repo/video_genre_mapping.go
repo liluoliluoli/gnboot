@@ -27,7 +27,7 @@ func (r *VideoGenreMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVide
 }
 
 func (r *VideoGenreMappingRepo) FindByVideoIdAndType(ctx context.Context, videoId []int64, videoType string) ([]*sdomain.VideoGenreMapping, error) {
-	finds, err := r.do(ctx, nil).Where(gen.VideoGenreMapping.VideoID.In(videoId...)).Where(gen.VideoSubtitleMapping.VideoType.Eq(videoType)).Find()
+	finds, err := r.do(ctx, nil).Where(gen.VideoGenreMapping.VideoID.In(videoId...)).Where(gen.VideoGenreMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
 		return nil, handleQueryError(err)
 	}

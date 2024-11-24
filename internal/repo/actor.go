@@ -58,7 +58,7 @@ func (r *ActorRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*sd
 }
 
 func (r *ActorRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Actor, error) {
-	finds, err := r.do(ctx, nil).Where(gen.Genre.ID.In(ids...)).Find()
+	finds, err := r.do(ctx, nil).Where(gen.Actor.ID.In(ids...)).Find()
 	if err != nil {
 		return nil, handleQueryError(err)
 	}

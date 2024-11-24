@@ -58,7 +58,7 @@ func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*
 }
 
 func (r *KeywordRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Keyword, error) {
-	finds, err := r.do(ctx, nil).Where(gen.Genre.ID.In(ids...)).Find()
+	finds, err := r.do(ctx, nil).Where(gen.Keyword.ID.In(ids...)).Find()
 	if err != nil {
 		return nil, handleQueryError(err)
 	}

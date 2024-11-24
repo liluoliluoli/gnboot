@@ -41,7 +41,11 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	data, cleanup := repo.NewData(universalClient, tenant, sonyflake)
+	tracerProvider, err := repo.NewTracer(c)
+	if err != nil {
+		return nil, nil, err
+	}
+	data, cleanup := repo.NewData(universalClient, tenant, sonyflake, tracerProvider)
 	movieRepo := repo.NewMovieRepo(data)
 	movieUseCase := service.NewMovieUseCase(c, movieRepo)
 	gnbootService := adaptor.NewGnbootService(worker, movieUseCase)

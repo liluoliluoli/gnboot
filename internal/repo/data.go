@@ -25,7 +25,7 @@ import (
 
 // ProviderSet is repo providers.
 var ProviderSet = wire.NewSet(
-	NewRedis, NewDB, NewSonyflake, NewData, trace.NewTracerProvider,
+	NewRedis, NewDB, NewSonyflake, NewData, NewTracer,
 	NewMovieRepo,
 )
 

@@ -61,9 +61,7 @@ func main() {
 	logOps := []func(*log.Options){
 		log.WithJSON(true),
 		log.WithLevel(beforeReadConfigLogLevel),
-		log.WithValuer("adaptor.version", Version),
-		log.WithValuer("trace.id", tracing.TraceID()),
-		log.WithValuer("span.id", tracing.SpanID()),
+		log.WithValuer("traceId", tracing.TraceID()),
 		log.WithCallerOptions(
 			caller.WithSource(false),
 			caller.WithLevel(2),

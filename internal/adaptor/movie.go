@@ -23,7 +23,7 @@ func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest
 	if err != nil {
 		return nil, err
 	}
-	return res.ConvertFromDto(), nil
+	return res.ConvertToDto(), nil
 }
 
 func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {

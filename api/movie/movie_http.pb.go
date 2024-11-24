@@ -35,7 +35,7 @@ type MovieRemoteServiceHTTPServer interface {
 	// FindMovie query Movie list by page
 	FindMovie(context.Context, *FindMovieRequest) (*FindMovieResp, error)
 	// GetMovie query one Movie record
-	GetMovie(context.Context, *GetMovieRequest) (*GetMovieResp, error)
+	GetMovie(context.Context, *GetMovieRequest) (*MovieResp, error)
 	// UpdateMovie update one Movie record by id
 	UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error)
 }
@@ -86,7 +86,7 @@ func _MovieRemoteService_GetMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer
 		if err != nil {
 			return err
 		}
-		reply := out.(*GetMovieResp)
+		reply := out.(*MovieResp)
 		return ctx.Result(200, reply)
 	}
 }
@@ -180,7 +180,7 @@ type MovieRemoteServiceHTTPClient interface {
 	CreateMovie(ctx context.Context, req *CreateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteMovie(ctx context.Context, req *params.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	FindMovie(ctx context.Context, req *FindMovieRequest, opts ...http.CallOption) (rsp *FindMovieResp, err error)
-	GetMovie(ctx context.Context, req *GetMovieRequest, opts ...http.CallOption) (rsp *GetMovieResp, err error)
+	GetMovie(ctx context.Context, req *GetMovieRequest, opts ...http.CallOption) (rsp *MovieResp, err error)
 	UpdateMovie(ctx context.Context, req *UpdateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -231,8 +231,8 @@ func (c *MovieRemoteServiceHTTPClientImpl) FindMovie(ctx context.Context, in *Fi
 	return &out, nil
 }
 
-func (c *MovieRemoteServiceHTTPClientImpl) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...http.CallOption) (*GetMovieResp, error) {
-	var out GetMovieResp
+func (c *MovieRemoteServiceHTTPClientImpl) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...http.CallOption) (*MovieResp, error) {
+	var out MovieResp
 	pattern := "/movie/get"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationMovieRemoteServiceGetMovie))

@@ -687,8 +687,6 @@ github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbS
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-cinch/common/constant v1.0.5 h1:/alETGgn7cjoe+qMQQoxEpbvXyOKJsLq+WR29BfBgwU=
 github.com/go-cinch/common/constant v1.0.5/go.mod h1:adgZhN/74eUksUW2fpawMs1/9hH3E4kUmP2dA9Q5RmE=
-github.com/go-cinch/common/copierx v1.0.3 h1:trl7QS5AIilKKeUXmNkghvI2m69zwts+S7zT+qsiHNw=
-github.com/go-cinch/common/copierx v1.0.3/go.mod h1:uYSjYCK56MuQrbalJwlnF30DQv1crOLmYHG7wYky4rY=
 github.com/go-cinch/common/i18n v1.0.6 h1:aRY3ixEhfIDYp6YDJLXljpH7sZf/J8H4warDxk2CS2s=
 github.com/go-cinch/common/i18n v1.0.6/go.mod h1:URXatJBnKNtnLLSH9XnYBuvW57FjJ8OIuhNqadqACUY=
 github.com/go-cinch/common/id v1.0.4 h1:bMjcxMq5lL19o2a/ty6OnS8tIn7kc98FznAq2vypUJs=
@@ -903,8 +901,6 @@ github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a h1:bbPeKD0xmW/
 github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
 github.com/jackc/pgx/v5 v5.3.0 h1:/NQi8KHMpKWHInxXesC8yD4DhkXPrVhmnwYkjp9AmBA=
 github.com/jackc/pgx/v5 v5.3.0/go.mod h1:t3JDKnCBlYIc0ewLF0Q7B8MXmoIaBOZj/ic7iHozM/8=
-github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
-github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.4/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=

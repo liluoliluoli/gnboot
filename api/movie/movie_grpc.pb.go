@@ -35,7 +35,7 @@ type MovieRemoteServiceClient interface {
 	// create one Movie record
 	CreateMovie(ctx context.Context, in *CreateMovieRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// query one Movie record
-	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieResp, error)
+	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*MovieResp, error)
 	// query Movie list by page
 	FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*FindMovieResp, error)
 	// update one Movie record by id
@@ -61,8 +61,8 @@ func (c *movieRemoteServiceClient) CreateMovie(ctx context.Context, in *CreateMo
 	return out, nil
 }
 
-func (c *movieRemoteServiceClient) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*GetMovieResp, error) {
-	out := new(GetMovieResp)
+func (c *movieRemoteServiceClient) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...grpc.CallOption) (*MovieResp, error) {
+	out := new(MovieResp)
 	err := c.cc.Invoke(ctx, MovieRemoteService_GetMovie_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ type MovieRemoteServiceServer interface {
 	// create one Movie record
 	CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error)
 	// query one Movie record
-	GetMovie(context.Context, *GetMovieRequest) (*GetMovieResp, error)
+	GetMovie(context.Context, *GetMovieRequest) (*MovieResp, error)
 	// query Movie list by page
 	FindMovie(context.Context, *FindMovieRequest) (*FindMovieResp, error)
 	// update one Movie record by id
@@ -121,7 +121,7 @@ type UnimplementedMovieRemoteServiceServer struct {
 func (UnimplementedMovieRemoteServiceServer) CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMovie not implemented")
 }
-func (UnimplementedMovieRemoteServiceServer) GetMovie(context.Context, *GetMovieRequest) (*GetMovieResp, error) {
+func (UnimplementedMovieRemoteServiceServer) GetMovie(context.Context, *GetMovieRequest) (*MovieResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMovie not implemented")
 }
 func (UnimplementedMovieRemoteServiceServer) FindMovie(context.Context, *FindMovieRequest) (*FindMovieResp, error) {

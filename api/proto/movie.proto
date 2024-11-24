@@ -13,7 +13,7 @@ import "proto/keyword.proto";
 import "proto/subtitle.proto";
 import "proto/actor.proto";
 
-option go_package = "/api/movie;movie";
+option go_package = "gnboot/api/movie;movie";
 
 option (openapi.v3.document) = {
   info : {title : "movie adaptor";
@@ -62,7 +62,7 @@ additional_properties:
       };
     }
     // query one Movie record
-    rpc GetMovie(GetMovieRequest) returns (GetMovieResp) {
+    rpc GetMovie(GetMovieRequest) returns (MovieResp) {
       option (google.api.http) = {
         get : "/movie/get"
       };
@@ -121,11 +121,6 @@ additional_properties:
 
   message GetMovieRequest {
     int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
-  }
-
-  message GetMovieResp {
-    int64 id = 1;
-    string name = 2;
   }
 
   message FindMovieRequest {

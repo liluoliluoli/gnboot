@@ -4,7 +4,6 @@ go 1.22
 
 require (
 	github.com/go-cinch/common/constant v1.0.5
-	github.com/go-cinch/common/copierx v1.0.3
 	github.com/go-cinch/common/i18n v1.0.6
 	github.com/go-cinch/common/id v1.0.4
 	github.com/go-cinch/common/log v1.1.0
@@ -67,7 +66,6 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
 	github.com/hibiken/asynq v0.24.1 // indirect
-	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/lufia/plan9stats v0.0.0-20230326075908-cb1d2100619a // indirect

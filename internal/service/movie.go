@@ -36,11 +36,10 @@ func (uc *MovieUseCase) Create(ctx context.Context, item *sdomain.CreateMovie) e
 	return err
 }
 
-func (uc *MovieUseCase) Get(ctx context.Context, id int64) (rp *sdomain.Movie, err error) {
-	rp, err = uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
+func (uc *MovieUseCase) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+	return uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
 		return uc.get(ctx, id)
 	})
-	return
 }
 
 func (uc *MovieUseCase) get(ctx context.Context, id int64) (*sdomain.Movie, error) {

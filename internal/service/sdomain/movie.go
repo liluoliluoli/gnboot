@@ -2,6 +2,7 @@ package sdomain
 
 import (
 	"github.com/go-cinch/common/page"
+	"github.com/samber/lo"
 	moviedto "gnboot/api/movie"
 	"gnboot/internal/repo/model"
 )
@@ -11,11 +12,11 @@ type CreateMovie struct {
 	Name string `json:"name"`
 }
 
-func (*CreateMovie) ConvertToRepo() *model.Movie {
+func (d *CreateMovie) ConvertToRepo() *model.Movie {
 	return &model.Movie{}
 }
 
-func (*CreateMovie) ConvertFromDto(req *moviedto.CreateMovieRequest) *CreateMovie {
+func (d *CreateMovie) ConvertFromDto(req *moviedto.CreateMovieRequest) *CreateMovie {
 	return &CreateMovie{}
 }
 
@@ -41,12 +42,28 @@ type Movie struct {
 	//Actors             []*Actor               `json:"actors"`             //演员
 }
 
-func (*Movie) ConvertFromRepo(movie *model.Movie) *Movie {
-	return &Movie{}
+func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {
+	return &Movie{
+		ID:            movie.ID,
+		OriginalTitle: movie.OriginalTitle,
+		Status:        movie.Status,
+		VoteAverage:   lo.FromPtr(movie.VoteAverage),
+		VoteCount:     lo.FromPtr(movie.VoteCount),
+		Country:       lo.FromPtr(movie.Country),
+		Trailer:       lo.FromPtr(movie.Trailer),
+		URL:           movie.URL,
+		Downloaded:    movie.Downloaded,
+		FileSize:      lo.FromPtr(movie.FileSize),
+		Filename:      lo.FromPtr(movie.Filename),
+		Ext:           lo.FromPtr(movie.Ext),
+	}
 }
 
-func (*Movie) ConvertFromDto() *moviedto.GetMovieResp {
-	return &moviedto.GetMovieResp{}
+func (d *Movie) ConvertFromDto() *moviedto.GetMovieResp {
+	return &moviedto.GetMovieResp{
+		Id:   d.ID,
+		Name: d.OriginalTitle,
+	}
 }
 
 type FindMovie struct {
@@ -66,10 +83,10 @@ type UpdateMovie struct {
 	Title *string `json:"title,omitempty"`
 }
 
-func (*UpdateMovie) ConvertToRepo() *model.Movie {
+func (d *UpdateMovie) ConvertToRepo() *model.Movie {
 	return &model.Movie{}
 }
 
-func (*UpdateMovie) ConvertFromDto(dto *moviedto.UpdateMovieRequest) *UpdateMovie {
+func (d *UpdateMovie) ConvertFromDto(dto *moviedto.UpdateMovieRequest) *UpdateMovie {
 	return &UpdateMovie{}
 }

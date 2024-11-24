@@ -56,7 +56,7 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieReque
 		Page: page_util.ToAdaptorPage(res.Page),
 		List: lo.Map(res.List, func(item *sdomain.Movie, index int) *movie.MovieResp {
 			return &movie.MovieResp{
-				Id:            int64(item.ID),
+				Id:            item.ID,
 				OriginalTitle: item.OriginalTitle,
 				Status:        item.Status,
 				VoteAverage:   item.VoteAverage,

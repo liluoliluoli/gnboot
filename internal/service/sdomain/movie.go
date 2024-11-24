@@ -59,10 +59,10 @@ func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {
 	}
 }
 
-func (d *Movie) ConvertToDto() *moviedto.GetMovieResp {
-	return &moviedto.GetMovieResp{
-		Id:   d.ID,
-		Name: d.OriginalTitle,
+func (d *Movie) ConvertToDto() *moviedto.MovieResp {
+	return &moviedto.MovieResp{
+		Id:            d.ID,
+		OriginalTitle: d.OriginalTitle,
 	}
 }
 

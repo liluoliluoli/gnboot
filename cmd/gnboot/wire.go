@@ -10,10 +10,10 @@ import (
 	"github.com/google/wire"
 	"gnboot/internal/adaptor"
 	"gnboot/internal/conf"
-	"gnboot/internal/pkg/task"
 	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
+	"gnboot/internal/task"
 )
 
 // wireApp init kratos application.

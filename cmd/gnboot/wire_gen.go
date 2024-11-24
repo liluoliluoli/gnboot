@@ -10,10 +10,10 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"gnboot/internal/adaptor"
 	"gnboot/internal/conf"
-	"gnboot/internal/pkg/task"
 	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
+	"gnboot/internal/task"
 )
 
 import (

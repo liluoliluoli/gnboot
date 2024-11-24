@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-cinch/common/proto/params"
 	"gnboot/api/movie"
+	"gnboot/internal/service"
 	"gnboot/internal/service/sdomain"
 	"gnboot/internal/utils/page_util"
 	"strconv"
@@ -13,20 +14,29 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *GnbootService) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (*emptypb.Empty, error) {
+type MovieProvider struct {
+	movie.UnimplementedMovieRemoteServiceServer
+	movie *service.MovieService
+}
+
+func NewMovieProvider(movie *service.MovieService) *MovieProvider {
+	return &MovieProvider{movie: movie}
+}
+
+func (s *MovieProvider) CreateMovie(ctx context.Context, req *movie.CreateMovieRequest) (*emptypb.Empty, error) {
 	err := s.movie.Create(ctx, (&sdomain.CreateMovie{}).ConvertFromDto(req))
 	return &emptypb.Empty{}, err
 }
 
-func (s *GnbootService) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (*movie.GetMovieResp, error) {
-	res, err := s.movie.Get(ctx, int64(req.Id))
+func (s *MovieProvider) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (*movie.MovieResp, error) {
+	res, err := s.movie.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	return res.ConvertToDto(), nil
 }
 
-func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
+func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieRequest) (*movie.FindMovieResp, error) {
 	condition := &sdomain.FindMovie{
 		Page:   lo.FromPtr(page_util.ToDomainPage(req.Page)),
 		Search: req.Search,
@@ -73,12 +83,12 @@ func (s *GnbootService) FindMovie(ctx context.Context, req *movie.FindMovieReque
 	}, nil
 }
 
-func (s *GnbootService) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (*emptypb.Empty, error) {
+func (s *MovieProvider) UpdateMovie(ctx context.Context, req *movie.UpdateMovieRequest) (*emptypb.Empty, error) {
 	err := s.movie.Update(ctx, (&sdomain.UpdateMovie{}).ConvertFromDto(req))
 	return &emptypb.Empty{}, err
 }
 
-func (s *GnbootService) DeleteMovie(ctx context.Context, req *params.IdsRequest) (*emptypb.Empty, error) {
+func (s *MovieProvider) DeleteMovie(ctx context.Context, req *params.IdsRequest) (*emptypb.Empty, error) {
 	err := s.movie.Delete(ctx, lo.Map(strings.Split(req.Ids, ","), func(item string, index int) int64 {
 		id, err := strconv.ParseInt(item, 10, 64)
 		if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/go-cinch/common/log"
 )
 
-func (*GnbootService) HealthCheck(writer http.ResponseWriter, _ *http.Request) {
+func HealthCheck(writer http.ResponseWriter, _ *http.Request) {
 	log.Debug("healthcheck")
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)

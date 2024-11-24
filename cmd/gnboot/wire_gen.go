@@ -13,7 +13,6 @@ import (
 	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
-	"gnboot/internal/task"
 )
 
 import (
@@ -25,10 +24,6 @@ import (
 
 // wireApp init kratos application.
 func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
-	worker, err := task.New(c)
-	if err != nil {
-		return nil, nil, err
-	}
 	universalClient, err := repo.NewRedis(c)
 	if err != nil {
 		return nil, nil, err
@@ -47,10 +42,12 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	}
 	data, cleanup := repo.NewData(universalClient, tenant, sonyflake, tracerProvider)
 	movieRepo := repo.NewMovieRepo(data)
-	movieUseCase := service.NewMovieUseCase(c, movieRepo)
-	gnbootService := adaptor.NewGnbootService(worker, movieUseCase)
-	grpcServer := server.NewGRPCServer(c, gnbootService)
-	httpServer := server.NewHTTPServer(c, gnbootService)
+	genreRepo := repo.NewGenreRepo(data)
+	videoGenreMappingRepo := repo.NewVideoGenreMappingRepo(data)
+	movieService := service.NewMovieService(c, movieRepo, genreRepo, videoGenreMappingRepo)
+	movieProvider := adaptor.NewMovieProvider(movieService)
+	grpcServer := server.NewGRPCServer(c, movieProvider)
+	httpServer := server.NewHTTPServer(c, movieProvider)
 	app := newApp(grpcServer, httpServer)
 	return app, func() {
 		cleanup()

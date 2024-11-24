@@ -1,27 +1,24 @@
-package task
+package server
 
 import (
 	"context"
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
-	"github.com/google/wire"
 	"github.com/pkg/errors"
+	"gnboot/internal/adaptor/task"
 	"gnboot/internal/conf"
-	"go.opentelemetry.io/otel"
+	"gnboot/internal/service/sdomain"
 )
 
-// ProviderSet is task providers.
-var ProviderSet = wire.NewSet(New)
-
 // New is initialize task worker from config
-func New(c *conf.Bootstrap) (w *worker.Worker, err error) {
+func NewWorker(c *conf.Bootstrap) (w *worker.Worker, err error) {
 	w = worker.New(
 		worker.WithRedisURI(c.Data.Redis.Dsn),
 		worker.WithGroup(c.Name),
 		worker.WithHandler(func(ctx context.Context, p worker.Payload) error {
-			return process(task{
-				ctx:     ctx,
-				payload: p,
+			return process(&sdomain.Task{
+				Ctx:     ctx,
+				Payload: p,
 			})
 		}),
 	)
@@ -50,20 +47,12 @@ func New(c *conf.Bootstrap) (w *worker.Worker, err error) {
 	return
 }
 
-type task struct {
-	ctx     context.Context
-	payload worker.Payload
-}
-
-func process(t task) (err error) {
-	tr := otel.Tracer("task")
-	ctx, span := tr.Start(t.ctx, "Task")
-	defer span.End()
-	switch t.payload.UID {
+func process(t *sdomain.Task) (err error) {
+	switch t.Payload.UID {
 	case "task1":
-		log.WithContext(ctx).Info("task1: %s", t.payload.Payload)
+		task.ProcessTest(t)
 	case "task2":
-		log.WithContext(ctx).Info("task2: %s", t.payload.Payload)
+		log.WithContext(t.Ctx).Info("task2: %s", t.Payload.Payload)
 	}
 	return
 }

@@ -34,7 +34,7 @@ type Movie struct {
 	Filename      string   `json:"filename"`      // 文件名
 	Ext           string   `json:"ext"`           //扩展参数
 	Genres        []*Genre `json:"genres"`        //流派
-	//Studios            []*Studio              `json:"studios"`            //出品方
+	//Studios            []*Studio `json:"studios"`            //出品方
 	Keywords           []string `json:"keywords"`           //关键词
 	LastPlayedPosition int64    `json:"lastPlayedPosition"` //上次播放位置
 	LastPlayedTime     string   `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS

@@ -19,12 +19,13 @@ import (
 	"gnboot/internal/conf"
 	localMiddleware "gnboot/internal/server/middleware"
 	"golang.org/x/text/language"
+	nethttp "net/http"
 )
 
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(
 	c *conf.Bootstrap,
-	svc *adaptor.GnbootService,
+	movieProvider *adaptor.MovieProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -58,9 +59,15 @@ func NewHTTPServer(
 		opts = append(opts, http.Timeout(c.Server.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	movie.RegisterMovieRemoteServiceHTTPServer(srv, svc)
+	movie.RegisterMovieRemoteServiceHTTPServer(srv, movieProvider)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
-	srv.HandlePrefix("/pub/healthcheck", HealthHandler(svc))
+	srv.HandlePrefix("/pub/healthcheck", HealthHandler())
 	return srv
+}
+
+func HealthHandler() *nethttp.ServeMux {
+	mux := nethttp.NewServeMux()
+	mux.HandleFunc("/pub/healthcheck", adaptor.HealthCheck)
+	return mux
 }

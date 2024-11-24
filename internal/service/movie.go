@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/samber/lo"
+	"gnboot/internal/common/constant"
 	"gnboot/internal/conf"
 	"gnboot/internal/repo"
 	"gnboot/internal/repo/gen"
@@ -9,24 +11,28 @@ import (
 	"gnboot/internal/utils/cache_util"
 )
 
-type MovieUseCase struct {
-	c     *conf.Bootstrap
-	repo  *repo.MovieRepo
-	cache sdomain.Cache[*sdomain.Movie]
+type MovieService struct {
+	c                     *conf.Bootstrap
+	movieRepo             *repo.MovieRepo
+	genreRepo             *repo.GenreRepo
+	videoGenreMappingRepo *repo.VideoGenreMappingRepo
+	cache                 sdomain.Cache[*sdomain.Movie]
 }
 
-func NewMovieUseCase(c *conf.Bootstrap, rp *repo.MovieRepo) *MovieUseCase {
-	return &MovieUseCase{
-		c:     c,
-		repo:  rp,
-		cache: repo.NewCache[*sdomain.Movie](c, rp.Data.Cache()),
+func NewMovieService(c *conf.Bootstrap, movieRepo *repo.MovieRepo, genreRepo *repo.GenreRepo, videoGenreMappingRepo *repo.VideoGenreMappingRepo) *MovieService {
+	return &MovieService{
+		c:                     c,
+		movieRepo:             movieRepo,
+		genreRepo:             genreRepo,
+		videoGenreMappingRepo: videoGenreMappingRepo,
+		cache:                 repo.NewCache[*sdomain.Movie](c, movieRepo.Data.Cache()),
 	}
 }
 
-func (uc *MovieUseCase) Create(ctx context.Context, item *sdomain.CreateMovie) error {
-	err := gen.Use(uc.repo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := uc.cache.Flush(ctx, func(ctx context.Context) error {
-			return uc.repo.Create(ctx, tx, item)
+func (s *MovieService) Create(ctx context.Context, item *sdomain.CreateMovie) error {
+	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.movieRepo.Create(ctx, tx, item)
 		})
 		if err != nil {
 			return err
@@ -36,23 +42,23 @@ func (uc *MovieUseCase) Create(ctx context.Context, item *sdomain.CreateMovie) e
 	return err
 }
 
-func (uc *MovieUseCase) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
-	return uc.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
-		return uc.get(ctx, id)
+func (s *MovieService) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+	return s.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
+		return s.get(ctx, id)
 	})
 }
 
-func (uc *MovieUseCase) get(ctx context.Context, id int64) (*sdomain.Movie, error) {
-	item, err := uc.repo.Get(ctx, id)
+func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+	item, err := s.movieRepo.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	return item, nil
 }
 
-func (uc *MovieUseCase) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
-	rp, err := uc.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
-		return uc.page(ctx, condition)
+func (s *MovieService) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+	rp, err := s.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
+		return s.page(ctx, condition)
 	})
 	if err != nil {
 		return nil, err
@@ -60,18 +66,35 @@ func (uc *MovieUseCase) Page(ctx context.Context, condition *sdomain.FindMovie) 
 	return rp, nil
 }
 
-func (uc *MovieUseCase) page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
-	pageResult, err := uc.repo.Page(ctx, condition)
+func (s *MovieService) page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+	pageResult, err := s.movieRepo.Page(ctx, condition)
 	if err != nil {
 		return nil, err
+	}
+	if pageResult != nil && len(pageResult.List) != 0 {
+		for _, item := range pageResult.List {
+			mappings, err := s.videoGenreMappingRepo.FindByVideoIdAndType(ctx, lo.Map(pageResult.List, func(item *sdomain.Movie, index int) int64 {
+				return item.ID
+			}), constant.VideoType_movie)
+			if err != nil {
+				return nil, err
+			}
+			genres, err := s.genreRepo.FindByIds(ctx, lo.Map(mappings, func(item *sdomain.VideoGenreMapping, index int) int64 {
+				return item.GenreId
+			}))
+			if err != nil {
+				return nil, err
+			}
+			item.Genres = genres
+		}
 	}
 	return pageResult, nil
 }
 
-func (uc *MovieUseCase) Update(ctx context.Context, item *sdomain.UpdateMovie) error {
-	err := gen.Use(uc.repo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := uc.cache.Flush(ctx, func(ctx context.Context) error {
-			return uc.repo.Update(ctx, tx, item)
+func (s *MovieService) Update(ctx context.Context, item *sdomain.UpdateMovie) error {
+	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.movieRepo.Update(ctx, tx, item)
 		})
 		if err != nil {
 			return err
@@ -81,10 +104,10 @@ func (uc *MovieUseCase) Update(ctx context.Context, item *sdomain.UpdateMovie) e
 	return err
 }
 
-func (uc *MovieUseCase) Delete(ctx context.Context, ids ...int64) error {
-	err := gen.Use(uc.repo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := uc.cache.Flush(ctx, func(ctx context.Context) error {
-			return uc.repo.Delete(ctx, tx, ids...)
+func (s *MovieService) Delete(ctx context.Context, ids ...int64) error {
+	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.movieRepo.Delete(ctx, tx, ids...)
 		})
 		if err != nil {
 			return err

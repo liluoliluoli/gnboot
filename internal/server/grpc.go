@@ -23,7 +23,7 @@ import (
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(
 	c *conf.Bootstrap,
-	svc *adaptor.GnbootService,
+	movieProvider *adaptor.MovieProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -57,7 +57,7 @@ func NewGRPCServer(
 		opts = append(opts, grpc.Timeout(c.Server.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	movie.RegisterMovieRemoteServiceServer(srv, svc)
+	movie.RegisterMovieRemoteServiceServer(srv, movieProvider)
 	//TODO 追加业务注册
 	return srv
 }

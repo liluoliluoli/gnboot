@@ -13,10 +13,9 @@ import (
 	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
-	"gnboot/internal/task"
 )
 
 // wireApp init kratos application.
 func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, repo.ProviderSet, service.ProviderSet, task.ProviderSet, adaptor.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, repo.ProviderSet, service.ProviderSet, adaptor.ProviderSet, newApp))
 }

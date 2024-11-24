@@ -3,6 +3,7 @@ package sdomain
 import (
 	"context"
 	"github.com/go-cinch/common/page"
+	"github.com/go-cinch/common/worker"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -17,6 +18,11 @@ type Cache[T any] interface {
 	SetWithExpiration(ctx context.Context, action string, data any, seconds int64)
 	Flush(ctx context.Context, handler func(context.Context) error) error
 	FlushByPrefix(ctx context.Context, prefix ...string) (err error)
+}
+
+type Task struct {
+	Ctx     context.Context
+	Payload worker.Payload
 }
 
 type PageResult[T any] struct {

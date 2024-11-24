@@ -19,10 +19,6 @@ type Cache[T any] interface {
 	FlushByPrefix(ctx context.Context, prefix ...string) (err error)
 }
 
-type Transaction interface {
-	Tx(ctx context.Context, handler func(context.Context) error) error
-}
-
 type PageResult[T any] struct {
 	Page *page.Page `json:"page"`
 	List []T        `json:"list"`

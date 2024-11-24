@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"gnboot/internal/common/gerror"
-	"gnboot/internal/service/sdomain"
 	"net/url"
 	"strconv"
 	"time"
@@ -25,7 +24,7 @@ import (
 
 // ProviderSet is repo providers.
 var ProviderSet = wire.NewSet(
-	NewRedis, NewDB, NewSonyflake, NewData, NewTransaction,
+	NewRedis, NewDB, NewSonyflake, NewData,
 	NewMovieRepo,
 )
 
@@ -48,23 +47,12 @@ func NewData(
 		sonyflake: sonyflake,
 	}
 	cleanup = func() {
-		//if tp != nil {
-		//	tp.Shutdown(context.Background())
-		//}
 		log.Info("clean repo")
 	}
 	return
 }
 
 type contextTxKey struct{}
-
-// Tx is transaction wrapper
-func (d *Data) Tx(ctx context.Context, handler func(ctx context.Context) error) error {
-	return d.tenant.DB(ctx).Transaction(func(tx *gorm.DB) error {
-		ctx = context.WithValue(ctx, contextTxKey{}, tx)
-		return handler(ctx)
-	})
-}
 
 // DB can get tx from ctx, if not exist return db
 func (d *Data) DB(ctx context.Context) *gorm.DB {
@@ -89,11 +77,6 @@ func (d *Data) Cache() redis.UniversalClient {
 // ID can get unique id
 func (d *Data) ID(ctx context.Context) uint64 {
 	return d.sonyflake.Id(ctx)
-}
-
-// NewTransaction .
-func NewTransaction(d *Data) sdomain.Transaction {
-	return d
 }
 
 // NewRedis is initialize gredis connection from config

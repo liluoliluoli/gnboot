@@ -18,13 +18,14 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gnboot/internal/conf"
 	"gnboot/internal/db"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 // ProviderSet is repo providers.
 var ProviderSet = wire.NewSet(
-	NewRedis, NewDB, NewSonyflake, NewData,
+	NewRedis, NewDB, NewSonyflake, NewData, trace.NewTracerProvider,
 	NewMovieRepo,
 )
 
@@ -40,6 +41,7 @@ func NewData(
 	redis redis.UniversalClient,
 	gormTenant *tenant.Tenant,
 	sonyflake *id.Sonyflake,
+	tp *trace.TracerProvider,
 ) (d *Data, cleanup func()) {
 	d = &Data{
 		redis:     redis,
@@ -47,12 +49,23 @@ func NewData(
 		sonyflake: sonyflake,
 	}
 	cleanup = func() {
+		if tp != nil {
+			tp.Shutdown(context.Background())
+		}
 		log.Info("clean repo")
 	}
 	return
 }
 
 type contextTxKey struct{}
+
+// Tx is transaction wrapper
+func (d *Data) Tx(ctx context.Context, handler func(ctx context.Context) error) error {
+	return d.tenant.DB(ctx).Transaction(func(tx *gorm.DB) error {
+		ctx = context.WithValue(ctx, contextTxKey{}, tx)
+		return handler(ctx)
+	})
+}
 
 // DB can get tx from ctx, if not exist return db
 func (d *Data) DB(ctx context.Context) *gorm.DB {

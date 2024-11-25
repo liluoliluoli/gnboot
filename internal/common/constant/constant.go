@@ -12,3 +12,12 @@ const (
 	VideoType_season  VideoType = "season"
 	VideoType_episode VideoType = "episode"
 )
+
+type MovieFilterType = string
+
+const (
+	MovieFilterType_genre   MovieFilterType = "genre"
+	MovieFilterType_studio  MovieFilterType = "studio"
+	MovieFilterType_keyword MovieFilterType = "keyword"
+	MovieFilterType_actor   MovieFilterType = "actor"
+)

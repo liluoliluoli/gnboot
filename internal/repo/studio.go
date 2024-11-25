@@ -36,10 +36,10 @@ func (r *StudioRepo) Get(ctx context.Context, id int64) (*sdomain.Studio, error)
 	return (&sdomain.Studio{}).ConvertFromRepo(find), nil
 }
 
-func (r *StudioRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Studio], error) {
+func (r *StudioRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Studio], error) {
 	do := r.do(ctx, nil)
-	if condition.Search != nil {
-		do = do.Where(gen.Movie.OriginalTitle.Like("%" + *condition.Search + "%"))
+	if condition.Search != "" {
+		do = do.Where(gen.Movie.OriginalTitle.Like("%" + condition.Search + "%"))
 	}
 	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
 	if err != nil {

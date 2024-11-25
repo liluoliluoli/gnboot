@@ -436,108 +436,6 @@ var _ interface {
 	ErrorName() string
 } = CreateMovieRequestValidationError{}
 
-// Validate checks the field values on GetMovieRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *GetMovieRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetMovieRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetMovieRequestMultiError, or nil if none found.
-func (m *GetMovieRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetMovieRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(errors) > 0 {
-		return GetMovieRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetMovieRequestMultiError is an error wrapping multiple validation errors
-// returned by GetMovieRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetMovieRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetMovieRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetMovieRequestMultiError) AllErrors() []error { return m }
-
-// GetMovieRequestValidationError is the validation error returned by
-// GetMovieRequest.Validate if the designated constraints aren't met.
-type GetMovieRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetMovieRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetMovieRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetMovieRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetMovieRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetMovieRequestValidationError) ErrorName() string { return "GetMovieRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e GetMovieRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetMovieRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetMovieRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetMovieRequestValidationError{}
-
 // Validate checks the field values on FindMovieRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -814,22 +712,22 @@ var _ interface {
 	ErrorName() string
 } = SortValidationError{}
 
-// Validate checks the field values on FindMovieResp with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *FindMovieResp) Validate() error {
+// Validate checks the field values on SearchMovieResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SearchMovieResp) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on FindMovieResp with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in FindMovieRespMultiError, or
-// nil if none found.
-func (m *FindMovieResp) ValidateAll() error {
+// ValidateAll checks the field values on SearchMovieResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchMovieRespMultiError, or nil if none found.
+func (m *SearchMovieResp) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *FindMovieResp) validate(all bool) error {
+func (m *SearchMovieResp) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -840,7 +738,7 @@ func (m *FindMovieResp) validate(all bool) error {
 		switch v := interface{}(m.GetPage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, FindMovieRespValidationError{
+				errors = append(errors, SearchMovieRespValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -848,7 +746,7 @@ func (m *FindMovieResp) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, FindMovieRespValidationError{
+				errors = append(errors, SearchMovieRespValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -857,7 +755,7 @@ func (m *FindMovieResp) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return FindMovieRespValidationError{
+			return SearchMovieRespValidationError{
 				field:  "Page",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -872,7 +770,7 @@ func (m *FindMovieResp) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, FindMovieRespValidationError{
+					errors = append(errors, SearchMovieRespValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -880,7 +778,7 @@ func (m *FindMovieResp) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, FindMovieRespValidationError{
+					errors = append(errors, SearchMovieRespValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -889,7 +787,7 @@ func (m *FindMovieResp) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return FindMovieRespValidationError{
+				return SearchMovieRespValidationError{
 					field:  fmt.Sprintf("List[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -900,19 +798,19 @@ func (m *FindMovieResp) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return FindMovieRespMultiError(errors)
+		return SearchMovieRespMultiError(errors)
 	}
 
 	return nil
 }
 
-// FindMovieRespMultiError is an error wrapping multiple validation errors
-// returned by FindMovieResp.ValidateAll() if the designated constraints
+// SearchMovieRespMultiError is an error wrapping multiple validation errors
+// returned by SearchMovieResp.ValidateAll() if the designated constraints
 // aren't met.
-type FindMovieRespMultiError []error
+type SearchMovieRespMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m FindMovieRespMultiError) Error() string {
+func (m SearchMovieRespMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -921,11 +819,11 @@ func (m FindMovieRespMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m FindMovieRespMultiError) AllErrors() []error { return m }
+func (m SearchMovieRespMultiError) AllErrors() []error { return m }
 
-// FindMovieRespValidationError is the validation error returned by
-// FindMovieResp.Validate if the designated constraints aren't met.
-type FindMovieRespValidationError struct {
+// SearchMovieRespValidationError is the validation error returned by
+// SearchMovieResp.Validate if the designated constraints aren't met.
+type SearchMovieRespValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -933,22 +831,22 @@ type FindMovieRespValidationError struct {
 }
 
 // Field function returns field value.
-func (e FindMovieRespValidationError) Field() string { return e.field }
+func (e SearchMovieRespValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e FindMovieRespValidationError) Reason() string { return e.reason }
+func (e SearchMovieRespValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e FindMovieRespValidationError) Cause() error { return e.cause }
+func (e SearchMovieRespValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e FindMovieRespValidationError) Key() bool { return e.key }
+func (e SearchMovieRespValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e FindMovieRespValidationError) ErrorName() string { return "FindMovieRespValidationError" }
+func (e SearchMovieRespValidationError) ErrorName() string { return "SearchMovieRespValidationError" }
 
 // Error satisfies the builtin error interface
-func (e FindMovieRespValidationError) Error() string {
+func (e SearchMovieRespValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -960,14 +858,14 @@ func (e FindMovieRespValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sFindMovieResp.%s: %s%s",
+		"invalid %sSearchMovieResp.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = FindMovieRespValidationError{}
+var _ error = SearchMovieRespValidationError{}
 
 var _ interface {
 	Field() string
@@ -975,7 +873,244 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = FindMovieRespValidationError{}
+} = SearchMovieRespValidationError{}
+
+// Validate checks the field values on FilterMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FilterMovieRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FilterMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FilterMovieRequestMultiError, or nil if none found.
+func (m *FilterMovieRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FilterMovieRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FilterMovieRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FilterMovieRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FilterMovieRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Id
+
+	// no validation rules for Type
+
+	if len(errors) > 0 {
+		return FilterMovieRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FilterMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by FilterMovieRequest.ValidateAll() if the designated constraints
+// aren't met.
+type FilterMovieRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FilterMovieRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FilterMovieRequestMultiError) AllErrors() []error { return m }
+
+// FilterMovieRequestValidationError is the validation error returned by
+// FilterMovieRequest.Validate if the designated constraints aren't met.
+type FilterMovieRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FilterMovieRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FilterMovieRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FilterMovieRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FilterMovieRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FilterMovieRequestValidationError) ErrorName() string {
+	return "FilterMovieRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FilterMovieRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFilterMovieRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FilterMovieRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FilterMovieRequestValidationError{}
+
+// Validate checks the field values on GetMovieRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetMovieRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMovieRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMovieRequestMultiError, or nil if none found.
+func (m *GetMovieRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMovieRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetMovieRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMovieRequestMultiError is an error wrapping multiple validation errors
+// returned by GetMovieRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetMovieRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMovieRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMovieRequestMultiError) AllErrors() []error { return m }
+
+// GetMovieRequestValidationError is the validation error returned by
+// GetMovieRequest.Validate if the designated constraints aren't met.
+type GetMovieRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMovieRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMovieRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMovieRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMovieRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMovieRequestValidationError) ErrorName() string { return "GetMovieRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetMovieRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMovieRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMovieRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMovieRequestValidationError{}
 
 // Validate checks the field values on UpdateMovieRequest with the rules
 // defined in the proto definition for this message. If any rules are

@@ -35,3 +35,13 @@ func (r *VideoKeywordMappingRepo) FindByVideoIdAndType(ctx context.Context, vide
 		return (&sdomain.VideoKeywordMapping{}).ConvertFromRepo(item)
 	}), nil
 }
+
+func (r *VideoKeywordMappingRepo) FindByKeywordIdAndVideoType(ctx context.Context, keywordId int64, videoType string) ([]*sdomain.VideoKeywordMapping, error) {
+	finds, err := r.do(ctx, nil).Where(gen.VideoKeywordMapping.KeywordID.Eq(keywordId)).Where(gen.VideoKeywordMapping.VideoType.Eq(videoType)).Find()
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return lo.Map(finds, func(item *model.VideoKeywordMapping, index int) *sdomain.VideoKeywordMapping {
+		return (&sdomain.VideoKeywordMapping{}).ConvertFromRepo(item)
+	}), nil
+}

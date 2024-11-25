@@ -36,10 +36,10 @@ func (r *KeywordRepo) Get(ctx context.Context, id int64) (*sdomain.Keyword, erro
 	return (&sdomain.Keyword{}).ConvertFromRepo(find), nil
 }
 
-func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.FindMovie) (*sdomain.PageResult[*sdomain.Keyword], error) {
+func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Keyword], error) {
 	do := r.do(ctx, nil)
-	if condition.Search != nil {
-		do = do.Where(gen.Movie.OriginalTitle.Like("%" + *condition.Search + "%"))
+	if condition.Search != "" {
+		do = do.Where(gen.Movie.OriginalTitle.Like("%" + condition.Search + "%"))
 	}
 	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
 	if err != nil {

@@ -61,20 +61,23 @@ additional_properties:
         body : "*"
       };
     }
-    // query one Movie record
     rpc GetMovie(GetMovieRequest) returns (MovieResp) {
       option (google.api.http) = {
-        get : "/movie/get"
+        get : "/movie/query/id"
       };
     }
-    // query Movie list by page
-    rpc FindMovie(FindMovieRequest) returns (FindMovieResp) {
+    rpc FindMovie(FindMovieRequest) returns (SearchMovieResp) {
       option (google.api.http) = {
         post : "/movie/query/all"
         body : "*"
       };
     }
-    // update one Movie record by id
+    rpc FilterMovie(FilterMovieRequest) returns (SearchMovieResp) {
+      option (google.api.http) = {
+        post : "/movie/query/filter"
+        body : "*"
+      };
+    }
     rpc UpdateMovie(UpdateMovieRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         put : "/movie/update"
@@ -85,7 +88,6 @@ additional_properties:
         }
       };
     }
-    // delete one or more Movie record by id
     rpc DeleteMovie(params.IdsRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         delete : "/movie/delete"
@@ -119,10 +121,6 @@ additional_properties:
     string name = 1 [ (google.api.field_behavior) = REQUIRED ];
   }
 
-  message GetMovieRequest {
-    int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
-  }
-
   message FindMovieRequest {
     params.Page page = 1;
     optional string search = 2;
@@ -135,9 +133,19 @@ additional_properties:
     optional string direction = 3;
   }
 
-  message FindMovieResp {
+  message SearchMovieResp {
     params.Page page = 1;
     repeated MovieResp list = 2;
+  }
+
+  message FilterMovieRequest {
+    params.Page page = 1;
+    int64 id = 2;
+    string type = 3;
+  }
+
+  message GetMovieRequest {
+    int64 id = 1;
   }
 
   message UpdateMovieRequest {

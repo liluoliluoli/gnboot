@@ -66,21 +66,24 @@ func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 	}
 }
 
-type FindMovie struct {
-	Page   page.Page `json:"page"`
-	Search *string   `json:"search"`
-	Sort   *Sort     `json:"sort"`
+type SearchMovie struct {
+	Page      *page.Page `json:"page"`
+	Search    string     `json:"search"`
+	Id        int64      `json:"id"`
+	Type      string     `json:"type"`
+	FilterIds []int64    `json:"filterIds"`
+	Sort      *Sort      `json:"sort"`
 }
 
 type Sort struct {
-	Filter    *string `json:"filter"`
-	Type      *string `json:"type"`
-	Direction *string `json:"direction"`
+	Filter    string `json:"filter"`
+	Type      string `json:"type"`
+	Direction string `json:"direction"`
 }
 
 type UpdateMovie struct {
-	ID    int64   `json:"id,string"`
-	Title *string `json:"title,omitempty"`
+	ID    int64  `json:"id,string"`
+	Title string `json:"title,omitempty"`
 }
 
 func (d *UpdateMovie) ConvertToRepo() *model.Movie {

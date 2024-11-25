@@ -35,3 +35,13 @@ func (r *VideoActorMappingRepo) FindByVideoIdAndType(ctx context.Context, videoI
 		return (&sdomain.VideoActorMapping{}).ConvertFromRepo(item)
 	}), nil
 }
+
+func (r *VideoActorMappingRepo) FindByActorIdAndVideoType(ctx context.Context, actorId int64, videoType string) ([]*sdomain.VideoActorMapping, error) {
+	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.ActorID.Eq(actorId)).Where(gen.VideoActorMapping.VideoType.Eq(videoType)).Find()
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return lo.Map(finds, func(item *model.VideoActorMapping, index int) *sdomain.VideoActorMapping {
+		return (&sdomain.VideoActorMapping{}).ConvertFromRepo(item)
+	}), nil
+}

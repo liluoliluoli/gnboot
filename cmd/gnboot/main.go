@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"gnboot/internal/server"
 	"os"
 	"strconv"
 
@@ -41,7 +42,7 @@ func init() {
 	flag.StringVar(&flagConf, "c", "/Users/wing/Documents/go-workspace/gnboot/configs", "config path, eg: -c config.yml")
 }
 
-func newApp(gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(gs *grpc.Server, hs *http.Server, jb *server.Job) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -51,6 +52,7 @@ func newApp(gs *grpc.Server, hs *http.Server) *kratos.App {
 		kratos.Server(
 			gs,
 			hs,
+			jb,
 		),
 	)
 }

@@ -4,32 +4,55 @@ import (
 	"context"
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
-	"github.com/pkg/errors"
-	"gnboot/internal/adaptor/task"
 	"gnboot/internal/conf"
 	"gnboot/internal/service/sdomain"
+	"gnboot/internal/task"
 )
 
+type Job struct {
+	I4kSyncTask *task.I4kSyncTask
+	Worker      *worker.Worker
+}
+
+func (j Job) Start(ctx context.Context) error {
+	return nil
+}
+
+func (j Job) Stop(ctx context.Context) error {
+	return nil
+}
+
+func NewJob(c *conf.Bootstrap, i4kSyncTask *task.I4kSyncTask) *Job {
+	job := &Job{
+		I4kSyncTask: i4kSyncTask,
+	}
+	job.Worker = NewWorker(c, job)
+	return job
+}
+
 // New is initialize task worker from config
-func NewWorker(c *conf.Bootstrap) (w *worker.Worker, err error) {
-	w = worker.New(
+func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
+	w := worker.New(
 		worker.WithRedisURI(c.Data.Redis.Dsn),
 		worker.WithGroup(c.Name),
 		worker.WithHandler(func(ctx context.Context, p worker.Payload) error {
-			return process(&sdomain.Task{
-				Ctx:     ctx,
-				Payload: p,
-			})
+			switch p.UID {
+			case "task1":
+				job.I4kSyncTask.ProcessTest(&sdomain.Task{
+					Ctx:     ctx,
+					Payload: p,
+				})
+			}
+			return nil
 		}),
 	)
 	if w.Error != nil {
 		log.Error(w.Error)
-		err = errors.New("initialize worker failed")
-		return
+		panic(w.Error)
 	}
 
 	for id, item := range c.Task {
-		err = w.Cron(
+		err := w.Cron(
 			worker.WithRunUUID(id),
 			worker.WithRunGroup(item.Name),
 			worker.WithRunExpr(item.Expr),
@@ -38,21 +61,9 @@ func NewWorker(c *conf.Bootstrap) (w *worker.Worker, err error) {
 		)
 		if err != nil {
 			log.Error(err)
-			err = errors.New("initialize worker failed")
-			return
+			panic(err)
 		}
 	}
-
 	log.Info("initialize worker success")
-	return
-}
-
-func process(t *sdomain.Task) (err error) {
-	switch t.Payload.UID {
-	case "task1":
-		task.ProcessTest(t)
-	case "task2":
-		log.WithContext(t.Ctx).Info("task2: %s", t.Payload.Payload)
-	}
-	return
+	return w
 }

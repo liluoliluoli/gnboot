@@ -6,7 +6,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewGRPCServer, NewHTTPServer, NewWorker)
+var ProviderSet = wire.NewSet(NewGRPCServer, NewHTTPServer, NewJob)
 
 //go:embed middleware/locales
 var locales embed.FS

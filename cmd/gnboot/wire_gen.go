@@ -13,6 +13,7 @@ import (
 	"gnboot/internal/repo"
 	"gnboot/internal/server"
 	"gnboot/internal/service"
+	"gnboot/internal/task"
 )
 
 import (
@@ -55,7 +56,9 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	movieProvider := adaptor.NewMovieProvider(movieService)
 	grpcServer := server.NewGRPCServer(c, movieProvider)
 	httpServer := server.NewHTTPServer(c, movieProvider)
-	app := newApp(grpcServer, httpServer)
+	i4kSyncTask := task.NewI4kSyncTask(movieService)
+	job := server.NewJob(c, i4kSyncTask)
+	app := newApp(grpcServer, httpServer, job)
 	return app, func() {
 		cleanup()
 	}, nil

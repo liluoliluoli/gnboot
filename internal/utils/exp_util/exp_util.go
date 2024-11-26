@@ -1,6 +1,8 @@
 package exp_util
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TernaryExpression[T any] struct {
 	b bool

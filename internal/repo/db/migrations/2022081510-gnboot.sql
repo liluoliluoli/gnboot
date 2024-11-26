@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `keyword`
 CREATE TABLE IF NOT EXISTS `movie`
 (
     id             bigint unsigned auto_increment comment '主键' primary key,
+    external_id    varchar(45)          NULL COMMENT '外部id',
     original_title varchar(1024)        not null comment '标题',
     status         varchar(64)          not null comment '状态，Returning Series, Ended, Released, Unknown',
     vote_average   float                null comment '平均评分',
@@ -62,8 +63,9 @@ CREATE TABLE IF NOT EXISTS `movie`
     platform       varchar(45)          NULL COMMENT '1=i4k',
     year           varchar(45)          NULL COMMENT '年份',
     definition     varchar(45)          NULL COMMENT '清晰度（1=720p,2=1080P，3=4k）',
-    promotional    varchar(2048)        NULL COMMENT '封面',
-    external       varchar(45)          NULL COMMENT '外部id'
+    promotional    varchar(2048)        NULL COMMENT '封面地址',
+    create_time    varchar(45)          NOT NULL COMMENT '创建时间',
+    update_time    varchar(45)          NOT NULL COMMENT '更新时间'
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci comment '电影';
 
 CREATE TABLE IF NOT EXISTS `season`
@@ -89,7 +91,9 @@ CREATE TABLE IF NOT EXISTS `series`
     skip_intro     bigint        null comment '片头跳过秒数',
     skip_ending    bigint        null comment '片尾跳过秒数',
     file_size      bigint        null comment '文件大小',
-    filename       varchar(256)  null comment '文件名'
+    filename       varchar(256)  null comment '文件名',
+    create_time    varchar(45)   null comment '创建时间',
+    update_time    varchar(45)   null comment '更新时间'
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci comment '连续剧';
 
 CREATE TABLE IF NOT EXISTS `studio`

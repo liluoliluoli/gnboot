@@ -2,8 +2,8 @@ package context_util
 
 import (
 	"context"
-	"gnboot/internal/common/constant"
-	"gnboot/internal/common/gerror"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 )
 
 func GetGenericContext[R any](ctx context.Context, key string) (R, error) {

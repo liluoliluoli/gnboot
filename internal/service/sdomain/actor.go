@@ -1,9 +1,9 @@
 package sdomain
 
 import (
+	dto "github.com/liluoliluoli/gnboot/api/actor"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	dto "gnboot/api/actor"
-	"gnboot/internal/repo/model"
 )
 
 type Actor struct {

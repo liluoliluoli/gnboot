@@ -1,8 +1,8 @@
 package sdomain
 
 import (
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	"gnboot/internal/repo/model"
 )
 
 type VideoActorMapping struct {

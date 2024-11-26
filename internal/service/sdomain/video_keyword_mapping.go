@@ -1,7 +1,7 @@
 package sdomain
 
 import (
-	"gnboot/internal/repo/model"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
 
 type VideoKeywordMapping struct {

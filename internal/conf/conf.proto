@@ -1,7 +1,7 @@
 syntax = "proto3";
 package cinch.conf;
 
-option go_package = "gnboot/internal/conf;conf";
+option go_package = "github.com/liluoliluoli/gnboot/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 

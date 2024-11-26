@@ -1,9 +1,9 @@
 package task
 
 import (
-	"gnboot/internal/conf"
-	"gnboot/internal/service"
-	"gnboot/internal/service/sdomain"
+	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/service"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 )
 
 type I4kSyncTask struct {

@@ -2,8 +2,8 @@ package sdomain
 
 import (
 	"github.com/go-cinch/common/page"
-	dto "gnboot/api/genre"
-	"gnboot/internal/repo/model"
+	dto "github.com/liluoliluoli/gnboot/api/genre"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
 
 type Genre struct {

@@ -8,12 +8,12 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/google/wire"
-	"gnboot/internal/adaptor"
-	"gnboot/internal/conf"
-	"gnboot/internal/repo"
-	"gnboot/internal/server"
-	"gnboot/internal/service"
-	"gnboot/internal/task"
+	"github.com/liluoliluoli/gnboot/internal/adaptor"
+	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/server"
+	"github.com/liluoliluoli/gnboot/internal/service"
+	"github.com/liluoliluoli/gnboot/internal/task"
 )
 
 // wireApp init kratos application.

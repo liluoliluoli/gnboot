@@ -1,7 +1,7 @@
 package gomysql
 
 import (
-	"gnboot/internal/utils/context_util"
+	"github.com/liluoliluoli/gnboot/internal/utils/context_util"
 	"gorm.io/gorm"
 	"time"
 )

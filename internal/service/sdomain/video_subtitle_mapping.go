@@ -1,8 +1,8 @@
 package sdomain
 
 import (
-	dto "gnboot/api/subtitle"
-	"gnboot/internal/repo/model"
+	dto "github.com/liluoliluoli/gnboot/api/subtitle"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
 
 type VideoSubtitleMapping struct {

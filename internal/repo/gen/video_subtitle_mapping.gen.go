@@ -17,7 +17,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"gnboot/internal/repo/model"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
 
 func newVideoSubtitleMapping(db *gorm.DB, opts ...gen.DOOption) videoSubtitleMapping {

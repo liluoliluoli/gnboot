@@ -3,10 +3,10 @@ package repo
 import (
 	"context"
 	"github.com/go-cinch/common/page"
+	"github.com/liluoliluoli/gnboot/internal/repo/gen"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
-	"gnboot/internal/repo/gen"
-	"gnboot/internal/repo/model"
-	"gnboot/internal/service/sdomain"
 	"gorm.io/gorm"
 )
 

@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"gnboot/internal/server"
+	"github.com/liluoliluoli/gnboot/internal/server"
 	"os"
 	"strconv"
 
@@ -19,7 +19,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/conf"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"

@@ -1,9 +1,9 @@
 package sdomain
 
 import (
+	dto "github.com/liluoliluoli/gnboot/api/studio"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	dto "gnboot/api/studio"
-	"gnboot/internal/repo/model"
 )
 
 type Studio struct {

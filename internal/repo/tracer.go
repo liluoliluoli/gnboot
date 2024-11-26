@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-cinch/common/log"
+	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/pkg/errors"
-	"gnboot/internal/conf"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"

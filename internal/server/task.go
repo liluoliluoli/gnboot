@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
-	"gnboot/internal/conf"
-	"gnboot/internal/service/sdomain"
-	"gnboot/internal/task"
+	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/liluoliluoli/gnboot/internal/task"
 )
 
 type Job struct {

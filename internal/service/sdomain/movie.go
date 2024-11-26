@@ -2,9 +2,9 @@ package sdomain
 
 import (
 	"github.com/go-cinch/common/page"
+	moviedto "github.com/liluoliluoli/gnboot/api/movie"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	moviedto "gnboot/api/movie"
-	"gnboot/internal/repo/model"
 )
 
 type CreateMovie struct {

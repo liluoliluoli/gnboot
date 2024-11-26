@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-cinch/common/constant"
 	"github.com/go-cinch/common/middleware/i18n"
-	"gnboot/api/reason"
+	"github.com/liluoliluoli/gnboot/api/reason"
 )
 
 var (

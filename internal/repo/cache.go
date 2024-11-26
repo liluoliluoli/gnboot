@@ -3,16 +3,16 @@ package repo
 import (
 	"context"
 	"errors"
-	"gnboot/internal/service/sdomain"
-	"gnboot/internal/utils/json_util"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/liluoliluoli/gnboot/internal/utils/json_util"
 	"math/rand"
 	"strings"
 	"time"
 
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/plugins/gorm/tenant"
+	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/redis/go-redis/v9"
-	"gnboot/internal/conf"
 	"go.opentelemetry.io/otel/trace"
 )
 

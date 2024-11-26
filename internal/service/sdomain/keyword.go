@@ -1,8 +1,8 @@
 package sdomain
 
 import (
-	dto "gnboot/api/keyword"
-	"gnboot/internal/repo/model"
+	dto "github.com/liluoliluoli/gnboot/api/keyword"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
 
 type Keyword struct {

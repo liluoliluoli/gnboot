@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/repo/gen"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/liluoliluoli/gnboot/internal/utils/cache_util"
 	"github.com/samber/lo"
-	"gnboot/internal/common/constant"
-	"gnboot/internal/conf"
-	"gnboot/internal/repo"
-	"gnboot/internal/repo/gen"
-	"gnboot/internal/service/sdomain"
-	"gnboot/internal/utils/cache_util"
 )
 
 type MovieService struct {

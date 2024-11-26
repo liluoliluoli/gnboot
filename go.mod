@@ -1,4 +1,4 @@
-module gnboot
+module github.com/liluoliluoli/gnboot
 
 go 1.22
 

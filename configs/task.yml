@@ -1,7 +1,7 @@
 task:
   task1:
     name: 'every10s'
-    expr: '0 0 1 * * * *'
+    expr: '*/5 * * * * * *'
   task2:
     name: 'every3min'
     expr: '0 0 1 * * * *'

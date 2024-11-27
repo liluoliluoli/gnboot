@@ -1,6 +1,7 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
+MODULE="github.com/liluoliluoli/gnboot"
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -40,6 +41,7 @@ config:
 sub:
 	git submodule update --force --recursive --init --remote
 
+
 .PHONY: api
 # generate api proto
 api:
@@ -51,9 +53,12 @@ api:
 		protoc --proto_path=./api \
         	--proto_path=./third_party \
         	--go_out=. \
+        	--go_opt=module=$(MODULE) \
         	--go-errors_out=. \
         	--go-http_out=. \
+        	--go-http_opt=module=$(MODULE) \
         	--go-grpc_out=. \
+        	--go-grpc_opt=module=$(MODULE) \
         	--validate_out=lang=go:. \
         	--openapi_out=fq_schema_naming=true,default_response=false,output_mode=source_relative:docs \
         	$$NAME; \

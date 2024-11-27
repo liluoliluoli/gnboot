@@ -8,7 +8,7 @@ import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "cinch/params/params.proto";
 
-option go_package = "/api/actor;actor";
+option go_package = "github.com/liluoliluoli/gnboot/api/actor";
 
 option (openapi.v3.document) = {
   info : {title : "genre adaptor";

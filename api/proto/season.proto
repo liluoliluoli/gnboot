@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+import "proto/genre.proto";
+import "proto/studio.proto";
+import "proto/keyword.proto";
+import "proto/subtitle.proto";
+import "proto/actor.proto";
+import "proto/episode.proto";
+
+
+option go_package = "github.com/liluoliluoli/gnboot/api/season";
+
+option (openapi.v3.document) = {
+  info : {title : "season adaptor";
+version : "1.0.0";
+description : "This is season adaptor docs";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service SeasonRemoteService {
+    rpc GetSeason(GetSeasonRequest) returns (SeasonResp) {
+      option (google.api.http) = {
+        get : "/season/query/id"
+      };
+    }
+
+  }
+
+  message SeasonResp {
+    int64 id = 1;
+    string season = 2;
+    string seasonTitle = 3;
+    int64 skipIntro = 4;
+    int64 skipEnding = 5;
+    int32 episodeCount = 6;
+    repeated gnboot.EpisodeResp episodes = 7;
+
+  }
+
+
+  message GetSeasonRequest {
+    int64 id = 1;
+  }
+

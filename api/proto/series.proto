@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+import "proto/genre.proto";
+import "proto/studio.proto";
+import "proto/keyword.proto";
+import "proto/subtitle.proto";
+import "proto/actor.proto";
+import "proto/season.proto";
+
+option go_package = "github.com/liluoliluoli/gnboot/api/series";
+
+option (openapi.v3.document) = {
+  info : {title : "series adaptor";
+version : "1.0.0";
+description : "This is series adaptor docs";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service SeriesRemoteService {
+    rpc GetSeries(GetSeriesRequest) returns (SeriesResp) {
+      option (google.api.http) = {
+        get : "/series/query/id"
+      };
+    }
+    rpc FindSeries(FindSeriesRequest) returns (SearchSeriesResp) {
+      option (google.api.http) = {
+        post : "/series/query/all"
+        body : "*"
+      };
+    }
+    rpc FilterSeries(FilterSeriesRequest) returns (SearchSeriesResp) {
+      option (google.api.http) = {
+        post : "/series/query/filter"
+        body : "*"
+      };
+    }
+    rpc UpdateSeries(UpdateSeriesRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        put : "/series/update"
+        body : "*",
+        additional_bindings {
+          patch : "/series/update",
+          body : "*",
+        }
+      };
+    }
+    rpc DeleteSeries(params.IdsRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        delete : "/series/delete"
+      };
+    }
+  }
+
+  message SeriesResp {
+    int64 id = 1;
+    string originalTitle = 2;
+    string status = 3;
+    float voteAverage = 4;
+    int64 voteCount = 5;
+    string country = 6;
+    string trailer = 7;
+    string url = 8;
+    bool downloaded = 9;
+    int64 fileSize = 10;
+    string filename = 11;
+    string ext = 12;
+    repeated gnboot.GenreResp genres = 13;
+    repeated gnboot.StudioResp studios = 14;
+    repeated gnboot.KeywordResp keywords = 15;
+    int64 lastPlayedPosition = 16;
+    string lastPlayedTime = 17;
+    repeated gnboot.SubtitleResp subtitles = 18;
+    repeated gnboot.ActorResp actors = 19;
+    repeated gnboot.SeasonResp seasons = 20;
+    int64 skipIntro = 21;
+    int64 skipEnding = 22;
+  }
+
+  message CreateSeriesRequest {
+    string name = 1 [ (google.api.field_behavior) = REQUIRED ];
+  }
+
+  message FindSeriesRequest {
+    params.Page page = 1;
+    optional string search = 2;
+    optional Sort sort = 3;
+  }
+
+  message Sort {
+    optional string filter = 1;
+    optional string type = 2;
+    optional string direction = 3;
+  }
+
+  message SearchSeriesResp {
+    params.Page page = 1;
+    repeated SeriesResp list = 2;
+  }
+
+  message FilterSeriesRequest {
+    params.Page page = 1;
+    int64 id = 2;
+    string type = 3;
+  }
+
+  message GetSeriesRequest {
+    int64 id = 1;
+  }
+
+  message UpdateSeriesRequest {
+    int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
+    optional string name = 2;
+  }

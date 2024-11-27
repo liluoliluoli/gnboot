@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "cinch/params/params.proto";
+import "proto/genre.proto";
+import "proto/studio.proto";
+import "proto/keyword.proto";
+import "proto/subtitle.proto";
+import "proto/actor.proto";
+
+option go_package = "github.com/liluoliluoli/gnboot/api/episode";
+
+option (openapi.v3.document) = {
+  info : {title : "episode adaptor";
+version : "1.0.0";
+description : "This is episode adaptor docs";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service EpisodeRemoteService {
+    rpc GetEpisode(GetEpisodeRequest) returns (EpisodeResp) {
+      option (google.api.http) = {
+        get : "/tv/episode/query/id"
+      };
+    }
+  }
+
+  message EpisodeResp {
+    int64 id = 1;
+    int32 episode = 2;
+    int64 skipIntro = 3;
+    int64 skipEnding = 4;
+    string url = 5;
+    bool download = 6;
+    string ext = 7;
+    int64 fileSize = 8;
+  }
+
+  message GetEpisodeRequest {
+    int64 id = 1;
+  }

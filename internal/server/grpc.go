@@ -13,6 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
@@ -24,6 +25,7 @@ import (
 func NewGRPCServer(
 	c *conf.Bootstrap,
 	movieProvider *adaptor.MovieProvider,
+	episodeProvider *adaptor.EpisodeProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -58,6 +60,7 @@ func NewGRPCServer(
 	}
 	srv := grpc.NewServer(opts...)
 	movie.RegisterMovieRemoteServiceServer(srv, movieProvider)
+	episode.RegisterEpisodeRemoteServiceServer(srv, episodeProvider)
 	//TODO 追加业务注册
 	return srv
 }

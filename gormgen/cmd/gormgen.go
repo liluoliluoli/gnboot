@@ -35,7 +35,7 @@ func init() {
 // 参考: https://stackoverflow.com/questions/28153203/undefined-function-declared-in-another-file
 func main() {
 	// 加载配置
-	dsn := "root:123456@tcp(127.0.0.1:3306)/video?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms"
+	dsn := "gnvideo:7H5rdOAIMA815pXz@tcp(mysql.sqlpub.com:3306)/gnvideo?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms"
 
 	// 初始化DB连接
 	db, err := gorm.Open(mysql.Open(dsn))

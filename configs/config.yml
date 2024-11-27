@@ -17,10 +17,10 @@ data:
     driver: mysql
     # dsn: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
     dsn: ''
-    endpoint: 'localhost:3306'
-    username: 'root'
-    password: '123456'
-    schema: 'video'
+    endpoint: 'mysql.sqlpub.com:3306'
+    username: 'gnvideo'
+    password: '7H5rdOAIMA815pXz'
+    schema: 'gnvideo'
     query: 'charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 #    tenants:
 #      gnboot.go-cinch.top: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms}'

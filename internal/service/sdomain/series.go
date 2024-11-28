@@ -2,25 +2,11 @@ package sdomain
 
 import (
 	"github.com/go-cinch/common/page"
-	moviedto "github.com/liluoliluoli/gnboot/api/movie"
+	seriesdto "github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
-	"github.com/samber/lo"
 )
 
-type CreateMovie struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
-}
-
-func (d *CreateMovie) ConvertToRepo() *model.Movie {
-	return &model.Movie{}
-}
-
-func (d *CreateMovie) ConvertFromDto(req *moviedto.CreateMovieRequest) *CreateMovie {
-	return &CreateMovie{}
-}
-
-type Movie struct {
+type Series struct {
 	ID                 int64                   `json:"id"`
 	OriginalTitle      string                  `json:"originalTitle"`      // 标题
 	Status             string                  `json:"status"`             // 状态，Returning Series, Ended, Released, Unknown
@@ -42,48 +28,25 @@ type Movie struct {
 	Actors             []*Actor                `json:"actors"`             //演员
 }
 
-func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {
-	return &Movie{
+func (d *Series) ConvertFromRepo(movie *model.Series) *Series {
+	return &Series{
 		ID:            movie.ID,
 		OriginalTitle: movie.OriginalTitle,
-		Status:        movie.Status,
-		VoteAverage:   lo.FromPtr(movie.VoteAverage),
-		VoteCount:     lo.FromPtr(movie.VoteCount),
-		Country:       lo.FromPtr(movie.Country),
-		Trailer:       lo.FromPtr(movie.Trailer),
-		URL:           movie.URL,
-		Downloaded:    movie.Downloaded,
-		FileSize:      lo.FromPtr(movie.FileSize),
-		Filename:      lo.FromPtr(movie.Filename),
-		Ext:           lo.FromPtr(movie.Ext),
 	}
 }
 
-func (d *Movie) ConvertToDto() *moviedto.MovieResp {
-	return &moviedto.MovieResp{
+func (d *Series) ConvertToDto() *seriesdto.SeriesResp {
+	return &seriesdto.SeriesResp{
 		Id:            d.ID,
 		OriginalTitle: d.OriginalTitle,
 	}
 }
 
-type SearchMovie struct {
+type SearchSeries struct {
 	Page      *page.Page `json:"page"`
 	Search    string     `json:"search"`
 	Id        int64      `json:"id"`
 	Type      string     `json:"type"`
 	FilterIds []int64    `json:"filterIds"`
 	Sort      *Sort      `json:"sort"`
-}
-
-type UpdateMovie struct {
-	ID    int64  `json:"id,string"`
-	Title string `json:"title,omitempty"`
-}
-
-func (d *UpdateMovie) ConvertToRepo() *model.Movie {
-	return &model.Movie{}
-}
-
-func (d *UpdateMovie) ConvertFromDto(dto *moviedto.UpdateMovieRequest) *UpdateMovie {
-	return &UpdateMovie{}
 }

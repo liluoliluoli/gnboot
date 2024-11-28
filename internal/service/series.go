@@ -5,15 +5,14 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
-	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/liluoliluoli/gnboot/internal/utils/cache_util"
 	"github.com/samber/lo"
 )
 
-type MovieService struct {
+type SeriesService struct {
 	c                        *conf.Bootstrap
-	movieRepo                *repo.MovieRepo
+	seriesRepo               *repo.SeriesRepo
 	genreRepo                *repo.GenreRepo
 	videoGenreMappingRepo    *repo.VideoGenreMappingRepo
 	actorRepo                *repo.ActorRepo
@@ -23,19 +22,19 @@ type MovieService struct {
 	keywordRepo              *repo.KeywordRepo
 	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
-	cache                    sdomain.Cache[*sdomain.Movie]
+	cache                    sdomain.Cache[*sdomain.Series]
 }
 
-func NewMovieService(c *conf.Bootstrap,
-	movieRepo *repo.MovieRepo,
+func NewSeriesService(c *conf.Bootstrap,
+	seriesRepo *repo.SeriesRepo,
 	genreRepo *repo.GenreRepo, videoGenreMappingRepo *repo.VideoGenreMappingRepo,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
 	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *MovieService {
-	return &MovieService{
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *SeriesService {
+	return &SeriesService{
 		c:                        c,
-		movieRepo:                movieRepo,
+		seriesRepo:               seriesRepo,
 		genreRepo:                genreRepo,
 		videoGenreMappingRepo:    videoGenreMappingRepo,
 		actorRepo:                actorRepo,
@@ -45,51 +44,38 @@ func NewMovieService(c *conf.Bootstrap,
 		keywordRepo:              keywordRepo,
 		videoKeywordMappingRepo:  videoKeywordMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
-		cache:                    repo.NewCache[*sdomain.Movie](c, movieRepo.Data.Cache()),
+		cache:                    repo.NewCache[*sdomain.Series](c, seriesRepo.Data.Cache()),
 	}
 }
 
-func (s *MovieService) Create(ctx context.Context, item *sdomain.CreateMovie) error {
-	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.movieRepo.Create(ctx, tx, item)
-		})
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	return err
-}
-
-func (s *MovieService) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
-	return s.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
+func (s *SeriesService) Get(ctx context.Context, id int64) (*sdomain.Series, error) {
+	return s.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Series, error) {
 		return s.get(ctx, id)
 	})
 }
 
-func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error) {
-	item, err := s.movieRepo.Get(ctx, id)
+func (s *SeriesService) get(ctx context.Context, id int64) (*sdomain.Series, error) {
+	item, err := s.seriesRepo.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	genresMap, err := s.buildMovieGenresMap(ctx, []*sdomain.Movie{item})
+	genresMap, err := s.buildSeriesGenresMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
-	actorsMap, err := s.buildMovieActorsMap(ctx, []*sdomain.Movie{item})
+	actorsMap, err := s.buildSeriesActorsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
-	keywordsMap, err := s.buildMovieKeywordsMap(ctx, []*sdomain.Movie{item})
+	keywordsMap, err := s.buildSeriesKeywordsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
-	studiosMap, err := s.buildMovieStudiosMap(ctx, []*sdomain.Movie{item})
+	studiosMap, err := s.buildSeriesStudiosMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
-	subtitlesMap, err := s.buildMovieSubtitlesMap(ctx, []*sdomain.Movie{item})
+	subtitlesMap, err := s.buildSeriesSubtitlesMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
@@ -101,8 +87,8 @@ func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error
 	return item, nil
 }
 
-func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
-	rp, err := s.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
+func (s *SeriesService) Page(ctx context.Context, condition *sdomain.SearchSeries) (*sdomain.PageResult[*sdomain.Series], error) {
+	rp, err := s.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Series], error) {
 		return s.page(ctx, condition)
 	})
 	if err != nil {
@@ -111,11 +97,11 @@ func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie)
 	return rp, nil
 }
 
-func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSeries) (*sdomain.PageResult[*sdomain.Series], error) {
 	filterIds := make([]int64, 0)
 	if condition.Id != 0 && condition.Type == "" {
 		if condition.Type == constant.FilterType_genre {
-			genreMappings, err := s.videoGenreMappingRepo.FindByGenreIdAndVideoType(ctx, condition.Id, constant.VideoType_movie)
+			genreMappings, err := s.videoGenreMappingRepo.FindByGenreIdAndVideoType(ctx, condition.Id, constant.VideoType_series)
 			if err != nil {
 				return nil, err
 			}
@@ -124,7 +110,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 			})...)
 		}
 		if condition.Type == constant.FilterType_studio {
-			studioMappings, err := s.videoStudioMappingRepo.FindByStudioIdAndVideoType(ctx, condition.Id, constant.VideoType_movie)
+			studioMappings, err := s.videoStudioMappingRepo.FindByStudioIdAndVideoType(ctx, condition.Id, constant.VideoType_series)
 			if err != nil {
 				return nil, err
 			}
@@ -133,7 +119,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 			})...)
 		}
 		if condition.Type == constant.FilterType_keyword {
-			keywordMappings, err := s.videoKeywordMappingRepo.FindByKeywordIdAndVideoType(ctx, condition.Id, constant.VideoType_movie)
+			keywordMappings, err := s.videoKeywordMappingRepo.FindByKeywordIdAndVideoType(ctx, condition.Id, constant.VideoType_series)
 			if err != nil {
 				return nil, err
 			}
@@ -142,7 +128,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 			})...)
 		}
 		if condition.Type == constant.FilterType_actor {
-			actorMappings, err := s.videoActorMappingRepo.FindByActorIdAndVideoType(ctx, condition.Id, constant.VideoType_movie)
+			actorMappings, err := s.videoActorMappingRepo.FindByActorIdAndVideoType(ctx, condition.Id, constant.VideoType_series)
 			if err != nil {
 				return nil, err
 			}
@@ -152,28 +138,28 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 		}
 	}
 	condition.FilterIds = filterIds
-	pageResult, err := s.movieRepo.Page(ctx, condition)
+	pageResult, err := s.seriesRepo.Page(ctx, condition)
 	if err != nil {
 		return nil, err
 	}
 	if pageResult != nil && len(pageResult.List) != 0 {
-		genresMap, err := s.buildMovieGenresMap(ctx, pageResult.List)
+		genresMap, err := s.buildSeriesGenresMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
 		}
-		actorsMap, err := s.buildMovieActorsMap(ctx, pageResult.List)
+		actorsMap, err := s.buildSeriesActorsMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
 		}
-		keywordsMap, err := s.buildMovieKeywordsMap(ctx, pageResult.List)
+		keywordsMap, err := s.buildSeriesKeywordsMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
 		}
-		studiosMap, err := s.buildMovieStudiosMap(ctx, pageResult.List)
+		studiosMap, err := s.buildSeriesStudiosMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
 		}
-		subtitlesMap, err := s.buildMovieSubtitlesMap(ctx, pageResult.List)
+		subtitlesMap, err := s.buildSeriesSubtitlesMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
 		}
@@ -188,38 +174,12 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 	return pageResult, nil
 }
 
-func (s *MovieService) Update(ctx context.Context, item *sdomain.UpdateMovie) error {
-	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.movieRepo.Update(ctx, tx, item)
-		})
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	return err
-}
-
-func (s *MovieService) Delete(ctx context.Context, ids ...int64) error {
-	err := gen.Use(s.movieRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
-		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.movieRepo.Delete(ctx, tx, ids...)
-		})
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	return err
-}
-
 // 补齐genre
-func (s *MovieService) buildMovieGenresMap(ctx context.Context, movies []*sdomain.Movie) (map[int64][]*sdomain.Genre, error) {
-	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+func (s *SeriesService) buildSeriesGenresMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.Genre, error) {
+	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
 		return item.ID
 	})
-	genreMappings, err := s.videoGenreMappingRepo.FindByVideoIdAndType(ctx, movieIds, constant.VideoType_movie)
+	genreMappings, err := s.videoGenreMappingRepo.FindByVideoIdAndType(ctx, seriesIds, constant.VideoType_series)
 	if err != nil {
 		return nil, err
 	}
@@ -243,11 +203,11 @@ func (s *MovieService) buildMovieGenresMap(ctx context.Context, movies []*sdomai
 }
 
 // 补齐actor
-func (s *MovieService) buildMovieActorsMap(ctx context.Context, movies []*sdomain.Movie) (map[int64][]*sdomain.Actor, error) {
-	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+func (s *SeriesService) buildSeriesActorsMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.Actor, error) {
+	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
 		return item.ID
 	})
-	actorMappings, err := s.videoActorMappingRepo.FindByVideoIdAndType(ctx, movieIds, constant.VideoType_movie)
+	actorMappings, err := s.videoActorMappingRepo.FindByVideoIdAndType(ctx, seriesIds, constant.VideoType_series)
 	if err != nil {
 		return nil, err
 	}
@@ -271,11 +231,11 @@ func (s *MovieService) buildMovieActorsMap(ctx context.Context, movies []*sdomai
 }
 
 // 补齐keyword
-func (s *MovieService) buildMovieKeywordsMap(ctx context.Context, movies []*sdomain.Movie) (map[int64][]*sdomain.Keyword, error) {
-	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+func (s *SeriesService) buildSeriesKeywordsMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.Keyword, error) {
+	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
 		return item.ID
 	})
-	keywordMappings, err := s.videoKeywordMappingRepo.FindByVideoIdAndType(ctx, movieIds, constant.VideoType_movie)
+	keywordMappings, err := s.videoKeywordMappingRepo.FindByVideoIdAndType(ctx, seriesIds, constant.VideoType_series)
 	if err != nil {
 		return nil, err
 	}
@@ -299,11 +259,11 @@ func (s *MovieService) buildMovieKeywordsMap(ctx context.Context, movies []*sdom
 }
 
 // 补齐studio
-func (s *MovieService) buildMovieStudiosMap(ctx context.Context, movies []*sdomain.Movie) (map[int64][]*sdomain.Studio, error) {
-	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+func (s *SeriesService) buildSeriesStudiosMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.Studio, error) {
+	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
 		return item.ID
 	})
-	studioMappings, err := s.videoStudioMappingRepo.FindByVideoIdAndType(ctx, movieIds, constant.VideoType_movie)
+	studioMappings, err := s.videoStudioMappingRepo.FindByVideoIdAndType(ctx, seriesIds, constant.VideoType_series)
 	if err != nil {
 		return nil, err
 	}
@@ -327,11 +287,11 @@ func (s *MovieService) buildMovieStudiosMap(ctx context.Context, movies []*sdoma
 }
 
 // 补齐subtitle
-func (s *MovieService) buildMovieSubtitlesMap(ctx context.Context, movies []*sdomain.Movie) (map[int64][]*sdomain.VideoSubtitleMapping, error) {
-	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+func (s *SeriesService) buildSeriesSubtitlesMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.VideoSubtitleMapping, error) {
+	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
 		return item.ID
 	})
-	subtitleMappings, err := s.videoSubtitleMappingRepo.FindByVideoIdAndType(ctx, movieIds, constant.VideoType_movie)
+	subtitleMappings, err := s.videoSubtitleMappingRepo.FindByVideoIdAndType(ctx, seriesIds, constant.VideoType_series)
 	if err != nil {
 		return nil, err
 	}

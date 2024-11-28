@@ -16,8 +16,8 @@ const (
 type MovieFilterType = string
 
 const (
-	MovieFilterType_genre   MovieFilterType = "genre"
-	MovieFilterType_studio  MovieFilterType = "studio"
-	MovieFilterType_keyword MovieFilterType = "keyword"
-	MovieFilterType_actor   MovieFilterType = "actor"
+	FilterType_genre   MovieFilterType = "genre"
+	FilterType_studio  MovieFilterType = "studio"
+	FilterType_keyword MovieFilterType = "keyword"
+	FilterType_actor   MovieFilterType = "actor"
 )

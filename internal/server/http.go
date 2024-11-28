@@ -17,6 +17,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/api/season"
+	"github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -30,6 +31,7 @@ func NewHTTPServer(
 	movieProvider *adaptor.MovieProvider,
 	episodeProvider *adaptor.EpisodeProvider,
 	seasonProvider *adaptor.SeasonProvider,
+	seriesProvider *adaptor.SeriesProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -66,6 +68,7 @@ func NewHTTPServer(
 	movie.RegisterMovieRemoteServiceHTTPServer(srv, movieProvider)
 	episode.RegisterEpisodeRemoteServiceHTTPServer(srv, episodeProvider)
 	season.RegisterSeasonRemoteServiceHTTPServer(srv, seasonProvider)
+	series.RegisterSeriesRemoteServiceHTTPServer(srv, seriesProvider)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())

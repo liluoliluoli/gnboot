@@ -33,7 +33,7 @@ var ProviderSet = wire.NewSet(
 	NewStudioRepo, NewVideoStudioMappingRepo,
 	NewKeywordRepo, NewVideoKeywordMappingRepo,
 	NewVideoSubtitleMappingRepo,
-	NewEpisodeRepo, NewSeasonRepo,
+	NewEpisodeRepo, NewSeasonRepo, NewSeriesRepo,
 )
 
 // Data .

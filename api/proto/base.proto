@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package gnboot;
+
+option go_package = "github.com/liluoliluoli/gnboot/api";
+
+message Sort {
+  optional string filter = 1;
+  optional string type = 2;
+  optional string direction = 3;
+}

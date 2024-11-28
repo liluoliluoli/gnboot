@@ -29,3 +29,9 @@ type PageResult[T any] struct {
 	Page *page.Page `json:"page"`
 	List []T        `json:"list"`
 }
+
+type Sort struct {
+	Filter    string `json:"filter"`
+	Type      string `json:"type"`
+	Direction string `json:"direction"`
+}

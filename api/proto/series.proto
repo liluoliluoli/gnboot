@@ -13,6 +13,7 @@ import "proto/keyword.proto";
 import "proto/subtitle.proto";
 import "proto/actor.proto";
 import "proto/season.proto";
+import "proto/base.proto";
 
 option go_package = "github.com/liluoliluoli/gnboot/api/series";
 
@@ -121,12 +122,6 @@ additional_properties:
     params.Page page = 1;
     optional string search = 2;
     optional Sort sort = 3;
-  }
-
-  message Sort {
-    optional string filter = 1;
-    optional string type = 2;
-    optional string direction = 3;
   }
 
   message SearchSeriesResp {

@@ -5,4 +5,4 @@ import (
 )
 
 // ProviderSet is adaptor providers.
-var ProviderSet = wire.NewSet(NewMovieProvider, NewEpisodeProvider)
+var ProviderSet = wire.NewSet(NewMovieProvider, NewEpisodeProvider, NewSeasonProvider)

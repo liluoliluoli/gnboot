@@ -16,6 +16,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/movie"
+	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -28,6 +29,7 @@ func NewHTTPServer(
 	c *conf.Bootstrap,
 	movieProvider *adaptor.MovieProvider,
 	episodeProvider *adaptor.EpisodeProvider,
+	seasonProvider *adaptor.SeasonProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -63,6 +65,7 @@ func NewHTTPServer(
 	srv := http.NewServer(opts...)
 	movie.RegisterMovieRemoteServiceHTTPServer(srv, movieProvider)
 	episode.RegisterEpisodeRemoteServiceHTTPServer(srv, episodeProvider)
+	season.RegisterSeasonRemoteServiceHTTPServer(srv, seasonProvider)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())

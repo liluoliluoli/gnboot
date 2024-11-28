@@ -15,6 +15,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/movie"
+	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -26,6 +27,7 @@ func NewGRPCServer(
 	c *conf.Bootstrap,
 	movieProvider *adaptor.MovieProvider,
 	episodeProvider *adaptor.EpisodeProvider,
+	seasonProvider *adaptor.SeasonProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -61,6 +63,7 @@ func NewGRPCServer(
 	srv := grpc.NewServer(opts...)
 	movie.RegisterMovieRemoteServiceServer(srv, movieProvider)
 	episode.RegisterEpisodeRemoteServiceServer(srv, episodeProvider)
+	season.RegisterSeasonRemoteServiceServer(srv, seasonProvider)
 	//TODO 追加业务注册
 	return srv
 }

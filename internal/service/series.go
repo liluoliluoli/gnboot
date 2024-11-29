@@ -88,7 +88,7 @@ func (s *SeriesService) get(ctx context.Context, id int64) (*sdomain.Series, err
 }
 
 func (s *SeriesService) Page(ctx context.Context, condition *sdomain.SearchSeries) (*sdomain.PageResult[*sdomain.Series], error) {
-	rp, err := s.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Series], error) {
+	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Series], error) {
 		return s.page(ctx, condition)
 	})
 	if err != nil {

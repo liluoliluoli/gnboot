@@ -97,7 +97,44 @@ func (c *Cache[T]) Get(
 	return _res, nil
 }
 
-func (c *Cache[T]) GetPage(
+func (c *Cache[T]) List(
+	ctx context.Context,
+	action string,
+	write func(string, context.Context) ([]T, error),
+) ([]T, error) {
+	var _res []T
+	if c.disable {
+		return write(action, ctx)
+	}
+	key := c.getValKey(ctx, action)
+	if !c.refresh { //无需回源
+		// 1. first get cache
+		rs, err := c.redis.Get(ctx, key).Result()
+		if err == nil {
+			// cache exists
+			res, err := json_util.Unmarshal[[]T](rs)
+			return res, err
+		}
+	}
+	// 2. get lock before read db
+	ok := c.Lock(ctx, action)
+	if !ok {
+		return _res, sdomain.ErrTooManyRequests(ctx)
+	}
+	defer c.Unlock(ctx, action)
+	// 3. load repo from db and write to cache
+	if write != nil {
+		res, err := write(action, ctx)
+		if err != nil {
+			return res, err
+		}
+		c.Set(ctx, action, res, false)
+		return res, nil
+	}
+	return _res, nil
+}
+
+func (c *Cache[T]) Page(
 	ctx context.Context,
 	action string,
 	write func(string, context.Context) (*sdomain.PageResult[T], error),

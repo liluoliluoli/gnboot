@@ -57,6 +57,16 @@ func (r *GenreRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 	}, nil
 }
 
+func (r *GenreRepo) FindAll(ctx context.Context) ([]*sdomain.Genre, error) {
+	finds, err := r.do(ctx, nil).Find()
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return lo.Map(finds, func(item *model.Genre, index int) *sdomain.Genre {
+		return (&sdomain.Genre{}).ConvertFromRepo(item)
+	}), nil
+}
+
 func (r *GenreRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Genre, error) {
 	finds, err := r.do(ctx, nil).Where(gen.Genre.ID.In(ids...)).Find()
 	if err != nil {

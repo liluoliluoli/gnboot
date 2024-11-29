@@ -12,7 +12,8 @@ type Cache[T any] interface {
 	WithPrefix(prefix string) Cache[T]
 	WithRefresh() Cache[T]
 	Get(ctx context.Context, action string, write func(string, context.Context) (T, error)) (T, error)
-	GetPage(ctx context.Context, action string, write func(string, context.Context) (*PageResult[T], error)) (*PageResult[T], error)
+	List(ctx context.Context, action string, write func(string, context.Context) ([]T, error)) ([]T, error)
+	Page(ctx context.Context, action string, write func(string, context.Context) (*PageResult[T], error)) (*PageResult[T], error)
 	Set(ctx context.Context, action string, data any, short bool)
 	Del(ctx context.Context, action string)
 	SetWithExpiration(ctx context.Context, action string, data any, seconds int64)

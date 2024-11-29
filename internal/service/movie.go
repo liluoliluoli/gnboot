@@ -102,7 +102,7 @@ func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error
 }
 
 func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
-	rp, err := s.cache.GetPage(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
+	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
 		return s.page(ctx, condition)
 	})
 	if err != nil {

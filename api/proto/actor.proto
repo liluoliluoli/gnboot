@@ -60,12 +60,15 @@ additional_properties:
     int64 id = 1;
     string name = 2;
     string originalName = 3;
-    bool adult = 4;
+    int32 adult = 4;
     int32 gender = 5;
     string character = 6;
     string profile = 7;
   }
 
-  message FindActorRequest { params.Page page = 1; }
+  message FindActorRequest {
+  }
 
-  message FindActorResp { params.Page page = 1; }
+  message FindActorResp {
+    repeated ActorResp actors = 1;
+  }

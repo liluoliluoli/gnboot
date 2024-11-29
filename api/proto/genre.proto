@@ -61,6 +61,11 @@ additional_properties:
     string name = 2;
   }
 
-  message FindGenreRequest { params.Page page = 1; }
+  message FindGenreRequest {
 
-  message FindGenreResp { params.Page page = 1; }
+  }
+
+  message FindGenreResp {
+    repeated GenreResp genres = 1;
+  }
+

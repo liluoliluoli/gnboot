@@ -59,8 +59,13 @@ additional_properties:
   message KeywordResp {
     int64 id = 1;
     string name = 2;
+
   }
 
-  message FindKeywordRequest { params.Page page = 1; }
+  message FindKeywordRequest {
 
-  message FindKeywordResp { params.Page page = 1; }
+  }
+
+  message FindKeywordResp {
+    repeated KeywordResp keywords = 1;
+  }

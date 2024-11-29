@@ -63,6 +63,10 @@ additional_properties:
     string logo = 4;
   }
 
-  message FindStudioRequest { params.Page page = 1; }
+  message FindStudioRequest {
 
-  message FindStudioResp { params.Page page = 1; }
+  }
+
+  message FindStudioResp {
+    repeated StudioResp studios = 1;
+  }

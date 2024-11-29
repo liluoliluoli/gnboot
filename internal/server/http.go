@@ -14,6 +14,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
+	"github.com/liluoliluoli/gnboot/api/actor"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/genre"
 	"github.com/liluoliluoli/gnboot/api/keyword"
@@ -38,6 +39,7 @@ func NewHTTPServer(
 	genreProvider *adaptor.GenreProvider,
 	studioProvider *adaptor.StudioProvider,
 	keywordProvider *adaptor.KeywordProvider,
+	actorProvider *adaptor.ActorProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -78,6 +80,7 @@ func NewHTTPServer(
 	genre.RegisterGenreRemoteServiceHTTPServer(srv, genreProvider)
 	studio.RegisterStudioRemoteServiceHTTPServer(srv, studioProvider)
 	keyword.RegisterKeywordRemoteServiceHTTPServer(srv, keywordProvider)
+	actor.RegisterActorRemoteServiceHTTPServer(srv, actorProvider)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())

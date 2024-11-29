@@ -15,6 +15,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/genre"
+	"github.com/liluoliluoli/gnboot/api/keyword"
 	"github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/api/series"
@@ -34,6 +35,7 @@ func NewGRPCServer(
 	seriesProvider *adaptor.SeriesProvider,
 	genreProvider *adaptor.GenreProvider,
 	studioProvider *adaptor.StudioProvider,
+	keywordProvider *adaptor.KeywordProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -73,6 +75,7 @@ func NewGRPCServer(
 	series.RegisterSeriesRemoteServiceServer(srv, seriesProvider)
 	genre.RegisterGenreRemoteServiceServer(srv, genreProvider)
 	studio.RegisterStudioRemoteServiceServer(srv, studioProvider)
+	keyword.RegisterKeywordRemoteServiceServer(srv, keywordProvider)
 	//TODO 追加业务注册
 	return srv
 }

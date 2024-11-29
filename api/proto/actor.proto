@@ -60,7 +60,7 @@ additional_properties:
     int64 id = 1;
     string name = 2;
     string originalName = 3;
-    int32 adult = 4;
+    bool adult = 4;
     int32 gender = 5;
     string character = 6;
     string profile = 7;

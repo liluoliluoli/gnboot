@@ -60,6 +60,7 @@ api:
         	--go-grpc_out=. \
         	--go-grpc_opt=module=$(MODULE) \
         	--validate_out=lang=go:. \
+        	--validate_opt=module=$(MODULE) \
         	--openapi_out=fq_schema_naming=true,default_response=false,output_mode=source_relative:docs \
         	$$NAME; \
 	done

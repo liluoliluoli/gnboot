@@ -18,6 +18,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/api/series"
+	"github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -32,6 +33,7 @@ func NewGRPCServer(
 	seasonProvider *adaptor.SeasonProvider,
 	seriesProvider *adaptor.SeriesProvider,
 	genreProvider *adaptor.GenreProvider,
+	studioProvider *adaptor.StudioProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -70,6 +72,7 @@ func NewGRPCServer(
 	season.RegisterSeasonRemoteServiceServer(srv, seasonProvider)
 	series.RegisterSeriesRemoteServiceServer(srv, seriesProvider)
 	genre.RegisterGenreRemoteServiceServer(srv, genreProvider)
+	studio.RegisterStudioRemoteServiceServer(srv, studioProvider)
 	//TODO 追加业务注册
 	return srv
 }

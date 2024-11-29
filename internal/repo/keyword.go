@@ -67,6 +67,16 @@ func (r *KeywordRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Ke
 	}), nil
 }
 
+func (r *KeywordRepo) FindAll(ctx context.Context) ([]*sdomain.Keyword, error) {
+	finds, err := r.do(ctx, nil).Find()
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return lo.Map(finds, func(item *model.Keyword, index int) *sdomain.Keyword {
+		return (&sdomain.Keyword{}).ConvertFromRepo(item)
+	}), nil
+}
+
 func (r *KeywordRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateMovie) error {
 	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
 	if err != nil {

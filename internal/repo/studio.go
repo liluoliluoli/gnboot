@@ -67,6 +67,16 @@ func (r *StudioRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Stu
 	}), nil
 }
 
+func (r *StudioRepo) FindAll(ctx context.Context) ([]*sdomain.Studio, error) {
+	finds, err := r.do(ctx, nil).Find()
+	if err != nil {
+		return nil, handleQueryError(err)
+	}
+	return lo.Map(finds, func(item *model.Studio, index int) *sdomain.Studio {
+		return (&sdomain.Studio{}).ConvertFromRepo(item)
+	}), nil
+}
+
 func (r *StudioRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateMovie) error {
 	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
 	if err != nil {

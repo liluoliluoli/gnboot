@@ -3,6 +3,7 @@ package page_util
 import (
 	"github.com/liluoliluoli/gnboot/api"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/samber/lo"
 )
 
 func ToDomainPage(p *api.Page) *sdomain.Page {
@@ -22,7 +23,7 @@ func ToAdaptorPage(p *sdomain.Page) *api.Page {
 	return &api.Page{
 		CurrentPage: p.CurrentPage,
 		PageSize:    p.PageSize,
-		TotalPage:   p.TotalPage,
+		TotalPage:   lo.Ternary(int32(p.Count)%p.PageSize == 0, int32(p.Count)/p.PageSize, int32(p.Count)/p.PageSize+1),
 		Count:       p.Count,
 	}
 }

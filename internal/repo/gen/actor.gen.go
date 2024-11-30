@@ -32,7 +32,7 @@ func newActor(db *gorm.DB, opts ...gen.DOOption) actor {
 	_actor.Name = field.NewString(tableName, "name")
 	_actor.OriginalAme = field.NewString(tableName, "original_ame")
 	_actor.Adult = field.NewBool(tableName, "adult")
-	_actor.Gender = field.NewBool(tableName, "gender")
+	_actor.Gender = field.NewInt32(tableName, "gender")
 	_actor.Profile = field.NewString(tableName, "profile")
 	_actor.CreateTime = field.NewTime(tableName, "create_time")
 	_actor.UpdateTime = field.NewTime(tableName, "update_time")
@@ -50,7 +50,7 @@ type actor struct {
 	Name        field.String // 名字
 	OriginalAme field.String // 原名
 	Adult       field.Bool   // 是否成年
-	Gender      field.Bool   // 性别
+	Gender      field.Int32  // 性别
 	Profile     field.String // 演员的照片或头像的URL
 	CreateTime  field.Time
 	UpdateTime  field.Time
@@ -74,7 +74,7 @@ func (a *actor) updateTableName(table string) *actor {
 	a.Name = field.NewString(table, "name")
 	a.OriginalAme = field.NewString(table, "original_ame")
 	a.Adult = field.NewBool(table, "adult")
-	a.Gender = field.NewBool(table, "gender")
+	a.Gender = field.NewInt32(table, "gender")
 	a.Profile = field.NewString(table, "profile")
 	a.CreateTime = field.NewTime(table, "create_time")
 	a.UpdateTime = field.NewTime(table, "update_time")

@@ -7,7 +7,7 @@ import (
 
 type VideoActorMapping struct {
 	ID        int64  `json:"id"`
-	VideId    int64  `json:"videId"`
+	VideoId   int64  `json:"videoId"`
 	VideoType string `json:"type"`
 	ActorId   int64  `json:"actorId"`
 	Character string `json:"character"`
@@ -16,7 +16,7 @@ type VideoActorMapping struct {
 func (d *VideoActorMapping) ConvertFromRepo(m *model.VideoActorMapping) *VideoActorMapping {
 	return &VideoActorMapping{
 		ID:        m.ID,
-		VideId:    m.VideoID,
+		VideoId:   m.VideoID,
 		VideoType: m.VideoType,
 		ActorId:   m.ActorID,
 		Character: lo.FromPtr(m.Character),

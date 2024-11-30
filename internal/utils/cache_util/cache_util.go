@@ -7,6 +7,11 @@ import (
 
 func GetCacheActionName(condition ...any) string {
 	md5 := utils.StructMd5(condition)
-	_, file, _, _ := runtime.Caller(1)
-	return file + "_" + md5
+	pc := make([]uintptr, 1)
+	n := runtime.Callers(2, pc)
+	if n == 0 {
+		return "n/a"
+	}
+	method := runtime.FuncForPC(pc[0]).Name()
+	return method + "_" + md5
 }

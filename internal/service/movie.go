@@ -147,7 +147,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(actorMappings, func(item *sdomain.VideoActorMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 	}
@@ -262,10 +262,11 @@ func (s *MovieService) buildMovieActorsMap(ctx context.Context, movies []*sdomai
 	})
 	rsMap := make(map[int64][]*sdomain.Actor)
 	for _, actorMapping := range actorMappings {
-		if _, ok := rsMap[actorMapping.VideId]; !ok {
-			rsMap[actorMapping.VideId] = make([]*sdomain.Actor, 0)
+		if _, ok := rsMap[actorMapping.VideoId]; !ok {
+			rsMap[actorMapping.VideoId] = make([]*sdomain.Actor, 0)
 		}
-		rsMap[actorMapping.VideId] = append(rsMap[actorMapping.VideId], actorsMap[actorMapping.ActorId])
+		actorsMap[actorMapping.ActorId].Character = actorMapping.Character
+		rsMap[actorMapping.VideoId] = append(rsMap[actorMapping.VideoId], actorsMap[actorMapping.ActorId])
 	}
 	return rsMap, nil
 }

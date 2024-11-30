@@ -14,6 +14,7 @@ type Actor struct {
 	Adult        bool   `json:"adult"`
 	Gender       int32  `json:"gender"`
 	Profile      string `json:"profile"`
+	Character    string `json:"character"`
 }
 
 func (d *Actor) MarshalBinary() ([]byte, error) {
@@ -30,7 +31,7 @@ func (d *Actor) ConvertFromRepo(m *model.Actor) *Actor {
 		Name:         lo.FromPtr(m.Name),
 		OriginalName: lo.FromPtr(m.OriginalAme),
 		Adult:        m.Adult,
-		Gender:       1, // todo
+		Gender:       m.Gender,
 		Profile:      lo.FromPtr(m.Profile),
 	}
 }
@@ -43,5 +44,6 @@ func (d *Actor) ConvertToDto() *dto.ActorResp {
 		Adult:        d.Adult,
 		Gender:       d.Gender,
 		Profile:      d.Profile,
+		Character:    d.Character,
 	}
 }

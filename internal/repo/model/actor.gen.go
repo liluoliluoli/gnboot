@@ -16,7 +16,7 @@ type Actor struct {
 	Name        *string    `gorm:"column:name;type:varchar(128);comment:名字" json:"name"`
 	OriginalAme *string    `gorm:"column:original_ame;type:varchar(128);comment:原名" json:"originalAme"`
 	Adult       bool       `gorm:"column:adult;type:tinyint(1);not null;default:1;comment:是否成年" json:"adult"`
-	Gender      bool       `gorm:"column:gender;type:tinyint(1);not null;comment:性别" json:"gender"`
+	Gender      int32      `gorm:"column:gender;type:int;not null;comment:性别" json:"gender"`
 	Profile     *string    `gorm:"column:profile;type:varchar(1024);comment:演员的照片或头像的URL" json:"profile"`
 	CreateTime  *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
 	UpdateTime  *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`

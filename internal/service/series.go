@@ -133,7 +133,7 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(actorMappings, func(item *sdomain.VideoActorMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 	}
@@ -222,10 +222,10 @@ func (s *SeriesService) buildSeriesActorsMap(ctx context.Context, series []*sdom
 	})
 	rsMap := make(map[int64][]*sdomain.Actor)
 	for _, actorMapping := range actorMappings {
-		if _, ok := rsMap[actorMapping.VideId]; !ok {
-			rsMap[actorMapping.VideId] = make([]*sdomain.Actor, 0)
+		if _, ok := rsMap[actorMapping.VideoId]; !ok {
+			rsMap[actorMapping.VideoId] = make([]*sdomain.Actor, 0)
 		}
-		rsMap[actorMapping.VideId] = append(rsMap[actorMapping.VideId], actorsMap[actorMapping.ActorId])
+		rsMap[actorMapping.VideoId] = append(rsMap[actorMapping.VideoId], actorsMap[actorMapping.ActorId])
 	}
 	return rsMap, nil
 }

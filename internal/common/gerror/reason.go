@@ -12,7 +12,6 @@ var (
 	ErrIdempotentMissingToken = func(ctx context.Context) error {
 		return reason.ErrorIllegalParameter(i18n.FromContext(ctx).T(constant.IdempotentMissingToken))
 	}
-
 	ErrTooManyRequests = func(ctx context.Context) error {
 		return reason.ErrorTooManyRequests(i18n.FromContext(ctx).T(constant.TooManyRequests))
 	}

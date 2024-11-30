@@ -2,7 +2,12 @@ package sdomain
 
 import (
 	"encoding/json"
+	"github.com/liluoliluoli/gnboot/api/actor"
+	"github.com/liluoliluoli/gnboot/api/genre"
+	"github.com/liluoliluoli/gnboot/api/keyword"
 	moviedto "github.com/liluoliluoli/gnboot/api/movie"
+	"github.com/liluoliluoli/gnboot/api/studio"
+	"github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
 )
@@ -71,6 +76,31 @@ func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 	return &moviedto.MovieResp{
 		Id:            d.ID,
 		OriginalTitle: d.OriginalTitle,
+		Status:        d.Status,
+		VoteAverage:   d.VoteAverage,
+		VoteCount:     d.VoteCount,
+		Country:       d.Country,
+		Trailer:       d.Trailer,
+		Url:           d.URL,
+		Downloaded:    d.Downloaded,
+		FileSize:      d.FileSize,
+		Filename:      d.Filename,
+		Ext:           d.Ext,
+		Genres: lo.Map(d.Genres, func(item *Genre, index int) *genre.GenreResp {
+			return item.ConvertToDto()
+		}),
+		Studios: lo.Map(d.Studios, func(item *Studio, index int) *studio.StudioResp {
+			return item.ConvertToDto()
+		}),
+		Keywords: lo.Map(d.Keywords, func(item *Keyword, index int) *keyword.KeywordResp {
+			return item.ConvertToDto()
+		}),
+		Actors: lo.Map(d.Actors, func(item *Actor, index int) *actor.ActorResp {
+			return item.ConvertToDto()
+		}),
+		Subtitles: lo.Map(d.Subtitles, func(item *VideoSubtitleMapping, index int) *subtitle.SubtitleResp {
+			return item.ConvertToDto()
+		}),
 	}
 }
 

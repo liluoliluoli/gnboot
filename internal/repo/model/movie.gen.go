@@ -17,12 +17,12 @@ type Movie struct {
 	OriginalTitle string    `gorm:"column:original_title;type:varchar(1024);not null;comment:标题" json:"originalTitle"`
 	Status        string    `gorm:"column:status;type:varchar(64);not null;comment:状态，Returning Series, Ended, Released, Unknown" json:"status"`
 	VoteAverage   *float32  `gorm:"column:vote_average;type:float;comment:平均评分" json:"voteAverage"`
-	VoteCount     *int64    `gorm:"column:vote_count;type:bigint;comment:评分数" json:"voteCount"`
+	VoteCount     *int32    `gorm:"column:vote_count;type:int;comment:评分数" json:"voteCount"`
 	Country       *string   `gorm:"column:country;type:varchar(32);comment:国家" json:"country"`
 	Trailer       *string   `gorm:"column:trailer;type:varchar(1024);comment:预告片地址" json:"trailer"`
 	URL           string    `gorm:"column:url;type:varchar(2048);not null;comment:影片地址" json:"url"`
 	Downloaded    bool      `gorm:"column:downloaded;type:tinyint(1);not null;comment:是否可以下载" json:"downloaded"`
-	FileSize      *int64    `gorm:"column:file_size;type:bigint;comment:文件大小" json:"fileSize"`
+	FileSize      *int32    `gorm:"column:file_size;type:int;comment:文件大小" json:"fileSize"`
 	Filename      *string   `gorm:"column:filename;type:varchar(256);comment:文件名" json:"filename"`
 	Ext           *string   `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
 	Platform      *string   `gorm:"column:platform;type:varchar(45);comment:1=i4k" json:"platform"`

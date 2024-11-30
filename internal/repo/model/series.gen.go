@@ -12,12 +12,12 @@ type Series struct {
 	OriginalTitle string   `gorm:"column:original_title;type:varchar(1024);not null;comment:标题" json:"originalTitle"`
 	Status        string   `gorm:"column:status;type:varchar(64);not null;comment:状态，Returning Series, Ended, Released, Unknown" json:"status"`
 	VoteAverage   *float32 `gorm:"column:vote_average;type:float;comment:平均评分" json:"voteAverage"`
-	VoteCount     *int64   `gorm:"column:vote_count;type:bigint;comment:评分数" json:"voteCount"`
+	VoteCount     *int32   `gorm:"column:vote_count;type:int;comment:评分数" json:"voteCount"`
 	Country       *string  `gorm:"column:country;type:varchar(32);comment:国家" json:"country"`
 	Trailer       *string  `gorm:"column:trailer;type:varchar(1024);comment:预告片地址" json:"trailer"`
-	SkipIntro     *int64   `gorm:"column:skip_intro;type:bigint;comment:片头跳过秒数" json:"skipIntro"`
-	SkipEnding    *int64   `gorm:"column:skip_ending;type:bigint;comment:片尾跳过秒数" json:"skipEnding"`
-	FileSize      *int64   `gorm:"column:file_size;type:bigint;comment:文件大小" json:"fileSize"`
+	SkipIntro     *int32   `gorm:"column:skip_intro;type:int;comment:片头跳过秒数" json:"skipIntro"`
+	SkipEnding    *int32   `gorm:"column:skip_ending;type:int;comment:片尾跳过秒数" json:"skipEnding"`
+	FileSize      *int32   `gorm:"column:file_size;type:int;comment:文件大小" json:"fileSize"`
 	Filename      *string  `gorm:"column:filename;type:varchar(256);comment:文件名" json:"filename"`
 	CreateTime    string   `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
 	UpdateTime    string   `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`

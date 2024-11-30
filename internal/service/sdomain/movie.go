@@ -31,12 +31,12 @@ type Movie struct {
 	OriginalTitle      string                  `json:"originalTitle"`      // 标题
 	Status             string                  `json:"status"`             // 状态，Returning Series, Ended, Released, Unknown
 	VoteAverage        float32                 `json:"voteAverage"`        // 平均评分
-	VoteCount          int64                   `json:"voteCount"`          // 评分数
+	VoteCount          int32                   `json:"voteCount"`          // 评分数
 	Country            string                  `json:"country"`            // 国家
 	Trailer            string                  `json:"trailer"`            // 预告片地址
 	URL                string                  `json:"url"`                // 影片地址
 	Downloaded         bool                    `json:"downloaded"`         // 是否可以下载
-	FileSize           int64                   `json:"fileSize"`           // 文件大小
+	FileSize           int32                   `json:"fileSize"`           // 文件大小
 	Filename           string                  `json:"filename"`           // 文件名
 	Ext                string                  `json:"ext"`                //扩展参数
 	Genres             []*Genre                `json:"genres"`             //流派
@@ -101,6 +101,12 @@ func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 		}),
 		Subtitles: lo.Map(d.Subtitles, func(item *VideoSubtitleMapping, index int) *subtitle.SubtitleResp {
 			return item.ConvertToDto()
+		}),
+		LastPlayedPosition: d.LastPlayedPosition,
+		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() string {
+			return d.LastPlayedTime.Format("2006-01-02 15:04:05")
+		}, func() string {
+			return ""
 		}),
 	}
 }

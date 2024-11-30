@@ -32,12 +32,12 @@ func newSeries(db *gorm.DB, opts ...gen.DOOption) series {
 	_series.OriginalTitle = field.NewString(tableName, "original_title")
 	_series.Status = field.NewString(tableName, "status")
 	_series.VoteAverage = field.NewFloat32(tableName, "vote_average")
-	_series.VoteCount = field.NewInt64(tableName, "vote_count")
+	_series.VoteCount = field.NewInt32(tableName, "vote_count")
 	_series.Country = field.NewString(tableName, "country")
 	_series.Trailer = field.NewString(tableName, "trailer")
-	_series.SkipIntro = field.NewInt64(tableName, "skip_intro")
-	_series.SkipEnding = field.NewInt64(tableName, "skip_ending")
-	_series.FileSize = field.NewInt64(tableName, "file_size")
+	_series.SkipIntro = field.NewInt32(tableName, "skip_intro")
+	_series.SkipEnding = field.NewInt32(tableName, "skip_ending")
+	_series.FileSize = field.NewInt32(tableName, "file_size")
 	_series.Filename = field.NewString(tableName, "filename")
 	_series.CreateTime = field.NewString(tableName, "create_time")
 	_series.UpdateTime = field.NewString(tableName, "update_time")
@@ -55,12 +55,12 @@ type series struct {
 	OriginalTitle field.String  // 标题
 	Status        field.String  // 状态，Returning Series, Ended, Released, Unknown
 	VoteAverage   field.Float32 // 平均评分
-	VoteCount     field.Int64   // 评分数
+	VoteCount     field.Int32   // 评分数
 	Country       field.String  // 国家
 	Trailer       field.String  // 预告片地址
-	SkipIntro     field.Int64   // 片头跳过秒数
-	SkipEnding    field.Int64   // 片尾跳过秒数
-	FileSize      field.Int64   // 文件大小
+	SkipIntro     field.Int32   // 片头跳过秒数
+	SkipEnding    field.Int32   // 片尾跳过秒数
+	FileSize      field.Int32   // 文件大小
 	Filename      field.String  // 文件名
 	CreateTime    field.String  // 创建时间
 	UpdateTime    field.String  // 更新时间
@@ -84,12 +84,12 @@ func (s *series) updateTableName(table string) *series {
 	s.OriginalTitle = field.NewString(table, "original_title")
 	s.Status = field.NewString(table, "status")
 	s.VoteAverage = field.NewFloat32(table, "vote_average")
-	s.VoteCount = field.NewInt64(table, "vote_count")
+	s.VoteCount = field.NewInt32(table, "vote_count")
 	s.Country = field.NewString(table, "country")
 	s.Trailer = field.NewString(table, "trailer")
-	s.SkipIntro = field.NewInt64(table, "skip_intro")
-	s.SkipEnding = field.NewInt64(table, "skip_ending")
-	s.FileSize = field.NewInt64(table, "file_size")
+	s.SkipIntro = field.NewInt32(table, "skip_intro")
+	s.SkipEnding = field.NewInt32(table, "skip_ending")
+	s.FileSize = field.NewInt32(table, "file_size")
 	s.Filename = field.NewString(table, "filename")
 	s.CreateTime = field.NewString(table, "create_time")
 	s.UpdateTime = field.NewString(table, "update_time")

@@ -31,12 +31,12 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.ID = field.NewInt64(tableName, "id")
 	_episode.SeasonID = field.NewInt64(tableName, "season_id")
 	_episode.Episode = field.NewInt32(tableName, "episode")
-	_episode.SkipIntro = field.NewInt64(tableName, "skip_intro")
-	_episode.SkipEnding = field.NewInt64(tableName, "skip_ending")
+	_episode.SkipIntro = field.NewInt32(tableName, "skip_intro")
+	_episode.SkipEnding = field.NewInt32(tableName, "skip_ending")
 	_episode.URL = field.NewString(tableName, "url")
 	_episode.Downloaded = field.NewInt32(tableName, "downloaded")
 	_episode.Ext = field.NewString(tableName, "ext")
-	_episode.FileSize = field.NewInt64(tableName, "file_size")
+	_episode.FileSize = field.NewInt32(tableName, "file_size")
 	_episode.CreateTime = field.NewTime(tableName, "create_time")
 	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 
@@ -52,12 +52,12 @@ type episode struct {
 	ID         field.Int64  // 主键
 	SeasonID   field.Int64  // 季id
 	Episode    field.Int32  // 第几集
-	SkipIntro  field.Int64  // 片头跳过秒数
-	SkipEnding field.Int64  // 片尾跳过秒数
+	SkipIntro  field.Int32  // 片头跳过秒数
+	SkipEnding field.Int32  // 片尾跳过秒数
 	URL        field.String // 影片地址
 	Downloaded field.Int32  // 是否能下载
 	Ext        field.String // 扩展参数
-	FileSize   field.Int64  // 文件大小
+	FileSize   field.Int32  // 文件大小
 	CreateTime field.Time
 	UpdateTime field.Time
 
@@ -79,12 +79,12 @@ func (e *episode) updateTableName(table string) *episode {
 	e.ID = field.NewInt64(table, "id")
 	e.SeasonID = field.NewInt64(table, "season_id")
 	e.Episode = field.NewInt32(table, "episode")
-	e.SkipIntro = field.NewInt64(table, "skip_intro")
-	e.SkipEnding = field.NewInt64(table, "skip_ending")
+	e.SkipIntro = field.NewInt32(table, "skip_intro")
+	e.SkipEnding = field.NewInt32(table, "skip_ending")
 	e.URL = field.NewString(table, "url")
 	e.Downloaded = field.NewInt32(table, "downloaded")
 	e.Ext = field.NewString(table, "ext")
-	e.FileSize = field.NewInt64(table, "file_size")
+	e.FileSize = field.NewInt32(table, "file_size")
 	e.CreateTime = field.NewTime(table, "create_time")
 	e.UpdateTime = field.NewTime(table, "update_time")
 

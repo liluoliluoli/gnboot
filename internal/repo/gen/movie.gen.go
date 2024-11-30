@@ -33,12 +33,12 @@ func newMovie(db *gorm.DB, opts ...gen.DOOption) movie {
 	_movie.OriginalTitle = field.NewString(tableName, "original_title")
 	_movie.Status = field.NewString(tableName, "status")
 	_movie.VoteAverage = field.NewFloat32(tableName, "vote_average")
-	_movie.VoteCount = field.NewInt64(tableName, "vote_count")
+	_movie.VoteCount = field.NewInt32(tableName, "vote_count")
 	_movie.Country = field.NewString(tableName, "country")
 	_movie.Trailer = field.NewString(tableName, "trailer")
 	_movie.URL = field.NewString(tableName, "url")
 	_movie.Downloaded = field.NewBool(tableName, "downloaded")
-	_movie.FileSize = field.NewInt64(tableName, "file_size")
+	_movie.FileSize = field.NewInt32(tableName, "file_size")
 	_movie.Filename = field.NewString(tableName, "filename")
 	_movie.Ext = field.NewString(tableName, "ext")
 	_movie.Platform = field.NewString(tableName, "platform")
@@ -62,12 +62,12 @@ type movie struct {
 	OriginalTitle field.String  // 标题
 	Status        field.String  // 状态，Returning Series, Ended, Released, Unknown
 	VoteAverage   field.Float32 // 平均评分
-	VoteCount     field.Int64   // 评分数
+	VoteCount     field.Int32   // 评分数
 	Country       field.String  // 国家
 	Trailer       field.String  // 预告片地址
 	URL           field.String  // 影片地址
 	Downloaded    field.Bool    // 是否可以下载
-	FileSize      field.Int64   // 文件大小
+	FileSize      field.Int32   // 文件大小
 	Filename      field.String  // 文件名
 	Ext           field.String  // 扩展参数
 	Platform      field.String  // 1=i4k
@@ -97,12 +97,12 @@ func (m *movie) updateTableName(table string) *movie {
 	m.OriginalTitle = field.NewString(table, "original_title")
 	m.Status = field.NewString(table, "status")
 	m.VoteAverage = field.NewFloat32(table, "vote_average")
-	m.VoteCount = field.NewInt64(table, "vote_count")
+	m.VoteCount = field.NewInt32(table, "vote_count")
 	m.Country = field.NewString(table, "country")
 	m.Trailer = field.NewString(table, "trailer")
 	m.URL = field.NewString(table, "url")
 	m.Downloaded = field.NewBool(table, "downloaded")
-	m.FileSize = field.NewInt64(table, "file_size")
+	m.FileSize = field.NewInt32(table, "file_size")
 	m.Filename = field.NewString(table, "filename")
 	m.Ext = field.NewString(table, "ext")
 	m.Platform = field.NewString(table, "platform")

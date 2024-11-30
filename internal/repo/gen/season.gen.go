@@ -32,8 +32,8 @@ func newSeason(db *gorm.DB, opts ...gen.DOOption) season {
 	_season.SeriesID = field.NewInt64(tableName, "series_id")
 	_season.Season = field.NewInt32(tableName, "season")
 	_season.SeriesTitle = field.NewString(tableName, "series_title")
-	_season.SkipIntro = field.NewInt64(tableName, "skip_intro")
-	_season.SkipEnding = field.NewInt64(tableName, "skip_ending")
+	_season.SkipIntro = field.NewInt32(tableName, "skip_intro")
+	_season.SkipEnding = field.NewInt32(tableName, "skip_ending")
 	_season.EpisodeCount = field.NewInt32(tableName, "episode_count")
 	_season.CreateTime = field.NewTime(tableName, "create_time")
 	_season.UpdateTime = field.NewTime(tableName, "update_time")
@@ -51,8 +51,8 @@ type season struct {
 	SeriesID     field.Int64  // 连续剧id
 	Season       field.Int32  // 第几季
 	SeriesTitle  field.String // 季名称
-	SkipIntro    field.Int64  // 片头跳过秒数
-	SkipEnding   field.Int64  // 片尾跳过秒数
+	SkipIntro    field.Int32  // 片头跳过秒数
+	SkipEnding   field.Int32  // 片尾跳过秒数
 	EpisodeCount field.Int32  // 总集数
 	CreateTime   field.Time
 	UpdateTime   field.Time
@@ -76,8 +76,8 @@ func (s *season) updateTableName(table string) *season {
 	s.SeriesID = field.NewInt64(table, "series_id")
 	s.Season = field.NewInt32(table, "season")
 	s.SeriesTitle = field.NewString(table, "series_title")
-	s.SkipIntro = field.NewInt64(table, "skip_intro")
-	s.SkipEnding = field.NewInt64(table, "skip_ending")
+	s.SkipIntro = field.NewInt32(table, "skip_intro")
+	s.SkipEnding = field.NewInt32(table, "skip_ending")
 	s.EpisodeCount = field.NewInt32(table, "episode_count")
 	s.CreateTime = field.NewTime(table, "create_time")
 	s.UpdateTime = field.NewTime(table, "update_time")

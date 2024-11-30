@@ -26,6 +26,7 @@ const OperationMovieRemoteServiceDeleteMovie = "/gnboot.MovieRemoteService/Delet
 const OperationMovieRemoteServiceFilterMovie = "/gnboot.MovieRemoteService/FilterMovie"
 const OperationMovieRemoteServiceFindMovie = "/gnboot.MovieRemoteService/FindMovie"
 const OperationMovieRemoteServiceGetMovie = "/gnboot.MovieRemoteService/GetMovie"
+const OperationMovieRemoteServiceNextToPlayMovies = "/gnboot.MovieRemoteService/NextToPlayMovies"
 const OperationMovieRemoteServiceUpdateMovie = "/gnboot.MovieRemoteService/UpdateMovie"
 
 type MovieRemoteServiceHTTPServer interface {
@@ -35,6 +36,7 @@ type MovieRemoteServiceHTTPServer interface {
 	FilterMovie(context.Context, *FilterMovieRequest) (*SearchMovieResp, error)
 	FindMovie(context.Context, *FindMovieRequest) (*SearchMovieResp, error)
 	GetMovie(context.Context, *GetMovieRequest) (*MovieResp, error)
+	NextToPlayMovies(context.Context, *NextToPlayMoviesRequest) (*SearchMovieResp, error)
 	UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error)
 }
 
@@ -44,6 +46,7 @@ func RegisterMovieRemoteServiceHTTPServer(s *http.Server, srv MovieRemoteService
 	r.GET("/movie/query/id", _MovieRemoteService_GetMovie0_HTTP_Handler(srv))
 	r.POST("/movie/query/all", _MovieRemoteService_FindMovie0_HTTP_Handler(srv))
 	r.POST("/movie/query/filter", _MovieRemoteService_FilterMovie0_HTTP_Handler(srv))
+	r.POST("/movie/nextToPlay/query/all", _MovieRemoteService_NextToPlayMovies0_HTTP_Handler(srv))
 	r.PATCH("/movie/update", _MovieRemoteService_UpdateMovie0_HTTP_Handler(srv))
 	r.PUT("/movie/update", _MovieRemoteService_UpdateMovie1_HTTP_Handler(srv))
 	r.DELETE("/movie/delete", _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv))
@@ -134,6 +137,28 @@ func _MovieRemoteService_FilterMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPSer
 	}
 }
 
+func _MovieRemoteService_NextToPlayMovies0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in NextToPlayMoviesRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationMovieRemoteServiceNextToPlayMovies)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.NextToPlayMovies(ctx, req.(*NextToPlayMoviesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SearchMovieResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _MovieRemoteService_UpdateMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateMovieRequest
@@ -203,6 +228,7 @@ type MovieRemoteServiceHTTPClient interface {
 	FilterMovie(ctx context.Context, req *FilterMovieRequest, opts ...http.CallOption) (rsp *SearchMovieResp, err error)
 	FindMovie(ctx context.Context, req *FindMovieRequest, opts ...http.CallOption) (rsp *SearchMovieResp, err error)
 	GetMovie(ctx context.Context, req *GetMovieRequest, opts ...http.CallOption) (rsp *MovieResp, err error)
+	NextToPlayMovies(ctx context.Context, req *NextToPlayMoviesRequest, opts ...http.CallOption) (rsp *SearchMovieResp, err error)
 	UpdateMovie(ctx context.Context, req *UpdateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -273,6 +299,19 @@ func (c *MovieRemoteServiceHTTPClientImpl) GetMovie(ctx context.Context, in *Get
 	opts = append(opts, http.Operation(OperationMovieRemoteServiceGetMovie))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *MovieRemoteServiceHTTPClientImpl) NextToPlayMovies(ctx context.Context, in *NextToPlayMoviesRequest, opts ...http.CallOption) (*SearchMovieResp, error) {
+	var out SearchMovieResp
+	pattern := "/movie/nextToPlay/query/all"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationMovieRemoteServiceNextToPlayMovies))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

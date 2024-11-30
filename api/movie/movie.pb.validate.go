@@ -900,6 +900,137 @@ var _ interface {
 	ErrorName() string
 } = FilterMovieRequestValidationError{}
 
+// Validate checks the field values on NextToPlayMoviesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *NextToPlayMoviesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NextToPlayMoviesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NextToPlayMoviesRequestMultiError, or nil if none found.
+func (m *NextToPlayMoviesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NextToPlayMoviesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, NextToPlayMoviesRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, NextToPlayMoviesRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return NextToPlayMoviesRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return NextToPlayMoviesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// NextToPlayMoviesRequestMultiError is an error wrapping multiple validation
+// errors returned by NextToPlayMoviesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type NextToPlayMoviesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NextToPlayMoviesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NextToPlayMoviesRequestMultiError) AllErrors() []error { return m }
+
+// NextToPlayMoviesRequestValidationError is the validation error returned by
+// NextToPlayMoviesRequest.Validate if the designated constraints aren't met.
+type NextToPlayMoviesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NextToPlayMoviesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NextToPlayMoviesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NextToPlayMoviesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NextToPlayMoviesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NextToPlayMoviesRequestValidationError) ErrorName() string {
+	return "NextToPlayMoviesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e NextToPlayMoviesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNextToPlayMoviesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NextToPlayMoviesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NextToPlayMoviesRequestValidationError{}
+
 // Validate checks the field values on GetMovieRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

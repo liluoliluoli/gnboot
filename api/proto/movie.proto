@@ -78,6 +78,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc NextToPlayMovies(NextToPlayMoviesRequest) returns (SearchMovieResp) {
+      option (google.api.http) = {
+        post : "/movie/nextToPlay/query/all"
+        body : "*"
+      };
+    }
     rpc UpdateMovie(UpdateMovieRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         put : "/movie/update"
@@ -137,6 +143,10 @@ additional_properties:
     int64 id = 2;
     string type = 3;
   }
+
+message NextToPlayMoviesRequest {
+  Page page = 1;
+}
 
   message GetMovieRequest {
     int64 id = 1;

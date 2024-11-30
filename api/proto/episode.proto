@@ -62,12 +62,12 @@ additional_properties:
   message EpisodeResp {
     int64 id = 1;
     int32 episode = 2;
-    int64 skipIntro = 3;
-    int64 skipEnding = 4;
+    int32 skipIntro = 3;
+    int32 skipEnding = 4;
     string url = 5;
     bool download = 6;
     string ext = 7;
-    int64 fileSize = 8;
+    int32 fileSize = 8;
   }
 
   message GetEpisodeRequest {

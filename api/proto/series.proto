@@ -93,24 +93,24 @@ additional_properties:
     string originalTitle = 2;
     string status = 3;
     float voteAverage = 4;
-    int64 voteCount = 5;
+    int32 voteCount = 5;
     string country = 6;
     string trailer = 7;
     string url = 8;
     bool downloaded = 9;
-    int64 fileSize = 10;
+    int32 fileSize = 10;
     string filename = 11;
     string ext = 12;
     repeated gnboot.GenreResp genres = 13;
     repeated gnboot.StudioResp studios = 14;
     repeated gnboot.KeywordResp keywords = 15;
-    int64 lastPlayedPosition = 16;
+    int32 lastPlayedPosition = 16;
     string lastPlayedTime = 17;
     repeated gnboot.SubtitleResp subtitles = 18;
     repeated gnboot.ActorResp actors = 19;
     repeated gnboot.SeasonResp seasons = 20;
-    int64 skipIntro = 21;
-    int64 skipEnding = 22;
+    int32 skipIntro = 21;
+    int32 skipEnding = 22;
   }
 
   message CreateSeriesRequest {

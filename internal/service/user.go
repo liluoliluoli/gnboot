@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
-	"github.com/liluoliluoli/gnboot/internal/utils/cache_util"
 )
 
 type UserService struct {

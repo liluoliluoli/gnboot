@@ -19,7 +19,7 @@ func NewI4kSyncTask(c *conf.Bootstrap, movieService *service.MovieService) *I4kS
 }
 
 func (t *I4kSyncTask) ProcessTest(task *sdomain.Task) error {
-	_, err := t.movieService.Get(task.Ctx, 1)
+	_, err := t.movieService.Get(task.Ctx, 1, 1)
 	if err != nil {
 		return err
 	}

@@ -8,9 +8,9 @@ import (
 	"github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/api/subtitle"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/page_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
-	"github.com/liluoliluoli/gnboot/internal/utils/page_util"
 	"github.com/samber/lo"
 )
 

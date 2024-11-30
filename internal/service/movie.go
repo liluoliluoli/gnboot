@@ -3,12 +3,11 @@ package service
 import (
 	"context"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
-	"github.com/liluoliluoli/gnboot/internal/utils/cache_util"
-	"github.com/liluoliluoli/gnboot/internal/utils/exp_util"
 	"github.com/samber/lo"
 	"time"
 )
@@ -100,21 +99,27 @@ func (s *MovieService) get(ctx context.Context, id int64, userId int64) (*sdomai
 	if err != nil {
 		return nil, err
 	}
-	moviePlayedMap, err := s.buildMovieLastPlayedInfo(ctx, userId, []*sdomain.Movie{item})
-	if err != nil {
-		return nil, err
+	if userId != 0 {
+		moviePlayedMap, err := s.buildMovieLastPlayedInfo(ctx, userId, []*sdomain.Movie{item})
+		if err != nil {
+			return nil, err
+		}
+		item.LastPlayedPosition = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() int32 {
+			return moviePlayedMap[item.ID].LastPlayedPosition
+		}, func() int32 {
+			return 0
+		})
+		item.LastPlayedTime = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() *time.Time {
+			return lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)
+		}, func() *time.Time {
+			return nil
+		})
 	}
 	item.Actors = actorsMap[item.ID]
 	item.Genres = genresMap[item.ID]
 	item.Keywords = keywordsMap[item.ID]
 	item.Studios = studiosMap[item.ID]
 	item.Subtitles = subtitlesMap[item.ID]
-	item.LastPlayedPosition = exp_util.Ternary(func() int32 {
-		return exp_util.If[int32](moviePlayedMap[item.ID] != nil).Then(moviePlayedMap[item.ID].LastPlayedPosition).Else(0)
-	})
-	item.LastPlayedTime = exp_util.Ternary(func() *time.Time {
-		return exp_util.If[*time.Time](moviePlayedMap[item.ID] != nil).Then(lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)).Else(nil)
-	})
 	return item, nil
 }
 
@@ -194,9 +199,13 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie,
 		if err != nil {
 			return nil, err
 		}
-		moviePlayedMap, err := s.buildMovieLastPlayedInfo(ctx, userId, pageResult.List)
-		if err != nil {
-			return nil, err
+
+		var moviePlayedMap map[int64]*sdomain.VideoUserMapping
+		if userId != 0 {
+			moviePlayedMap, err = s.buildMovieLastPlayedInfo(ctx, userId, pageResult.List)
+			if err != nil {
+				return nil, err
+			}
 		}
 		for _, item := range pageResult.List {
 			item.Actors = actorsMap[item.ID]
@@ -204,12 +213,18 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie,
 			item.Subtitles = subtitlesMap[item.ID]
 			item.Keywords = keywordsMap[item.ID]
 			item.Studios = studiosMap[item.ID]
-			item.LastPlayedPosition = exp_util.Ternary(func() int32 {
-				return exp_util.If[int32](moviePlayedMap[item.ID] != nil).Then(moviePlayedMap[item.ID].LastPlayedPosition).Else(0)
-			})
-			item.LastPlayedTime = exp_util.Ternary(func() *time.Time {
-				return exp_util.If[*time.Time](moviePlayedMap[item.ID] != nil).Then(lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)).Else(nil)
-			})
+			if userId != 0 {
+				item.LastPlayedPosition = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() int32 {
+					return moviePlayedMap[item.ID].LastPlayedPosition
+				}, func() int32 {
+					return 0
+				})
+				item.LastPlayedTime = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() *time.Time {
+					return lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)
+				}, func() *time.Time {
+					return nil
+				})
+			}
 		}
 	}
 	return pageResult, nil

@@ -17,7 +17,6 @@ require (
 	github.com/go-cinch/common/plugins/k8s/pod v1.0.0
 	github.com/go-cinch/common/plugins/kratos/config/env v1.0.0
 	github.com/go-cinch/common/plugins/kratos/encoding/yml v1.0.1
-	github.com/go-cinch/common/proto/params v1.0.0
 	github.com/go-cinch/common/utils v1.0.4
 	github.com/go-cinch/common/worker v1.0.7
 	github.com/go-kratos/kratos/v2 v2.8.2

@@ -29,7 +29,7 @@ func (r *SeriesRepo) do(ctx context.Context, tx *gen.Query) gen.ISeriesDo {
 func (r *SeriesRepo) Get(ctx context.Context, id int64) (*sdomain.Series, error) {
 	find, err := r.do(ctx, nil).Where(gen.Series.ID.Eq(id)).First()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return (&sdomain.Series{}).ConvertFromRepo(find), nil
 }
@@ -44,7 +44,7 @@ func (r *SeriesRepo) Page(ctx context.Context, condition *sdomain.SearchSeries) 
 	}
 	list, total, err := do.Order(gen.Series.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return &sdomain.PageResult[*sdomain.Series]{
 		Page: &sdomain.Page{

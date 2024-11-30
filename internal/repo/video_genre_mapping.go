@@ -29,7 +29,7 @@ func (r *VideoGenreMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVide
 func (r *VideoGenreMappingRepo) FindByVideoIdAndType(ctx context.Context, videoId []int64, videoType string) ([]*sdomain.VideoGenreMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoGenreMapping.VideoID.In(videoId...)).Where(gen.VideoGenreMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoGenreMapping, index int) *sdomain.VideoGenreMapping {
 		return (&sdomain.VideoGenreMapping{}).ConvertFromRepo(item)
@@ -39,7 +39,7 @@ func (r *VideoGenreMappingRepo) FindByVideoIdAndType(ctx context.Context, videoI
 func (r *VideoGenreMappingRepo) FindByGenreIdAndVideoType(ctx context.Context, genreId int64, videoType string) ([]*sdomain.VideoGenreMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoGenreMapping.GenreID.Eq(genreId)).Where(gen.VideoGenreMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoGenreMapping, index int) *sdomain.VideoGenreMapping {
 		return (&sdomain.VideoGenreMapping{}).ConvertFromRepo(item)

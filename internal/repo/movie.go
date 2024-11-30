@@ -30,7 +30,7 @@ func (r *MovieRepo) do(ctx context.Context, tx *gen.Query) gen.IMovieDo {
 func (r *MovieRepo) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
 	find, err := r.do(ctx, nil).Where(gen.Movie.ID.Eq(id)).First()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return (&sdomain.Movie{}).ConvertFromRepo(find), nil
 }
@@ -45,7 +45,7 @@ func (r *MovieRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 	}
 	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return &sdomain.PageResult[*sdomain.Movie]{
 		Page: &sdomain.Page{

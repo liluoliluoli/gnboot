@@ -29,7 +29,7 @@ func (r *SeasonRepo) do(ctx context.Context, tx *gen.Query) gen.ISeasonDo {
 func (r *SeasonRepo) Get(ctx context.Context, id int64) (*sdomain.Season, error) {
 	find, err := r.do(ctx, nil).Where(gen.Season.ID.Eq(id)).First()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return (&sdomain.Season{}).ConvertFromRepo(find), nil
 }
@@ -37,7 +37,7 @@ func (r *SeasonRepo) Get(ctx context.Context, id int64) (*sdomain.Season, error)
 func (r *SeasonRepo) QueryBySeriesId(ctx context.Context, seriesId int64) ([]*sdomain.Season, error) {
 	finds, err := r.do(ctx, nil).Order(gen.Season.Season).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.Season, index int) *sdomain.Season {
 		return (&sdomain.Season{}).ConvertFromRepo(item)

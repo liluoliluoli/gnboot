@@ -31,6 +31,9 @@ var (
 	ErrIllegalParameter = func(ctx context.Context, args ...string) error {
 		return i18n.NewError(ctx, constant.IllegalParameter, reason.ErrorIllegalParameter, args...)
 	}
+	ErrDataConvert = func(ctx context.Context, args ...string) error {
+		return i18n.NewError(ctx, "data.convert", reason.ErrorIllegalParameter, args...)
+	}
 )
 
 func HandleRedisNotFoundError(err error) error {

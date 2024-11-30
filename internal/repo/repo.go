@@ -206,12 +206,12 @@ func NewSonyflake(c *conf.Bootstrap) (sf *id.Sonyflake, err error) {
 	return
 }
 
-func handleQueryError(queryErr error) error {
+func handleQueryError(ctx context.Context, queryErr error) error {
 	if queryErr == nil {
 		return nil
 	}
 	if errors.Is(queryErr, gorm.ErrRecordNotFound) {
 		return nil
 	}
-	return gerror.NewBizErrorWithCause(gerror.DbError, queryErr)
+	return gerror.ErrInternal(ctx)
 }

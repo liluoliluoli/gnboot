@@ -14,7 +14,7 @@ func GetGenericContext[R any](ctx context.Context, key string) (R, error) {
 	}
 	r, ok := clu.(R)
 	if !ok {
-		return r, gerror.NewBizError(gerror.DataConvertError)
+		return r, gerror.ErrDataConvert(ctx)
 	}
 	return r, nil
 }

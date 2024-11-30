@@ -30,7 +30,7 @@ func (r *GenreRepo) do(ctx context.Context, tx *gen.Query) gen.IGenreDo {
 func (r *GenreRepo) Get(ctx context.Context, id int64) (*sdomain.Genre, error) {
 	find, err := r.do(ctx, nil).Where(gen.Movie.ID.Eq(id)).First()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return (&sdomain.Genre{}).ConvertFromRepo(find), nil
 }
@@ -42,7 +42,7 @@ func (r *GenreRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 	}
 	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return &sdomain.PageResult[*sdomain.Genre]{
 		Page: &sdomain.Page{
@@ -59,7 +59,7 @@ func (r *GenreRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 func (r *GenreRepo) FindAll(ctx context.Context) ([]*sdomain.Genre, error) {
 	finds, err := r.do(ctx, nil).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.Genre, index int) *sdomain.Genre {
 		return (&sdomain.Genre{}).ConvertFromRepo(item)
@@ -69,7 +69,7 @@ func (r *GenreRepo) FindAll(ctx context.Context) ([]*sdomain.Genre, error) {
 func (r *GenreRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Genre, error) {
 	finds, err := r.do(ctx, nil).Where(gen.Genre.ID.In(ids...)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.Genre, index int) *sdomain.Genre {
 		return (&sdomain.Genre{}).ConvertFromRepo(item)

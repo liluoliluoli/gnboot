@@ -29,7 +29,7 @@ func (r *VideoActorMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVide
 func (r *VideoActorMappingRepo) FindByVideoIdAndType(ctx context.Context, videoId []int64, videoType string) ([]*sdomain.VideoActorMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.VideoID.In(videoId...)).Where(gen.VideoActorMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoActorMapping, index int) *sdomain.VideoActorMapping {
 		return (&sdomain.VideoActorMapping{}).ConvertFromRepo(item)
@@ -39,7 +39,7 @@ func (r *VideoActorMappingRepo) FindByVideoIdAndType(ctx context.Context, videoI
 func (r *VideoActorMappingRepo) FindByActorIdAndVideoType(ctx context.Context, actorId int64, videoType string) ([]*sdomain.VideoActorMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.ActorID.Eq(actorId)).Where(gen.VideoActorMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoActorMapping, index int) *sdomain.VideoActorMapping {
 		return (&sdomain.VideoActorMapping{}).ConvertFromRepo(item)

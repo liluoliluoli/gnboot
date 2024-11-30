@@ -30,7 +30,7 @@ func (r *KeywordRepo) do(ctx context.Context, tx *gen.Query) gen.IKeywordDo {
 func (r *KeywordRepo) Get(ctx context.Context, id int64) (*sdomain.Keyword, error) {
 	find, err := r.do(ctx, nil).Where(gen.Keyword.ID.Eq(id)).First()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return (&sdomain.Keyword{}).ConvertFromRepo(find), nil
 }
@@ -42,7 +42,7 @@ func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) 
 	}
 	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return &sdomain.PageResult[*sdomain.Keyword]{
 		Page: &sdomain.Page{
@@ -59,7 +59,7 @@ func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) 
 func (r *KeywordRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Keyword, error) {
 	finds, err := r.do(ctx, nil).Where(gen.Keyword.ID.In(ids...)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.Keyword, index int) *sdomain.Keyword {
 		return (&sdomain.Keyword{}).ConvertFromRepo(item)
@@ -69,7 +69,7 @@ func (r *KeywordRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Ke
 func (r *KeywordRepo) FindAll(ctx context.Context) ([]*sdomain.Keyword, error) {
 	finds, err := r.do(ctx, nil).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.Keyword, index int) *sdomain.Keyword {
 		return (&sdomain.Keyword{}).ConvertFromRepo(item)

@@ -29,7 +29,7 @@ func (r *VideoKeywordMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVi
 func (r *VideoKeywordMappingRepo) FindByVideoIdAndType(ctx context.Context, videoId []int64, videoType string) ([]*sdomain.VideoKeywordMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoKeywordMapping.VideoID.In(videoId...)).Where(gen.VideoKeywordMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoKeywordMapping, index int) *sdomain.VideoKeywordMapping {
 		return (&sdomain.VideoKeywordMapping{}).ConvertFromRepo(item)
@@ -39,7 +39,7 @@ func (r *VideoKeywordMappingRepo) FindByVideoIdAndType(ctx context.Context, vide
 func (r *VideoKeywordMappingRepo) FindByKeywordIdAndVideoType(ctx context.Context, keywordId int64, videoType string) ([]*sdomain.VideoKeywordMapping, error) {
 	finds, err := r.do(ctx, nil).Where(gen.VideoKeywordMapping.KeywordID.Eq(keywordId)).Where(gen.VideoKeywordMapping.VideoType.Eq(videoType)).Find()
 	if err != nil {
-		return nil, handleQueryError(err)
+		return nil, handleQueryError(ctx, err)
 	}
 	return lo.Map(finds, func(item *model.VideoKeywordMapping, index int) *sdomain.VideoKeywordMapping {
 		return (&sdomain.VideoKeywordMapping{}).ConvertFromRepo(item)

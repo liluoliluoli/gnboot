@@ -1,7 +1,6 @@
 package sdomain
 
 import (
-	"github.com/go-cinch/common/page"
 	moviedto "github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
@@ -67,12 +66,12 @@ func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 }
 
 type SearchMovie struct {
-	Page      *page.Page `json:"page"`
-	Search    string     `json:"search"`
-	Id        int64      `json:"id"`
-	Type      string     `json:"type"`
-	FilterIds []int64    `json:"filterIds"`
-	Sort      *Sort      `json:"sort"`
+	Page      *Page   `json:"page"`
+	Search    string  `json:"search"`
+	Id        int64   `json:"id"`
+	Type      string  `json:"type"`
+	FilterIds []int64 `json:"filterIds"`
+	Sort      *Sort   `json:"sort"`
 }
 
 type UpdateMovie struct {

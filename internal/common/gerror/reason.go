@@ -1,4 +1,4 @@
-package sdomain
+package gerror
 
 import (
 	"context"
@@ -32,3 +32,10 @@ var (
 		return i18n.NewError(ctx, constant.IllegalParameter, reason.ErrorIllegalParameter, args...)
 	}
 )
+
+func HandleRedisNotFoundError(err error) error {
+	if err.Error() == "redis:nil" {
+		return nil
+	}
+	return err
+}

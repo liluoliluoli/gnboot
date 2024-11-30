@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"github.com/go-cinch/common/page"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
@@ -43,15 +42,15 @@ func (r *SeriesRepo) Page(ctx context.Context, condition *sdomain.SearchSeries) 
 	if len(condition.FilterIds) != 0 {
 		do = do.Where(gen.Series.ID.In(condition.FilterIds...))
 	}
-	list, total, err := do.Order(gen.Series.UpdateTime.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
+	list, total, err := do.Order(gen.Series.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
 		return nil, handleQueryError(err)
 	}
 	return &sdomain.PageResult[*sdomain.Series]{
-		Page: &page.Page{
-			Num:   condition.Page.Num,
-			Size:  condition.Page.Size,
-			Total: total,
+		Page: &sdomain.Page{
+			CurrentPage: condition.Page.CurrentPage,
+			PageSize:    condition.Page.PageSize,
+			TotalPage:   total,
 		},
 		List: lo.Map(list, func(item *model.Series, index int) *sdomain.Series {
 			return (&sdomain.Series{}).ConvertFromRepo(item)

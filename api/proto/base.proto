@@ -9,3 +9,14 @@ message Sort {
   optional string type = 2;
   optional string direction = 3;
 }
+
+message Page {
+  int32 currentPage = 1;
+  int32 pageSize = 2;
+  int32 totalPage = 3;
+  int64 count = 4;
+}
+
+message IdsRequest {
+  string ids = 1;
+}

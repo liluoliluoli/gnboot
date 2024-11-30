@@ -6,7 +6,7 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "cinch/params/params.proto";
+import "proto/base.proto";
 
 option go_package = "github.com/liluoliluoli/gnboot/api/subtitle";
 
@@ -64,6 +64,6 @@ additional_properties:
     string mimeType = 5;
   }
 
-  message FindSubtitleRequest { params.Page page = 1; }
+  message FindSubtitleRequest { Page page = 1; }
 
-  message FindSubtitleResp { params.Page page = 1; }
+  message FindSubtitleResp { Page page = 1; }

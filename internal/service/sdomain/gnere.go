@@ -1,7 +1,6 @@
 package sdomain
 
 import (
-	"github.com/go-cinch/common/page"
 	dto "github.com/liluoliluoli/gnboot/api/genre"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
@@ -26,7 +25,7 @@ func (d *Genre) ConvertToDto() *dto.GenreResp {
 }
 
 type FindGenre struct {
-	Page   page.Page `json:"page"`
-	Search *string   `json:"search"`
-	Sort   *Sort     `json:"sort"`
+	Page   Page    `json:"page"`
+	Search *string `json:"search"`
+	Sort   *Sort   `json:"sort"`
 }

@@ -8,9 +8,9 @@ package movie
 
 import (
 	context "context"
-	params "github.com/go-cinch/common/proto/params"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	api "github.com/liluoliluoli/gnboot/api"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -31,7 +31,7 @@ const OperationMovieRemoteServiceUpdateMovie = "/gnboot.MovieRemoteService/Updat
 type MovieRemoteServiceHTTPServer interface {
 	// CreateMovie create one Movie record
 	CreateMovie(context.Context, *CreateMovieRequest) (*emptypb.Empty, error)
-	DeleteMovie(context.Context, *params.IdsRequest) (*emptypb.Empty, error)
+	DeleteMovie(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	FilterMovie(context.Context, *FilterMovieRequest) (*SearchMovieResp, error)
 	FindMovie(context.Context, *FindMovieRequest) (*SearchMovieResp, error)
 	GetMovie(context.Context, *GetMovieRequest) (*MovieResp, error)
@@ -180,13 +180,13 @@ func _MovieRemoteService_UpdateMovie1_HTTP_Handler(srv MovieRemoteServiceHTTPSer
 
 func _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in params.IdsRequest
+		var in api.IdsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationMovieRemoteServiceDeleteMovie)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteMovie(ctx, req.(*params.IdsRequest))
+			return srv.DeleteMovie(ctx, req.(*api.IdsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -199,7 +199,7 @@ func _MovieRemoteService_DeleteMovie0_HTTP_Handler(srv MovieRemoteServiceHTTPSer
 
 type MovieRemoteServiceHTTPClient interface {
 	CreateMovie(ctx context.Context, req *CreateMovieRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	DeleteMovie(ctx context.Context, req *params.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DeleteMovie(ctx context.Context, req *api.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	FilterMovie(ctx context.Context, req *FilterMovieRequest, opts ...http.CallOption) (rsp *SearchMovieResp, err error)
 	FindMovie(ctx context.Context, req *FindMovieRequest, opts ...http.CallOption) (rsp *SearchMovieResp, err error)
 	GetMovie(ctx context.Context, req *GetMovieRequest, opts ...http.CallOption) (rsp *MovieResp, err error)
@@ -227,7 +227,7 @@ func (c *MovieRemoteServiceHTTPClientImpl) CreateMovie(ctx context.Context, in *
 	return &out, nil
 }
 
-func (c *MovieRemoteServiceHTTPClientImpl) DeleteMovie(ctx context.Context, in *params.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *MovieRemoteServiceHTTPClientImpl) DeleteMovie(ctx context.Context, in *api.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/movie/delete"
 	path := binding.EncodeURL(pattern, in, true)

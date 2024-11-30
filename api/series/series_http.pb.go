@@ -8,9 +8,9 @@ package series
 
 import (
 	context "context"
-	params "github.com/go-cinch/common/proto/params"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	api "github.com/liluoliluoli/gnboot/api"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -28,7 +28,7 @@ const OperationSeriesRemoteServiceGetSeries = "/gnboot.SeriesRemoteService/GetSe
 const OperationSeriesRemoteServiceUpdateSeries = "/gnboot.SeriesRemoteService/UpdateSeries"
 
 type SeriesRemoteServiceHTTPServer interface {
-	DeleteSeries(context.Context, *params.IdsRequest) (*emptypb.Empty, error)
+	DeleteSeries(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	GetSeries(context.Context, *GetSeriesRequest) (*SeriesResp, error)
@@ -154,13 +154,13 @@ func _SeriesRemoteService_UpdateSeries1_HTTP_Handler(srv SeriesRemoteServiceHTTP
 
 func _SeriesRemoteService_DeleteSeries0_HTTP_Handler(srv SeriesRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in params.IdsRequest
+		var in api.IdsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationSeriesRemoteServiceDeleteSeries)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteSeries(ctx, req.(*params.IdsRequest))
+			return srv.DeleteSeries(ctx, req.(*api.IdsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -172,7 +172,7 @@ func _SeriesRemoteService_DeleteSeries0_HTTP_Handler(srv SeriesRemoteServiceHTTP
 }
 
 type SeriesRemoteServiceHTTPClient interface {
-	DeleteSeries(ctx context.Context, req *params.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DeleteSeries(ctx context.Context, req *api.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	FilterSeries(ctx context.Context, req *FilterSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	FindSeries(ctx context.Context, req *FindSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	GetSeries(ctx context.Context, req *GetSeriesRequest, opts ...http.CallOption) (rsp *SeriesResp, err error)
@@ -187,7 +187,7 @@ func NewSeriesRemoteServiceHTTPClient(client *http.Client) SeriesRemoteServiceHT
 	return &SeriesRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *SeriesRemoteServiceHTTPClientImpl) DeleteSeries(ctx context.Context, in *params.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *SeriesRemoteServiceHTTPClientImpl) DeleteSeries(ctx context.Context, in *api.IdsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/series/delete"
 	path := binding.EncodeURL(pattern, in, true)

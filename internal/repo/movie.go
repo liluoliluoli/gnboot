@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"github.com/go-cinch/common/page"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
@@ -44,15 +43,15 @@ func (r *MovieRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 	if len(condition.FilterIds) != 0 {
 		do = do.Where(gen.Movie.ID.In(condition.FilterIds...))
 	}
-	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.Num-1)*condition.Page.Size), int(condition.Page.Size))
+	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {
 		return nil, handleQueryError(err)
 	}
 	return &sdomain.PageResult[*sdomain.Movie]{
-		Page: &page.Page{
-			Num:   condition.Page.Num,
-			Size:  condition.Page.Size,
-			Total: total,
+		Page: &sdomain.Page{
+			CurrentPage: condition.Page.CurrentPage,
+			PageSize:    condition.Page.PageSize,
+			TotalPage:   total,
 		},
 		List: lo.Map(list, func(item *model.Movie, index int) *sdomain.Movie {
 			return (&sdomain.Movie{}).ConvertFromRepo(item)

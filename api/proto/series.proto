@@ -6,7 +6,6 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "cinch/params/params.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";
@@ -82,7 +81,7 @@ additional_properties:
         }
       };
     }
-    rpc DeleteSeries(params.IdsRequest) returns (google.protobuf.Empty) {
+    rpc DeleteSeries(IdsRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         delete : "/series/delete"
       };
@@ -119,18 +118,18 @@ additional_properties:
   }
 
   message FindSeriesRequest {
-    params.Page page = 1;
+    Page page = 1;
     optional string search = 2;
     optional Sort sort = 3;
   }
 
   message SearchSeriesResp {
-    params.Page page = 1;
+    Page page = 1;
     repeated SeriesResp list = 2;
   }
 
   message FilterSeriesRequest {
-    params.Page page = 1;
+    Page page = 1;
     int64 id = 2;
     string type = 3;
   }

@@ -8,7 +8,7 @@ package movie
 
 import (
 	context "context"
-	params "github.com/go-cinch/common/proto/params"
+	api "github.com/liluoliluoli/gnboot/api"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -39,7 +39,7 @@ type MovieRemoteServiceClient interface {
 	FindMovie(ctx context.Context, in *FindMovieRequest, opts ...grpc.CallOption) (*SearchMovieResp, error)
 	FilterMovie(ctx context.Context, in *FilterMovieRequest, opts ...grpc.CallOption) (*SearchMovieResp, error)
 	UpdateMovie(ctx context.Context, in *UpdateMovieRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteMovie(ctx context.Context, in *params.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteMovie(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type movieRemoteServiceClient struct {
@@ -95,7 +95,7 @@ func (c *movieRemoteServiceClient) UpdateMovie(ctx context.Context, in *UpdateMo
 	return out, nil
 }
 
-func (c *movieRemoteServiceClient) DeleteMovie(ctx context.Context, in *params.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *movieRemoteServiceClient) DeleteMovie(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, MovieRemoteService_DeleteMovie_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -114,7 +114,7 @@ type MovieRemoteServiceServer interface {
 	FindMovie(context.Context, *FindMovieRequest) (*SearchMovieResp, error)
 	FilterMovie(context.Context, *FilterMovieRequest) (*SearchMovieResp, error)
 	UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error)
-	DeleteMovie(context.Context, *params.IdsRequest) (*emptypb.Empty, error)
+	DeleteMovie(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMovieRemoteServiceServer()
 }
 
@@ -137,7 +137,7 @@ func (UnimplementedMovieRemoteServiceServer) FilterMovie(context.Context, *Filte
 func (UnimplementedMovieRemoteServiceServer) UpdateMovie(context.Context, *UpdateMovieRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMovie not implemented")
 }
-func (UnimplementedMovieRemoteServiceServer) DeleteMovie(context.Context, *params.IdsRequest) (*emptypb.Empty, error) {
+func (UnimplementedMovieRemoteServiceServer) DeleteMovie(context.Context, *api.IdsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMovie not implemented")
 }
 func (UnimplementedMovieRemoteServiceServer) mustEmbedUnimplementedMovieRemoteServiceServer() {}
@@ -244,7 +244,7 @@ func _MovieRemoteService_UpdateMovie_Handler(srv interface{}, ctx context.Contex
 }
 
 func _MovieRemoteService_DeleteMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(params.IdsRequest)
+	in := new(api.IdsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -256,7 +256,7 @@ func _MovieRemoteService_DeleteMovie_Handler(srv interface{}, ctx context.Contex
 		FullMethod: MovieRemoteService_DeleteMovie_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MovieRemoteServiceServer).DeleteMovie(ctx, req.(*params.IdsRequest))
+		return srv.(MovieRemoteServiceServer).DeleteMovie(ctx, req.(*api.IdsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

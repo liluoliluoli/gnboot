@@ -1,7 +1,6 @@
 package sdomain
 
 import (
-	"github.com/go-cinch/common/page"
 	seriesdto "github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
@@ -43,10 +42,10 @@ func (d *Series) ConvertToDto() *seriesdto.SeriesResp {
 }
 
 type SearchSeries struct {
-	Page      *page.Page `json:"page"`
-	Search    string     `json:"search"`
-	Id        int64      `json:"id"`
-	Type      string     `json:"type"`
-	FilterIds []int64    `json:"filterIds"`
-	Sort      *Sort      `json:"sort"`
+	Page      *Page   `json:"page"`
+	Search    string  `json:"search"`
+	Id        int64   `json:"id"`
+	Type      string  `json:"type"`
+	FilterIds []int64 `json:"filterIds"`
+	Sort      *Sort   `json:"sort"`
 }

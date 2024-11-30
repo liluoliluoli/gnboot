@@ -8,7 +8,7 @@ package series
 
 import (
 	context "context"
-	params "github.com/go-cinch/common/proto/params"
+	api "github.com/liluoliluoli/gnboot/api"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -36,7 +36,7 @@ type SeriesRemoteServiceClient interface {
 	FindSeries(ctx context.Context, in *FindSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
 	FilterSeries(ctx context.Context, in *FilterSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
 	UpdateSeries(ctx context.Context, in *UpdateSeriesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteSeries(ctx context.Context, in *params.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteSeries(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type seriesRemoteServiceClient struct {
@@ -83,7 +83,7 @@ func (c *seriesRemoteServiceClient) UpdateSeries(ctx context.Context, in *Update
 	return out, nil
 }
 
-func (c *seriesRemoteServiceClient) DeleteSeries(ctx context.Context, in *params.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *seriesRemoteServiceClient) DeleteSeries(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, SeriesRemoteService_DeleteSeries_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -100,7 +100,7 @@ type SeriesRemoteServiceServer interface {
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
 	UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error)
-	DeleteSeries(context.Context, *params.IdsRequest) (*emptypb.Empty, error)
+	DeleteSeries(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSeriesRemoteServiceServer()
 }
 
@@ -120,7 +120,7 @@ func (UnimplementedSeriesRemoteServiceServer) FilterSeries(context.Context, *Fil
 func (UnimplementedSeriesRemoteServiceServer) UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSeries not implemented")
 }
-func (UnimplementedSeriesRemoteServiceServer) DeleteSeries(context.Context, *params.IdsRequest) (*emptypb.Empty, error) {
+func (UnimplementedSeriesRemoteServiceServer) DeleteSeries(context.Context, *api.IdsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSeries not implemented")
 }
 func (UnimplementedSeriesRemoteServiceServer) mustEmbedUnimplementedSeriesRemoteServiceServer() {}
@@ -209,7 +209,7 @@ func _SeriesRemoteService_UpdateSeries_Handler(srv interface{}, ctx context.Cont
 }
 
 func _SeriesRemoteService_DeleteSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(params.IdsRequest)
+	in := new(api.IdsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -221,7 +221,7 @@ func _SeriesRemoteService_DeleteSeries_Handler(srv interface{}, ctx context.Cont
 		FullMethod: SeriesRemoteService_DeleteSeries_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SeriesRemoteServiceServer).DeleteSeries(ctx, req.(*params.IdsRequest))
+		return srv.(SeriesRemoteServiceServer).DeleteSeries(ctx, req.(*api.IdsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

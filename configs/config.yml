@@ -11,7 +11,7 @@ server:
   idempotent: true
   validate: true
   # disable service.Cache or not
-  nocache: true
+  nocache: false
 data:
   database:
     driver: mysql

@@ -6,7 +6,6 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "cinch/params/params.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";

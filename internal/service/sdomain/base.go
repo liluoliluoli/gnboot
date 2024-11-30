@@ -2,7 +2,6 @@ package sdomain
 
 import (
 	"context"
-	"github.com/go-cinch/common/page"
 	"github.com/go-cinch/common/worker"
 	"github.com/redis/go-redis/v9"
 )
@@ -27,8 +26,15 @@ type Task struct {
 }
 
 type PageResult[T any] struct {
-	Page *page.Page `json:"page"`
-	List []T        `json:"list"`
+	Page *Page `json:"page"`
+	List []T   `json:"list"`
+}
+
+type Page struct {
+	CurrentPage int32 `json:"currentPage"`
+	PageSize    int32 `json:"pageSize"`
+	TotalPage   int32 `json:"totalPage"`
+	Count       bool  `json:"count"`
 }
 
 type Sort struct {

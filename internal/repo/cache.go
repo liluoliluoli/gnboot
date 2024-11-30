@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/liluoliluoli/gnboot/internal/utils/json_util"
 	"math/rand"
@@ -73,6 +74,7 @@ func (c *Cache[T]) Get(
 	if !c.refresh { //无需回源
 		// 1. first get cache
 		rs, err := c.redis.Get(ctx, key).Result()
+		err = gerror.HandleRedisNotFoundError(err)
 		if err == nil {
 			// cache exists
 			res, err := json_util.Unmarshal[T](rs)
@@ -82,7 +84,7 @@ func (c *Cache[T]) Get(
 	// 2. get lock before read db
 	ok := c.Lock(ctx, action)
 	if !ok {
-		return _res, sdomain.ErrTooManyRequests(ctx)
+		return _res, gerror.ErrTooManyRequests(ctx)
 	}
 	defer c.Unlock(ctx, action)
 	// 3. load repo from db and write to cache
@@ -110,6 +112,7 @@ func (c *Cache[T]) List(
 	if !c.refresh { //无需回源
 		// 1. first get cache
 		rs, err := c.redis.Get(ctx, key).Result()
+		err = gerror.HandleRedisNotFoundError(err)
 		if err == nil {
 			// cache exists
 			res, err := json_util.Unmarshal[[]T](rs)
@@ -119,7 +122,7 @@ func (c *Cache[T]) List(
 	// 2. get lock before read db
 	ok := c.Lock(ctx, action)
 	if !ok {
-		return _res, sdomain.ErrTooManyRequests(ctx)
+		return _res, gerror.ErrTooManyRequests(ctx)
 	}
 	defer c.Unlock(ctx, action)
 	// 3. load repo from db and write to cache
@@ -147,6 +150,7 @@ func (c *Cache[T]) Page(
 	if !c.refresh { //无需回源
 		// 1. first get cache
 		rs, err := c.redis.Get(ctx, key).Result()
+		err = gerror.HandleRedisNotFoundError(err)
 		if err == nil {
 			// cache exists
 			res, err := json_util.Unmarshal[*sdomain.PageResult[T]](rs)
@@ -156,7 +160,7 @@ func (c *Cache[T]) Page(
 	// 2. get lock before read db
 	ok := c.Lock(ctx, action)
 	if !ok {
-		return _res, sdomain.ErrTooManyRequests(ctx)
+		return _res, gerror.ErrTooManyRequests(ctx)
 	}
 	defer c.Unlock(ctx, action)
 	// 3. load repo from db and write to cache

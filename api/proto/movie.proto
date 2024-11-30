@@ -6,7 +6,6 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "cinch/params/params.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";
@@ -89,7 +88,7 @@ additional_properties:
         }
       };
     }
-    rpc DeleteMovie(params.IdsRequest) returns (google.protobuf.Empty) {
+    rpc DeleteMovie(IdsRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         delete : "/movie/delete"
       };
@@ -123,18 +122,18 @@ additional_properties:
   }
 
   message FindMovieRequest {
-    params.Page page = 1;
+    Page page = 1;
     optional string search = 2;
     optional Sort sort = 3;
   }
 
   message SearchMovieResp {
-    params.Page page = 1;
+    Page page = 1;
     repeated MovieResp list = 2;
   }
 
   message FilterMovieRequest {
-    params.Page page = 1;
+    Page page = 1;
     int64 id = 2;
     string type = 3;
   }

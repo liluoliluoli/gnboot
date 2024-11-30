@@ -172,6 +172,14 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie,
 				return item.VideoId
 			})...)
 		}
+	} else if condition.FilterByNextPlay {
+		userMovieMappings, err := s.videoUserMappingRepo.FindByUserIdAndVideoIdAndType(ctx, userId, nil, constant.VideoType_movie)
+		if err != nil {
+			return nil, err
+		}
+		filterIds = append(filterIds, lo.Map(userMovieMappings, func(item *sdomain.VideoUserMapping, index int) int64 {
+			return item.VideoId
+		})...)
 	}
 	condition.FilterIds = filterIds
 	pageResult, err := s.movieRepo.Page(ctx, condition)

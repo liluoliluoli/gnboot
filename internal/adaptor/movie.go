@@ -3,12 +3,7 @@ package adaptor
 import (
 	"context"
 	"github.com/liluoliluoli/gnboot/api"
-	"github.com/liluoliluoli/gnboot/api/actor"
-	"github.com/liluoliluoli/gnboot/api/genre"
-	"github.com/liluoliluoli/gnboot/api/keyword"
 	"github.com/liluoliluoli/gnboot/api/movie"
-	"github.com/liluoliluoli/gnboot/api/studio"
-	"github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/page_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
@@ -62,6 +57,7 @@ func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieReque
 				return ""
 			}),
 		},
+		FilterByNextPlay: false,
 	}
 	res, err := s.movie.Page(ctx, condition, 1)
 	if err != nil {
@@ -77,9 +73,10 @@ func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieReque
 
 func (s *MovieProvider) FilterMovie(ctx context.Context, req *movie.FilterMovieRequest) (*movie.SearchMovieResp, error) {
 	condition := &sdomain.SearchMovie{
-		Page: page_util.ToDomainPage(req.Page),
-		Id:   req.Id,
-		Type: req.Type,
+		Page:             page_util.ToDomainPage(req.Page),
+		Id:               req.Id,
+		Type:             req.Type,
+		FilterByNextPlay: false,
 	}
 	res, err := s.movie.Page(ctx, condition, 1)
 	if err != nil {
@@ -88,35 +85,24 @@ func (s *MovieProvider) FilterMovie(ctx context.Context, req *movie.FilterMovieR
 	return &movie.SearchMovieResp{
 		Page: page_util.ToAdaptorPage(res.Page),
 		List: lo.Map(res.List, func(item *sdomain.Movie, index int) *movie.MovieResp {
-			return &movie.MovieResp{
-				Id:            item.ID,
-				OriginalTitle: item.OriginalTitle,
-				Status:        item.Status,
-				VoteAverage:   item.VoteAverage,
-				VoteCount:     item.VoteCount,
-				Country:       item.Country,
-				Trailer:       item.Trailer,
-				Url:           item.URL,
-				Downloaded:    item.Downloaded,
-				FileSize:      item.FileSize,
-				Filename:      item.Filename,
-				Ext:           item.Ext,
-				Genres: lo.Map(item.Genres, func(item *sdomain.Genre, index int) *genre.GenreResp {
-					return item.ConvertToDto()
-				}),
-				Studios: lo.Map(item.Studios, func(item *sdomain.Studio, index int) *studio.StudioResp {
-					return item.ConvertToDto()
-				}),
-				Keywords: lo.Map(item.Keywords, func(item *sdomain.Keyword, index int) *keyword.KeywordResp {
-					return item.ConvertToDto()
-				}),
-				Actors: lo.Map(item.Actors, func(item *sdomain.Actor, index int) *actor.ActorResp {
-					return item.ConvertToDto()
-				}),
-				Subtitles: lo.Map(item.Subtitles, func(item *sdomain.VideoSubtitleMapping, index int) *subtitle.SubtitleResp {
-					return item.ConvertToDto()
-				}),
-			}
+			return item.ConvertToDto()
+		}),
+	}, nil
+}
+
+func (s *MovieProvider) NextToPlayMovies(ctx context.Context, req *movie.NextToPlayMoviesRequest) (*movie.SearchMovieResp, error) {
+	condition := &sdomain.SearchMovie{
+		Page:             page_util.ToDomainPage(req.Page),
+		FilterByNextPlay: true,
+	}
+	res, err := s.movie.Page(ctx, condition, 1)
+	if err != nil {
+		return nil, err
+	}
+	return &movie.SearchMovieResp{
+		Page: page_util.ToAdaptorPage(res.Page),
+		List: lo.Map(res.List, func(item *sdomain.Movie, index int) *movie.MovieResp {
+			return item.ConvertToDto()
 		}),
 	}, nil
 }

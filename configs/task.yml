@@ -1,9 +1,4 @@
 task:
   task1:
-    name: 'every10s'
-    expr: '* * 1 * * * *'
-  task2:
-    name: 'every3min'
+    name: '每天1点执行'
     expr: '0 0 1 * * * *'
-    timeout: 60
-    retry: 10

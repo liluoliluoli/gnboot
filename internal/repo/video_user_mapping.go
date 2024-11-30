@@ -26,8 +26,18 @@ func (r *VideoUserMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVideo
 	}
 }
 
-func (r *VideoUserMappingRepo) FindByUserIdAndVideoIdAndType(ctx context.Context, userId int64, videoId []int64, videoType string) ([]*sdomain.VideoUserMapping, error) {
-	finds, err := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.In(videoId...)).Where(gen.VideoUserMapping.VideoType.Eq(videoType)).Find()
+func (r *VideoUserMappingRepo) FindByUserIdAndVideoIdAndType(ctx context.Context, userId int64, videoIds []int64, videoType string) ([]*sdomain.VideoUserMapping, error) {
+	do := r.do(ctx, nil)
+	if userId != 0 {
+		do = do.Where(gen.VideoUserMapping.UserID.Eq(userId))
+	}
+	if len(videoIds) > 0 {
+		do.Where(gen.VideoUserMapping.VideoID.In(videoIds...))
+	}
+	if videoType != "" {
+		do = do.Where(gen.VideoUserMapping.VideoType.Eq(videoType))
+	}
+	finds, err := do.Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

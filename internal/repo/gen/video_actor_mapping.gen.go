@@ -33,6 +33,8 @@ func newVideoActorMapping(db *gorm.DB, opts ...gen.DOOption) videoActorMapping {
 	_videoActorMapping.VideoID = field.NewInt64(tableName, "video_id")
 	_videoActorMapping.ActorID = field.NewInt64(tableName, "actor_id")
 	_videoActorMapping.Character = field.NewString(tableName, "character")
+	_videoActorMapping.CreateTime = field.NewTime(tableName, "create_time")
+	_videoActorMapping.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_videoActorMapping.fillFieldMap()
 
@@ -42,12 +44,14 @@ func newVideoActorMapping(db *gorm.DB, opts ...gen.DOOption) videoActorMapping {
 type videoActorMapping struct {
 	videoActorMappingDo videoActorMappingDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	VideoType field.String // 影片类型，movie,series,season,episode
-	VideoID   field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
-	ActorID   field.Int64  // 演职人员id
-	Character field.String // 饰演角色名称
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	VideoType  field.String // 影片类型，movie,series,season,episode
+	VideoID    field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
+	ActorID    field.Int64  // 演职人员id
+	Character  field.String // 饰演角色名称
+	CreateTime field.Time   // 创建时间
+	UpdateTime field.Time   // 更新时间
 
 	fieldMap map[string]field.Expr
 }
@@ -69,6 +73,8 @@ func (v *videoActorMapping) updateTableName(table string) *videoActorMapping {
 	v.VideoID = field.NewInt64(table, "video_id")
 	v.ActorID = field.NewInt64(table, "actor_id")
 	v.Character = field.NewString(table, "character")
+	v.CreateTime = field.NewTime(table, "create_time")
+	v.UpdateTime = field.NewTime(table, "update_time")
 
 	v.fillFieldMap()
 
@@ -93,12 +99,14 @@ func (v *videoActorMapping) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (v *videoActorMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 5)
+	v.fieldMap = make(map[string]field.Expr, 7)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["actor_id"] = v.ActorID
 	v.fieldMap["character"] = v.Character
+	v.fieldMap["create_time"] = v.CreateTime
+	v.fieldMap["update_time"] = v.UpdateTime
 }
 
 func (v videoActorMapping) clone(db *gorm.DB) videoActorMapping {

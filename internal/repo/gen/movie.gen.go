@@ -45,8 +45,8 @@ func newMovie(db *gorm.DB, opts ...gen.DOOption) movie {
 	_movie.Year = field.NewString(tableName, "year")
 	_movie.Definition = field.NewString(tableName, "definition")
 	_movie.Promotional = field.NewString(tableName, "promotional")
-	_movie.CreateTime = field.NewString(tableName, "create_time")
-	_movie.UpdateTime = field.NewString(tableName, "update_time")
+	_movie.CreateTime = field.NewTime(tableName, "create_time")
+	_movie.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_movie.fillFieldMap()
 
@@ -74,8 +74,8 @@ type movie struct {
 	Year          field.String  // 年份
 	Definition    field.String  // 清晰度（1=720p,2=1080P，3=4k）
 	Promotional   field.String  // 封面地址
-	CreateTime    field.String  // 创建时间
-	UpdateTime    field.String  // 更新时间
+	CreateTime    field.Time    // 创建时间
+	UpdateTime    field.Time    // 更新时间
 
 	fieldMap map[string]field.Expr
 }
@@ -109,8 +109,8 @@ func (m *movie) updateTableName(table string) *movie {
 	m.Year = field.NewString(table, "year")
 	m.Definition = field.NewString(table, "definition")
 	m.Promotional = field.NewString(table, "promotional")
-	m.CreateTime = field.NewString(table, "create_time")
-	m.UpdateTime = field.NewString(table, "update_time")
+	m.CreateTime = field.NewTime(table, "create_time")
+	m.UpdateTime = field.NewTime(table, "update_time")
 
 	m.fillFieldMap()
 

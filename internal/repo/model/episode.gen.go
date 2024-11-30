@@ -4,19 +4,25 @@
 
 package model
 
+import (
+	"time"
+)
+
 const TableNameEpisode = "episode"
 
 // Episode mapped from table <episode>
 type Episode struct {
-	ID         int64   `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	SeasonID   *int64  `gorm:"column:season_id;type:bigint;comment:季id" json:"seasonId"`
-	Episode    int32   `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
-	SkipIntro  *int64  `gorm:"column:skip_intro;type:bigint;comment:片头跳过秒数" json:"skipIntro"`
-	SkipEnding *int64  `gorm:"column:skip_ending;type:bigint;comment:片尾跳过秒数" json:"skipEnding"`
-	URL        string  `gorm:"column:url;type:varchar(1024);not null;comment:影片地址" json:"url"`
-	Downloaded int32   `gorm:"column:downloaded;type:tinyint;not null;comment:是否能下载" json:"downloaded"`
-	Ext        *string `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
-	FileSize   *int64  `gorm:"column:file_size;type:bigint;comment:文件大小" json:"fileSize"`
+	ID         int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	SeasonID   *int64     `gorm:"column:season_id;type:bigint;comment:季id" json:"seasonId"`
+	Episode    int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
+	SkipIntro  *int64     `gorm:"column:skip_intro;type:bigint;comment:片头跳过秒数" json:"skipIntro"`
+	SkipEnding *int64     `gorm:"column:skip_ending;type:bigint;comment:片尾跳过秒数" json:"skipEnding"`
+	URL        string     `gorm:"column:url;type:varchar(1024);not null;comment:影片地址" json:"url"`
+	Downloaded int32      `gorm:"column:downloaded;type:tinyint;not null;comment:是否能下载" json:"downloaded"`
+	Ext        *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
+	FileSize   *int64     `gorm:"column:file_size;type:bigint;comment:文件大小" json:"fileSize"`
+	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
+	UpdateTime *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`
 }
 
 // TableName Episode's table name

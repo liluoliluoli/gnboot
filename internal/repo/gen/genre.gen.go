@@ -30,6 +30,8 @@ func newGenre(db *gorm.DB, opts ...gen.DOOption) genre {
 	_genre.ALL = field.NewAsterisk(tableName)
 	_genre.ID = field.NewInt64(tableName, "id")
 	_genre.Name = field.NewString(tableName, "name")
+	_genre.CreateTime = field.NewTime(tableName, "create_time")
+	_genre.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_genre.fillFieldMap()
 
@@ -39,9 +41,11 @@ func newGenre(db *gorm.DB, opts ...gen.DOOption) genre {
 type genre struct {
 	genreDo genreDo
 
-	ALL  field.Asterisk
-	ID   field.Int64  // 主键
-	Name field.String // 名称
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	Name       field.String // 名称
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -60,6 +64,8 @@ func (g *genre) updateTableName(table string) *genre {
 	g.ALL = field.NewAsterisk(table)
 	g.ID = field.NewInt64(table, "id")
 	g.Name = field.NewString(table, "name")
+	g.CreateTime = field.NewTime(table, "create_time")
+	g.UpdateTime = field.NewTime(table, "update_time")
 
 	g.fillFieldMap()
 
@@ -82,9 +88,11 @@ func (g *genre) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (g *genre) fillFieldMap() {
-	g.fieldMap = make(map[string]field.Expr, 2)
+	g.fieldMap = make(map[string]field.Expr, 4)
 	g.fieldMap["id"] = g.ID
 	g.fieldMap["name"] = g.Name
+	g.fieldMap["create_time"] = g.CreateTime
+	g.fieldMap["update_time"] = g.UpdateTime
 }
 
 func (g genre) clone(db *gorm.DB) genre {

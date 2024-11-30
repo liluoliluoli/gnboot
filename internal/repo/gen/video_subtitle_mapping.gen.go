@@ -35,6 +35,8 @@ func newVideoSubtitleMapping(db *gorm.DB, opts ...gen.DOOption) videoSubtitleMap
 	_videoSubtitleMapping.Title = field.NewString(tableName, "title")
 	_videoSubtitleMapping.Language = field.NewString(tableName, "language")
 	_videoSubtitleMapping.MimeType = field.NewString(tableName, "mime_type")
+	_videoSubtitleMapping.CreateTime = field.NewTime(tableName, "create_time")
+	_videoSubtitleMapping.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_videoSubtitleMapping.fillFieldMap()
 
@@ -44,14 +46,16 @@ func newVideoSubtitleMapping(db *gorm.DB, opts ...gen.DOOption) videoSubtitleMap
 type videoSubtitleMapping struct {
 	videoSubtitleMappingDo videoSubtitleMappingDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	VideoType field.String // 影片类型，movie,series,season,episode
-	VideoID   field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
-	URL       field.String // 字幕地址
-	Title     field.String // 字幕标题
-	Language  field.String // 字幕语言
-	MimeType  field.String // 字幕格式
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	VideoType  field.String // 影片类型，movie,series,season,episode
+	VideoID    field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
+	URL        field.String // 字幕地址
+	Title      field.String // 字幕标题
+	Language   field.String // 字幕语言
+	MimeType   field.String // 字幕格式
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -75,6 +79,8 @@ func (v *videoSubtitleMapping) updateTableName(table string) *videoSubtitleMappi
 	v.Title = field.NewString(table, "title")
 	v.Language = field.NewString(table, "language")
 	v.MimeType = field.NewString(table, "mime_type")
+	v.CreateTime = field.NewTime(table, "create_time")
+	v.UpdateTime = field.NewTime(table, "update_time")
 
 	v.fillFieldMap()
 
@@ -99,7 +105,7 @@ func (v *videoSubtitleMapping) GetFieldByName(fieldName string) (field.OrderExpr
 }
 
 func (v *videoSubtitleMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 7)
+	v.fieldMap = make(map[string]field.Expr, 9)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["video_id"] = v.VideoID
@@ -107,6 +113,8 @@ func (v *videoSubtitleMapping) fillFieldMap() {
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["language"] = v.Language
 	v.fieldMap["mime_type"] = v.MimeType
+	v.fieldMap["create_time"] = v.CreateTime
+	v.fieldMap["update_time"] = v.UpdateTime
 }
 
 func (v videoSubtitleMapping) clone(db *gorm.DB) videoSubtitleMapping {

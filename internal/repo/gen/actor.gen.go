@@ -34,6 +34,8 @@ func newActor(db *gorm.DB, opts ...gen.DOOption) actor {
 	_actor.Adult = field.NewBool(tableName, "adult")
 	_actor.Gender = field.NewBool(tableName, "gender")
 	_actor.Profile = field.NewString(tableName, "profile")
+	_actor.CreateTime = field.NewTime(tableName, "create_time")
+	_actor.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_actor.fillFieldMap()
 
@@ -50,6 +52,8 @@ type actor struct {
 	Adult       field.Bool   // 是否成年
 	Gender      field.Bool   // 性别
 	Profile     field.String // 演员的照片或头像的URL
+	CreateTime  field.Time
+	UpdateTime  field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -72,6 +76,8 @@ func (a *actor) updateTableName(table string) *actor {
 	a.Adult = field.NewBool(table, "adult")
 	a.Gender = field.NewBool(table, "gender")
 	a.Profile = field.NewString(table, "profile")
+	a.CreateTime = field.NewTime(table, "create_time")
+	a.UpdateTime = field.NewTime(table, "update_time")
 
 	a.fillFieldMap()
 
@@ -94,13 +100,15 @@ func (a *actor) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *actor) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 6)
+	a.fieldMap = make(map[string]field.Expr, 8)
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["name"] = a.Name
 	a.fieldMap["original_ame"] = a.OriginalAme
 	a.fieldMap["adult"] = a.Adult
 	a.fieldMap["gender"] = a.Gender
 	a.fieldMap["profile"] = a.Profile
+	a.fieldMap["create_time"] = a.CreateTime
+	a.fieldMap["update_time"] = a.UpdateTime
 }
 
 func (a actor) clone(db *gorm.DB) actor {

@@ -34,6 +34,8 @@ func newVideoUserMapping(db *gorm.DB, opts ...gen.DOOption) videoUserMapping {
 	_videoUserMapping.LastPlayedPosition = field.NewInt64(tableName, "last_played_position")
 	_videoUserMapping.LastPlayedTime = field.NewInt64(tableName, "last_played_time")
 	_videoUserMapping.Favorited = field.NewBool(tableName, "favorited")
+	_videoUserMapping.CreateTime = field.NewTime(tableName, "create_time")
+	_videoUserMapping.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_videoUserMapping.fillFieldMap()
 
@@ -50,6 +52,8 @@ type videoUserMapping struct {
 	LastPlayedPosition field.Int64  // 影片上次播放位置，第n秒
 	LastPlayedTime     field.Int64  // 上次播放时候
 	Favorited          field.Bool   // 是否收藏喜欢
+	CreateTime         field.Time
+	UpdateTime         field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -72,6 +76,8 @@ func (v *videoUserMapping) updateTableName(table string) *videoUserMapping {
 	v.LastPlayedPosition = field.NewInt64(table, "last_played_position")
 	v.LastPlayedTime = field.NewInt64(table, "last_played_time")
 	v.Favorited = field.NewBool(table, "favorited")
+	v.CreateTime = field.NewTime(table, "create_time")
+	v.UpdateTime = field.NewTime(table, "update_time")
 
 	v.fillFieldMap()
 
@@ -96,13 +102,15 @@ func (v *videoUserMapping) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (v *videoUserMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 6)
+	v.fieldMap = make(map[string]field.Expr, 8)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["last_played_position"] = v.LastPlayedPosition
 	v.fieldMap["last_played_time"] = v.LastPlayedTime
 	v.fieldMap["favorited"] = v.Favorited
+	v.fieldMap["create_time"] = v.CreateTime
+	v.fieldMap["update_time"] = v.UpdateTime
 }
 
 func (v videoUserMapping) clone(db *gorm.DB) videoUserMapping {

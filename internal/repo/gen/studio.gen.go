@@ -32,6 +32,8 @@ func newStudio(db *gorm.DB, opts ...gen.DOOption) studio {
 	_studio.Name = field.NewString(tableName, "name")
 	_studio.Country = field.NewString(tableName, "country")
 	_studio.Logo = field.NewString(tableName, "logo")
+	_studio.CreateTime = field.NewTime(tableName, "create_time")
+	_studio.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_studio.fillFieldMap()
 
@@ -41,11 +43,13 @@ func newStudio(db *gorm.DB, opts ...gen.DOOption) studio {
 type studio struct {
 	studioDo studioDo
 
-	ALL     field.Asterisk
-	ID      field.Int64  // 主键
-	Name    field.String // 名称
-	Country field.String // 国家
-	Logo    field.String // logo的地址
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	Name       field.String // 名称
+	Country    field.String // 国家
+	Logo       field.String // logo的地址
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +70,8 @@ func (s *studio) updateTableName(table string) *studio {
 	s.Name = field.NewString(table, "name")
 	s.Country = field.NewString(table, "country")
 	s.Logo = field.NewString(table, "logo")
+	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateTime = field.NewTime(table, "update_time")
 
 	s.fillFieldMap()
 
@@ -88,11 +94,13 @@ func (s *studio) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *studio) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 4)
+	s.fieldMap = make(map[string]field.Expr, 6)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["name"] = s.Name
 	s.fieldMap["country"] = s.Country
 	s.fieldMap["logo"] = s.Logo
+	s.fieldMap["create_time"] = s.CreateTime
+	s.fieldMap["update_time"] = s.UpdateTime
 }
 
 func (s studio) clone(db *gorm.DB) studio {

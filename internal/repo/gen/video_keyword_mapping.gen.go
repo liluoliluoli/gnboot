@@ -32,6 +32,8 @@ func newVideoKeywordMapping(db *gorm.DB, opts ...gen.DOOption) videoKeywordMappi
 	_videoKeywordMapping.VideoType = field.NewString(tableName, "video_type")
 	_videoKeywordMapping.VideoID = field.NewInt64(tableName, "video_id")
 	_videoKeywordMapping.KeywordID = field.NewInt64(tableName, "keyword_id")
+	_videoKeywordMapping.CreateTime = field.NewTime(tableName, "create_time")
+	_videoKeywordMapping.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_videoKeywordMapping.fillFieldMap()
 
@@ -41,11 +43,13 @@ func newVideoKeywordMapping(db *gorm.DB, opts ...gen.DOOption) videoKeywordMappi
 type videoKeywordMapping struct {
 	videoKeywordMappingDo videoKeywordMappingDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	VideoType field.String // 影片类型，movie,series,season,episode
-	VideoID   field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
-	KeywordID field.Int64  // 关键词id
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	VideoType  field.String // 影片类型，movie,series,season,episode
+	VideoID    field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
+	KeywordID  field.Int64  // 关键词id
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +70,8 @@ func (v *videoKeywordMapping) updateTableName(table string) *videoKeywordMapping
 	v.VideoType = field.NewString(table, "video_type")
 	v.VideoID = field.NewInt64(table, "video_id")
 	v.KeywordID = field.NewInt64(table, "keyword_id")
+	v.CreateTime = field.NewTime(table, "create_time")
+	v.UpdateTime = field.NewTime(table, "update_time")
 
 	v.fillFieldMap()
 
@@ -90,11 +96,13 @@ func (v *videoKeywordMapping) GetFieldByName(fieldName string) (field.OrderExpr,
 }
 
 func (v *videoKeywordMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 4)
+	v.fieldMap = make(map[string]field.Expr, 6)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["keyword_id"] = v.KeywordID
+	v.fieldMap["create_time"] = v.CreateTime
+	v.fieldMap["update_time"] = v.UpdateTime
 }
 
 func (v videoKeywordMapping) clone(db *gorm.DB) videoKeywordMapping {

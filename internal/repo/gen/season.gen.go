@@ -35,6 +35,8 @@ func newSeason(db *gorm.DB, opts ...gen.DOOption) season {
 	_season.SkipIntro = field.NewInt64(tableName, "skip_intro")
 	_season.SkipEnding = field.NewInt64(tableName, "skip_ending")
 	_season.EpisodeCount = field.NewInt32(tableName, "episode_count")
+	_season.CreateTime = field.NewTime(tableName, "create_time")
+	_season.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_season.fillFieldMap()
 
@@ -52,6 +54,8 @@ type season struct {
 	SkipIntro    field.Int64  // 片头跳过秒数
 	SkipEnding   field.Int64  // 片尾跳过秒数
 	EpisodeCount field.Int32  // 总集数
+	CreateTime   field.Time
+	UpdateTime   field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -75,6 +79,8 @@ func (s *season) updateTableName(table string) *season {
 	s.SkipIntro = field.NewInt64(table, "skip_intro")
 	s.SkipEnding = field.NewInt64(table, "skip_ending")
 	s.EpisodeCount = field.NewInt32(table, "episode_count")
+	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateTime = field.NewTime(table, "update_time")
 
 	s.fillFieldMap()
 
@@ -97,7 +103,7 @@ func (s *season) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *season) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 9)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["series_id"] = s.SeriesID
 	s.fieldMap["season"] = s.Season
@@ -105,6 +111,8 @@ func (s *season) fillFieldMap() {
 	s.fieldMap["skip_intro"] = s.SkipIntro
 	s.fieldMap["skip_ending"] = s.SkipEnding
 	s.fieldMap["episode_count"] = s.EpisodeCount
+	s.fieldMap["create_time"] = s.CreateTime
+	s.fieldMap["update_time"] = s.UpdateTime
 }
 
 func (s season) clone(db *gorm.DB) season {

@@ -4,12 +4,18 @@
 
 package model
 
+import (
+	"time"
+)
+
 const TableNameGenre = "genre"
 
 // Genre mapped from table <genre>
 type Genre struct {
-	ID   int64  `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	Name string `gorm:"column:name;type:varchar(32);not null;comment:名称" json:"name"`
+	ID         int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	Name       string     `gorm:"column:name;type:varchar(32);not null;comment:名称" json:"name"`
+	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
+	UpdateTime *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`
 }
 
 // TableName Genre's table name

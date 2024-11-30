@@ -37,6 +37,8 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.Downloaded = field.NewInt32(tableName, "downloaded")
 	_episode.Ext = field.NewString(tableName, "ext")
 	_episode.FileSize = field.NewInt64(tableName, "file_size")
+	_episode.CreateTime = field.NewTime(tableName, "create_time")
+	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_episode.fillFieldMap()
 
@@ -56,6 +58,8 @@ type episode struct {
 	Downloaded field.Int32  // 是否能下载
 	Ext        field.String // 扩展参数
 	FileSize   field.Int64  // 文件大小
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -81,6 +85,8 @@ func (e *episode) updateTableName(table string) *episode {
 	e.Downloaded = field.NewInt32(table, "downloaded")
 	e.Ext = field.NewString(table, "ext")
 	e.FileSize = field.NewInt64(table, "file_size")
+	e.CreateTime = field.NewTime(table, "create_time")
+	e.UpdateTime = field.NewTime(table, "update_time")
 
 	e.fillFieldMap()
 
@@ -103,7 +109,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 9)
+	e.fieldMap = make(map[string]field.Expr, 11)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["season_id"] = e.SeasonID
 	e.fieldMap["episode"] = e.Episode
@@ -113,6 +119,8 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["downloaded"] = e.Downloaded
 	e.fieldMap["ext"] = e.Ext
 	e.fieldMap["file_size"] = e.FileSize
+	e.fieldMap["create_time"] = e.CreateTime
+	e.fieldMap["update_time"] = e.UpdateTime
 }
 
 func (e episode) clone(db *gorm.DB) episode {

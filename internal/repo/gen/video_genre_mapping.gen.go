@@ -32,6 +32,8 @@ func newVideoGenreMapping(db *gorm.DB, opts ...gen.DOOption) videoGenreMapping {
 	_videoGenreMapping.VideoType = field.NewString(tableName, "video_type")
 	_videoGenreMapping.VideoID = field.NewInt64(tableName, "video_id")
 	_videoGenreMapping.GenreID = field.NewInt64(tableName, "genre_id")
+	_videoGenreMapping.CreateTime = field.NewTime(tableName, "create_time")
+	_videoGenreMapping.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_videoGenreMapping.fillFieldMap()
 
@@ -41,11 +43,13 @@ func newVideoGenreMapping(db *gorm.DB, opts ...gen.DOOption) videoGenreMapping {
 type videoGenreMapping struct {
 	videoGenreMappingDo videoGenreMappingDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	VideoType field.String // 影片类型，movie,series,season,episode
-	VideoID   field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
-	GenreID   field.Int64  // 流派id
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	VideoType  field.String // 影片类型，movie,series,season,episode
+	VideoID    field.Int64  // 影片id，根据video_type类型分别来自movie,series,season,episode表
+	GenreID    field.Int64  // 流派id
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +70,8 @@ func (v *videoGenreMapping) updateTableName(table string) *videoGenreMapping {
 	v.VideoType = field.NewString(table, "video_type")
 	v.VideoID = field.NewInt64(table, "video_id")
 	v.GenreID = field.NewInt64(table, "genre_id")
+	v.CreateTime = field.NewTime(table, "create_time")
+	v.UpdateTime = field.NewTime(table, "update_time")
 
 	v.fillFieldMap()
 
@@ -90,11 +96,13 @@ func (v *videoGenreMapping) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (v *videoGenreMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 4)
+	v.fieldMap = make(map[string]field.Expr, 6)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["genre_id"] = v.GenreID
+	v.fieldMap["create_time"] = v.CreateTime
+	v.fieldMap["update_time"] = v.UpdateTime
 }
 
 func (v videoGenreMapping) clone(db *gorm.DB) videoGenreMapping {

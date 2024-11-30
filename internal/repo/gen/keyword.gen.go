@@ -30,6 +30,8 @@ func newKeyword(db *gorm.DB, opts ...gen.DOOption) keyword {
 	_keyword.ALL = field.NewAsterisk(tableName)
 	_keyword.ID = field.NewInt64(tableName, "id")
 	_keyword.Name = field.NewString(tableName, "name")
+	_keyword.CreateTime = field.NewTime(tableName, "create_time")
+	_keyword.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_keyword.fillFieldMap()
 
@@ -39,9 +41,11 @@ func newKeyword(db *gorm.DB, opts ...gen.DOOption) keyword {
 type keyword struct {
 	keywordDo keywordDo
 
-	ALL  field.Asterisk
-	ID   field.Int64  // 主键
-	Name field.String // 词名称
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	Name       field.String // 词名称
+	CreateTime field.Time
+	UpdateTime field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -60,6 +64,8 @@ func (k *keyword) updateTableName(table string) *keyword {
 	k.ALL = field.NewAsterisk(table)
 	k.ID = field.NewInt64(table, "id")
 	k.Name = field.NewString(table, "name")
+	k.CreateTime = field.NewTime(table, "create_time")
+	k.UpdateTime = field.NewTime(table, "update_time")
 
 	k.fillFieldMap()
 
@@ -82,9 +88,11 @@ func (k *keyword) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (k *keyword) fillFieldMap() {
-	k.fieldMap = make(map[string]field.Expr, 2)
+	k.fieldMap = make(map[string]field.Expr, 4)
 	k.fieldMap["id"] = k.ID
 	k.fieldMap["name"] = k.Name
+	k.fieldMap["create_time"] = k.CreateTime
+	k.fieldMap["update_time"] = k.UpdateTime
 }
 
 func (k keyword) clone(db *gorm.DB) keyword {

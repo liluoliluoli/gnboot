@@ -70,6 +70,7 @@ func NewGRPCServer(
 	if c.Server.Grpc.Timeout != nil {
 		opts = append(opts, grpc.Timeout(c.Server.Grpc.Timeout.AsDuration()))
 	}
+	opts = append(opts, grpc.UnaryInterceptor(localMiddleware.GrpcUnaryDisableTimeoutPropagation()))
 	srv := grpc.NewServer(opts...)
 	movie.RegisterMovieRemoteServiceServer(srv, movieProvider)
 	episode.RegisterEpisodeRemoteServiceServer(srv, episodeProvider)

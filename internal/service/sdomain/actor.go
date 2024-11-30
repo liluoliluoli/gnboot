@@ -28,7 +28,7 @@ func (d *Actor) UnmarshalBinary(data []byte) error {
 func (d *Actor) ConvertFromRepo(m *model.Actor) *Actor {
 	return &Actor{
 		ID:           m.ID,
-		Name:         lo.FromPtr(m.Name),
+		Name:         m.Name,
 		OriginalName: lo.FromPtr(m.OriginalAme),
 		Adult:        m.Adult,
 		Gender:       m.Gender,

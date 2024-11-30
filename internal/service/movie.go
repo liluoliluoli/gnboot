@@ -8,7 +8,9 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/liluoliluoli/gnboot/internal/utils/cache_util"
+	"github.com/liluoliluoli/gnboot/internal/utils/exp_util"
 	"github.com/samber/lo"
+	"time"
 )
 
 type MovieService struct {
@@ -23,6 +25,8 @@ type MovieService struct {
 	keywordRepo              *repo.KeywordRepo
 	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
+	userRepo                 *repo.UserRepo
+	videoUserMappingRepo     *repo.VideoUserMappingRepo
 	cache                    sdomain.Cache[*sdomain.Movie]
 }
 
@@ -32,7 +36,8 @@ func NewMovieService(c *conf.Bootstrap,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
 	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *MovieService {
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo,
+	userRepo *repo.UserRepo, videoUserMappingRepo *repo.VideoUserMappingRepo) *MovieService {
 	return &MovieService{
 		c:                        c,
 		movieRepo:                movieRepo,
@@ -45,6 +50,8 @@ func NewMovieService(c *conf.Bootstrap,
 		keywordRepo:              keywordRepo,
 		videoKeywordMappingRepo:  videoKeywordMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
+		userRepo:                 userRepo,
+		videoUserMappingRepo:     videoUserMappingRepo,
 		cache:                    repo.NewCache[*sdomain.Movie](c, movieRepo.Data.Cache()),
 	}
 }
@@ -62,13 +69,13 @@ func (s *MovieService) Create(ctx context.Context, item *sdomain.CreateMovie) er
 	return err
 }
 
-func (s *MovieService) Get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+func (s *MovieService) Get(ctx context.Context, id int64, userId int64) (*sdomain.Movie, error) {
 	return s.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Movie, error) {
-		return s.get(ctx, id)
+		return s.get(ctx, id, userId)
 	})
 }
 
-func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error) {
+func (s *MovieService) get(ctx context.Context, id int64, userId int64) (*sdomain.Movie, error) {
 	item, err := s.movieRepo.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -93,17 +100,27 @@ func (s *MovieService) get(ctx context.Context, id int64) (*sdomain.Movie, error
 	if err != nil {
 		return nil, err
 	}
+	moviePlayedMap, err := s.buildMovieLastPlayedInfo(ctx, userId, []*sdomain.Movie{item})
+	if err != nil {
+		return nil, err
+	}
 	item.Actors = actorsMap[item.ID]
 	item.Genres = genresMap[item.ID]
 	item.Keywords = keywordsMap[item.ID]
 	item.Studios = studiosMap[item.ID]
 	item.Subtitles = subtitlesMap[item.ID]
+	item.LastPlayedPosition = exp_util.Ternary(func() int32 {
+		return exp_util.If[int32](moviePlayedMap[item.ID] != nil).Then(moviePlayedMap[item.ID].LastPlayedPosition).Else(0)
+	})
+	item.LastPlayedTime = exp_util.Ternary(func() *time.Time {
+		return exp_util.If[*time.Time](moviePlayedMap[item.ID] != nil).Then(lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)).Else(nil)
+	})
 	return item, nil
 }
 
-func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie, userId int64) (*sdomain.PageResult[*sdomain.Movie], error) {
 	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Movie], error) {
-		return s.page(ctx, condition)
+		return s.page(ctx, condition, userId)
 	})
 	if err != nil {
 		return nil, err
@@ -111,7 +128,7 @@ func (s *MovieService) Page(ctx context.Context, condition *sdomain.SearchMovie)
 	return rp, nil
 }
 
-func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Movie], error) {
+func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie, userId int64) (*sdomain.PageResult[*sdomain.Movie], error) {
 	filterIds := make([]int64, 0)
 	if condition.Id != 0 && condition.Type == "" {
 		if condition.Type == constant.FilterType_genre {
@@ -120,7 +137,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(genreMappings, func(item *sdomain.VideoGenreMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_studio {
@@ -129,7 +146,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(studioMappings, func(item *sdomain.VideoStudioMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_keyword {
@@ -138,7 +155,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(keywordMappings, func(item *sdomain.VideoKeywordMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_actor {
@@ -177,12 +194,22 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie)
 		if err != nil {
 			return nil, err
 		}
+		moviePlayedMap, err := s.buildMovieLastPlayedInfo(ctx, userId, pageResult.List)
+		if err != nil {
+			return nil, err
+		}
 		for _, item := range pageResult.List {
 			item.Actors = actorsMap[item.ID]
 			item.Genres = genresMap[item.ID]
 			item.Subtitles = subtitlesMap[item.ID]
 			item.Keywords = keywordsMap[item.ID]
 			item.Studios = studiosMap[item.ID]
+			item.LastPlayedPosition = exp_util.Ternary(func() int32 {
+				return exp_util.If[int32](moviePlayedMap[item.ID] != nil).Then(moviePlayedMap[item.ID].LastPlayedPosition).Else(0)
+			})
+			item.LastPlayedTime = exp_util.Ternary(func() *time.Time {
+				return exp_util.If[*time.Time](moviePlayedMap[item.ID] != nil).Then(lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)).Else(nil)
+			})
 		}
 	}
 	return pageResult, nil
@@ -234,10 +261,10 @@ func (s *MovieService) buildMovieGenresMap(ctx context.Context, movies []*sdomai
 	})
 	rsMap := make(map[int64][]*sdomain.Genre)
 	for _, genreMapping := range genreMappings {
-		if _, ok := rsMap[genreMapping.VideId]; !ok {
-			rsMap[genreMapping.VideId] = make([]*sdomain.Genre, 0)
+		if _, ok := rsMap[genreMapping.VideoId]; !ok {
+			rsMap[genreMapping.VideoId] = make([]*sdomain.Genre, 0)
 		}
-		rsMap[genreMapping.VideId] = append(rsMap[genreMapping.VideId], genresMap[genreMapping.GenreId])
+		rsMap[genreMapping.VideoId] = append(rsMap[genreMapping.VideoId], genresMap[genreMapping.GenreId])
 	}
 	return rsMap, nil
 }
@@ -291,10 +318,10 @@ func (s *MovieService) buildMovieKeywordsMap(ctx context.Context, movies []*sdom
 	})
 	rsMap := make(map[int64][]*sdomain.Keyword)
 	for _, keywordMapping := range keywordMappings {
-		if _, ok := rsMap[keywordMapping.VideId]; !ok {
-			rsMap[keywordMapping.VideId] = make([]*sdomain.Keyword, 0)
+		if _, ok := rsMap[keywordMapping.VideoId]; !ok {
+			rsMap[keywordMapping.VideoId] = make([]*sdomain.Keyword, 0)
 		}
-		rsMap[keywordMapping.VideId] = append(rsMap[keywordMapping.VideId], keywordsMap[keywordMapping.KeywordId])
+		rsMap[keywordMapping.VideoId] = append(rsMap[keywordMapping.VideoId], keywordsMap[keywordMapping.KeywordId])
 	}
 	return rsMap, nil
 }
@@ -319,10 +346,10 @@ func (s *MovieService) buildMovieStudiosMap(ctx context.Context, movies []*sdoma
 	})
 	rsMap := make(map[int64][]*sdomain.Studio)
 	for _, studioMapping := range studioMappings {
-		if _, ok := rsMap[studioMapping.VideId]; !ok {
-			rsMap[studioMapping.VideId] = make([]*sdomain.Studio, 0)
+		if _, ok := rsMap[studioMapping.VideoId]; !ok {
+			rsMap[studioMapping.VideoId] = make([]*sdomain.Studio, 0)
 		}
-		rsMap[studioMapping.VideId] = append(rsMap[studioMapping.VideId], studiosMap[studioMapping.StudioId])
+		rsMap[studioMapping.VideoId] = append(rsMap[studioMapping.VideoId], studiosMap[studioMapping.StudioId])
 	}
 	return rsMap, nil
 }
@@ -337,6 +364,20 @@ func (s *MovieService) buildMovieSubtitlesMap(ctx context.Context, movies []*sdo
 		return nil, err
 	}
 	return lo.GroupBy(subtitleMappings, func(item *sdomain.VideoSubtitleMapping) int64 {
-		return item.VideId
+		return item.VideoId
+	}), nil
+}
+
+// 补齐最后播放信息
+func (s *MovieService) buildMovieLastPlayedInfo(ctx context.Context, userId int64, movies []*sdomain.Movie) (map[int64]*sdomain.VideoUserMapping, error) {
+	movieIds := lo.Map(movies, func(item *sdomain.Movie, index int) int64 {
+		return item.ID
+	})
+	userMappings, err := s.videoUserMappingRepo.FindByUserIdAndVideoIdAndType(ctx, userId, movieIds, constant.VideoType_movie)
+	if err != nil {
+		return nil, err
+	}
+	return lo.SliceToMap(userMappings, func(item *sdomain.VideoUserMapping) (int64, *sdomain.VideoUserMapping) {
+		return item.VideoId, item
 	}), nil
 }

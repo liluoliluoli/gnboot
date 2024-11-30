@@ -15,11 +15,12 @@ type VideoUserMapping struct {
 	ID                 int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
 	VideoType          string     `gorm:"column:video_type;type:varchar(32);not null;comment:影片类型，movie,series,season,episode" json:"videoType"`
 	VideoID            int64      `gorm:"column:video_id;type:bigint;not null;comment:影片id，根据video_type类型分别来自movie,series,season,episode表" json:"videoId"`
-	LastPlayedPosition *int64     `gorm:"column:last_played_position;type:bigint;comment:影片上次播放位置，第n秒" json:"lastPlayedPosition"`
-	LastPlayedTime     *int64     `gorm:"column:last_played_time;type:bigint;comment:上次播放时候" json:"lastPlayedTime"`
-	Favorited          bool       `gorm:"column:favorited;type:tinyint(1);not null;comment:是否收藏喜欢" json:"favorited"`
-	CreateTime         *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
-	UpdateTime         *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`
+	LastPlayedPosition *int32     `gorm:"column:last_played_position;type:int;comment:影片上次播放位置，第n秒" json:"lastPlayedPosition"`
+	LastPlayedTime     *time.Time `gorm:"column:last_played_time;type:datetime;comment:上次播放时候" json:"lastPlayedTime"`
+	Favorited          *bool      `gorm:"column:favorited;type:tinyint(1);comment:是否收藏喜欢" json:"favorited"`
+	CreateTime         time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime         time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
+	UserID             int64      `gorm:"column:user_id;type:bigint;not null;comment:用户id" json:"userId"`
 }
 
 // TableName VideoUserMapping's table name

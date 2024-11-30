@@ -12,13 +12,13 @@ const TableNameVideoActorMapping = "video_actor_mapping"
 
 // VideoActorMapping mapped from table <video_actor_mapping>
 type VideoActorMapping struct {
-	ID         int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	VideoType  string     `gorm:"column:video_type;type:varchar(32);not null;comment:影片类型，movie,series,season,episode" json:"videoType"`
-	VideoID    int64      `gorm:"column:video_id;type:bigint;not null;comment:影片id，根据video_type类型分别来自movie,series,season,episode表" json:"videoId"`
-	ActorID    int64      `gorm:"column:actor_id;type:bigint;not null;comment:演职人员id" json:"actorId"`
-	Character  *string    `gorm:"column:character;type:varchar(128);comment:饰演角色名称" json:"character"`
-	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime;comment:创建时间" json:"createTime"`
-	UpdateTime *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	ID         int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	VideoType  string    `gorm:"column:video_type;type:varchar(32);not null;comment:影片类型，movie,series,season,episode" json:"videoType"`
+	VideoID    int64     `gorm:"column:video_id;type:bigint;not null;comment:影片id，根据video_type类型分别来自movie,series,season,episode表" json:"videoId"`
+	ActorID    int64     `gorm:"column:actor_id;type:bigint;not null;comment:演职人员id" json:"actorId"`
+	Character  *string   `gorm:"column:character;type:varchar(128);comment:饰演角色名称" json:"character"`
+	CreateTime time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 }
 
 // TableName VideoActorMapping's table name

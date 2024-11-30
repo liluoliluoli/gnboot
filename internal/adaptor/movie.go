@@ -34,7 +34,7 @@ func (s *MovieProvider) CreateMovie(ctx context.Context, req *movie.CreateMovieR
 }
 
 func (s *MovieProvider) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (*movie.MovieResp, error) {
-	res, err := s.movie.Get(ctx, req.Id)
+	res, err := s.movie.Get(ctx, req.Id, 1)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieReque
 			}),
 		},
 	}
-	res, err := s.movie.Page(ctx, condition)
+	res, err := s.movie.Page(ctx, condition, 1)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (s *MovieProvider) FilterMovie(ctx context.Context, req *movie.FilterMovieR
 		Id:   req.Id,
 		Type: req.Type,
 	}
-	res, err := s.movie.Page(ctx, condition)
+	res, err := s.movie.Page(ctx, condition, 1)
 	if err != nil {
 		return nil, err
 	}

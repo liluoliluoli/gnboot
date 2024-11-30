@@ -12,10 +12,10 @@ const TableNameKeyword = "keyword"
 
 // Keyword mapped from table <keyword>
 type Keyword struct {
-	ID         int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	Name       string     `gorm:"column:name;type:varchar(128);not null;comment:词名称" json:"name"`
-	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
-	UpdateTime *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`
+	ID         int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	Name       string    `gorm:"column:name;type:varchar(128);not null;comment:词名称" json:"name"`
+	CreateTime time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
 }
 
 // TableName Keyword's table name

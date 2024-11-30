@@ -8,7 +8,7 @@ import (
 
 type VideoSubtitleMapping struct {
 	ID        int64  `json:"id"`
-	VideId    int64  `json:"videId"`
+	VideoId   int64  `json:"videoId"`
 	VideoType string `json:"type"`
 	Url       string `json:"url"`
 	Title     string `json:"title"`
@@ -27,7 +27,7 @@ func (d *VideoSubtitleMapping) UnmarshalBinary(data []byte) error {
 func (d *VideoSubtitleMapping) ConvertFromRepo(m *model.VideoSubtitleMapping) *VideoSubtitleMapping {
 	return &VideoSubtitleMapping{
 		ID:        m.ID,
-		VideId:    m.VideoID,
+		VideoId:   m.VideoID,
 		VideoType: m.VideoType,
 		Url:       m.URL,
 		Title:     m.Title,

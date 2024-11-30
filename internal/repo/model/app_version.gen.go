@@ -18,6 +18,8 @@ type AppVersion struct {
 	Body               *string   `gorm:"column:body;type:text;comment:备注" json:"body"`
 	Name               string    `gorm:"column:name;type:varchar(256);not null;comment:资源名称" json:"name"`
 	BrowserDownloadURL string    `gorm:"column:browser_download_url;type:varchar(1024);not null;comment:下载地址" json:"browserDownloadUrl"`
+	CreateTime         time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime         time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
 }
 
 // TableName AppVersion's table name

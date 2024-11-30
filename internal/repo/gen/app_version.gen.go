@@ -34,6 +34,8 @@ func newAppVersion(db *gorm.DB, opts ...gen.DOOption) appVersion {
 	_appVersion.Body = field.NewString(tableName, "body")
 	_appVersion.Name = field.NewString(tableName, "name")
 	_appVersion.BrowserDownloadURL = field.NewString(tableName, "browser_download_url")
+	_appVersion.CreateTime = field.NewTime(tableName, "create_time")
+	_appVersion.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_appVersion.fillFieldMap()
 
@@ -50,6 +52,8 @@ type appVersion struct {
 	Body               field.String // 备注
 	Name               field.String // 资源名称
 	BrowserDownloadURL field.String // 下载地址
+	CreateTime         field.Time
+	UpdateTime         field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -72,6 +76,8 @@ func (a *appVersion) updateTableName(table string) *appVersion {
 	a.Body = field.NewString(table, "body")
 	a.Name = field.NewString(table, "name")
 	a.BrowserDownloadURL = field.NewString(table, "browser_download_url")
+	a.CreateTime = field.NewTime(table, "create_time")
+	a.UpdateTime = field.NewTime(table, "update_time")
 
 	a.fillFieldMap()
 
@@ -96,13 +102,15 @@ func (a *appVersion) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *appVersion) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 6)
+	a.fieldMap = make(map[string]field.Expr, 8)
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["tag_name"] = a.TagName
 	a.fieldMap["published_at"] = a.PublishedAt
 	a.fieldMap["body"] = a.Body
 	a.fieldMap["name"] = a.Name
 	a.fieldMap["browser_download_url"] = a.BrowserDownloadURL
+	a.fieldMap["create_time"] = a.CreateTime
+	a.fieldMap["update_time"] = a.UpdateTime
 }
 
 func (a appVersion) clone(db *gorm.DB) appVersion {

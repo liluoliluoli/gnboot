@@ -19,8 +19,8 @@ type Series struct {
 	SkipEnding    *int64   `gorm:"column:skip_ending;type:bigint;comment:片尾跳过秒数" json:"skipEnding"`
 	FileSize      *int64   `gorm:"column:file_size;type:bigint;comment:文件大小" json:"fileSize"`
 	Filename      *string  `gorm:"column:filename;type:varchar(256);comment:文件名" json:"filename"`
-	CreateTime    *string  `gorm:"column:create_time;type:int unsigned;autoCreateTime;comment:创建时间" json:"createTime"`
-	UpdateTime    *string  `gorm:"column:update_time;type:int unsigned;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	CreateTime    string   `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime    string   `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 }
 
 // TableName Series's table name

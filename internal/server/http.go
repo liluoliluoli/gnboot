@@ -62,6 +62,7 @@ func NewHTTPServer(
 	if c.Server.Validate {
 		middlewares = append(middlewares, validate.Validator())
 	}
+	middlewares = append(middlewares, localMiddleware.HttpDisableTimeoutPropagation())
 	var opts = []http.ServerOption{http.Middleware(middlewares...)}
 	if c.Server.Http.Network != "" {
 		opts = append(opts, http.Network(c.Server.Http.Network))

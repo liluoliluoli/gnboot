@@ -6,7 +6,7 @@ import (
 
 type VideoKeywordMapping struct {
 	ID        int64  `json:"id"`
-	VideId    int64  `json:"videId"`
+	VideoId   int64  `json:"videoId"`
 	VideoType string `json:"type"`
 	KeywordId int64  `json:"keywordId"`
 }
@@ -14,7 +14,7 @@ type VideoKeywordMapping struct {
 func (d *VideoKeywordMapping) ConvertFromRepo(m *model.VideoKeywordMapping) *VideoKeywordMapping {
 	return &VideoKeywordMapping{
 		ID:        m.ID,
-		VideId:    m.VideoID,
+		VideoId:   m.VideoID,
 		VideoType: m.VideoType,
 		KeywordId: m.KeywordID,
 	}

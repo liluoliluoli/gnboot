@@ -10,6 +10,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
+	"time"
 )
 
 type CreateMovie struct {
@@ -41,8 +42,8 @@ type Movie struct {
 	Genres             []*Genre                `json:"genres"`             //流派
 	Studios            []*Studio               `json:"studios"`            //出品方
 	Keywords           []*Keyword              `json:"keywords"`           //关键词
-	LastPlayedPosition int64                   `json:"lastPlayedPosition"` //上次播放位置
-	LastPlayedTime     string                  `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
+	LastPlayedPosition int32                   `json:"lastPlayedPosition"` //上次播放位置
+	LastPlayedTime     *time.Time              `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
 	Subtitles          []*VideoSubtitleMapping `json:"subtitles"`          //字幕
 	Actors             []*Actor                `json:"actors"`             //演员
 }

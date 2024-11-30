@@ -106,7 +106,7 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(genreMappings, func(item *sdomain.VideoGenreMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_studio {
@@ -115,7 +115,7 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(studioMappings, func(item *sdomain.VideoStudioMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_keyword {
@@ -124,7 +124,7 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 				return nil, err
 			}
 			filterIds = append(filterIds, lo.Map(keywordMappings, func(item *sdomain.VideoKeywordMapping, index int) int64 {
-				return item.VideId
+				return item.VideoId
 			})...)
 		}
 		if condition.Type == constant.FilterType_actor {
@@ -194,10 +194,10 @@ func (s *SeriesService) buildSeriesGenresMap(ctx context.Context, series []*sdom
 	})
 	rsMap := make(map[int64][]*sdomain.Genre)
 	for _, genreMapping := range genreMappings {
-		if _, ok := rsMap[genreMapping.VideId]; !ok {
-			rsMap[genreMapping.VideId] = make([]*sdomain.Genre, 0)
+		if _, ok := rsMap[genreMapping.VideoId]; !ok {
+			rsMap[genreMapping.VideoId] = make([]*sdomain.Genre, 0)
 		}
-		rsMap[genreMapping.VideId] = append(rsMap[genreMapping.VideId], genresMap[genreMapping.GenreId])
+		rsMap[genreMapping.VideoId] = append(rsMap[genreMapping.VideoId], genresMap[genreMapping.GenreId])
 	}
 	return rsMap, nil
 }
@@ -250,10 +250,10 @@ func (s *SeriesService) buildSeriesKeywordsMap(ctx context.Context, series []*sd
 	})
 	rsMap := make(map[int64][]*sdomain.Keyword)
 	for _, keywordMapping := range keywordMappings {
-		if _, ok := rsMap[keywordMapping.VideId]; !ok {
-			rsMap[keywordMapping.VideId] = make([]*sdomain.Keyword, 0)
+		if _, ok := rsMap[keywordMapping.VideoId]; !ok {
+			rsMap[keywordMapping.VideoId] = make([]*sdomain.Keyword, 0)
 		}
-		rsMap[keywordMapping.VideId] = append(rsMap[keywordMapping.VideId], keywordsMap[keywordMapping.KeywordId])
+		rsMap[keywordMapping.VideoId] = append(rsMap[keywordMapping.VideoId], keywordsMap[keywordMapping.KeywordId])
 	}
 	return rsMap, nil
 }
@@ -278,10 +278,10 @@ func (s *SeriesService) buildSeriesStudiosMap(ctx context.Context, series []*sdo
 	})
 	rsMap := make(map[int64][]*sdomain.Studio)
 	for _, studioMapping := range studioMappings {
-		if _, ok := rsMap[studioMapping.VideId]; !ok {
-			rsMap[studioMapping.VideId] = make([]*sdomain.Studio, 0)
+		if _, ok := rsMap[studioMapping.VideoId]; !ok {
+			rsMap[studioMapping.VideoId] = make([]*sdomain.Studio, 0)
 		}
-		rsMap[studioMapping.VideId] = append(rsMap[studioMapping.VideId], studiosMap[studioMapping.StudioId])
+		rsMap[studioMapping.VideoId] = append(rsMap[studioMapping.VideoId], studiosMap[studioMapping.StudioId])
 	}
 	return rsMap, nil
 }
@@ -296,6 +296,6 @@ func (s *SeriesService) buildSeriesSubtitlesMap(ctx context.Context, series []*s
 		return nil, err
 	}
 	return lo.GroupBy(subtitleMappings, func(item *sdomain.VideoSubtitleMapping) int64 {
-		return item.VideId
+		return item.VideoId
 	}), nil
 }

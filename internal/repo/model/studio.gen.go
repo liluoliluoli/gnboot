@@ -12,12 +12,12 @@ const TableNameStudio = "studio"
 
 // Studio mapped from table <studio>
 type Studio struct {
-	ID         int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	Name       string     `gorm:"column:name;type:varchar(32);not null;comment:名称" json:"name"`
-	Country    string     `gorm:"column:country;type:varchar(32);not null;comment:国家" json:"country"`
-	Logo       *string    `gorm:"column:logo;type:varchar(1024);comment:logo的地址" json:"logo"`
-	CreateTime *time.Time `gorm:"column:create_time;type:int unsigned;autoCreateTime" json:"createTime"`
-	UpdateTime *time.Time `gorm:"column:update_time;type:int unsigned;autoUpdateTime" json:"updateTime"`
+	ID         int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	Name       string    `gorm:"column:name;type:varchar(32);not null;comment:名称" json:"name"`
+	Country    string    `gorm:"column:country;type:varchar(32);not null;comment:国家" json:"country"`
+	Logo       *string   `gorm:"column:logo;type:varchar(1024);comment:logo的地址" json:"logo"`
+	CreateTime time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
 }
 
 // TableName Studio's table name

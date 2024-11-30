@@ -48,7 +48,7 @@ func (r *KeywordRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) 
 		Page: &sdomain.Page{
 			CurrentPage: condition.Page.CurrentPage,
 			PageSize:    condition.Page.PageSize,
-			TotalPage:   total,
+			Count:       total,
 		},
 		List: lo.Map(list, func(item *model.Keyword, index int) *sdomain.Keyword {
 			return (&sdomain.Keyword{}).ConvertFromRepo(item)

@@ -50,7 +50,7 @@ func (r *SeriesRepo) Page(ctx context.Context, condition *sdomain.SearchSeries) 
 		Page: &sdomain.Page{
 			CurrentPage: condition.Page.CurrentPage,
 			PageSize:    condition.Page.PageSize,
-			TotalPage:   total,
+			Count:       total,
 		},
 		List: lo.Map(list, func(item *model.Series, index int) *sdomain.Series {
 			return (&sdomain.Series{}).ConvertFromRepo(item)

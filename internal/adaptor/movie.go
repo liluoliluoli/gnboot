@@ -2,7 +2,7 @@ package adaptor
 
 import (
 	"context"
-	"github.com/go-cinch/common/proto/params"
+	"github.com/liluoliluoli/gnboot/api"
 	"github.com/liluoliluoli/gnboot/api/actor"
 	"github.com/liluoliluoli/gnboot/api/genre"
 	"github.com/liluoliluoli/gnboot/api/keyword"
@@ -154,7 +154,7 @@ func (s *MovieProvider) UpdateMovie(ctx context.Context, req *movie.UpdateMovieR
 	return &emptypb.Empty{}, err
 }
 
-func (s *MovieProvider) DeleteMovie(ctx context.Context, req *params.IdsRequest) (*emptypb.Empty, error) {
+func (s *MovieProvider) DeleteMovie(ctx context.Context, req *api.IdsRequest) (*emptypb.Empty, error) {
 	err := s.movie.Delete(ctx, lo.Map(strings.Split(req.Ids, ","), func(item string, index int) int64 {
 		id, err := strconv.ParseInt(item, 10, 64)
 		if err != nil {

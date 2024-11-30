@@ -1,11 +1,11 @@
 package page_util
 
 import (
-	"github.com/go-cinch/common/proto/params"
+	"github.com/liluoliluoli/gnboot/api"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 )
 
-func ToDomainPage(p *params.Page) *sdomain.Page {
+func ToDomainPage(p *api.Page) *sdomain.Page {
 	if p == nil {
 		return &sdomain.Page{
 			CurrentPage: 1,
@@ -13,15 +13,16 @@ func ToDomainPage(p *params.Page) *sdomain.Page {
 		}
 	}
 	return &sdomain.Page{
-		CurrentPage: p.Num,
-		PageSize:    p.Size,
+		CurrentPage: p.CurrentPage,
+		PageSize:    p.PageSize,
 	}
 }
 
-func ToAdaptorPage(p *sdomain.Page) *params.Page {
-	return &params.Page{
-		Num:   p.CurrentPage,
-		Size:  p.PageSize,
-		Total: p.TotalPage,
+func ToAdaptorPage(p *sdomain.Page) *api.Page {
+	return &api.Page{
+		CurrentPage: p.CurrentPage,
+		PageSize:    p.PageSize,
+		TotalPage:   p.TotalPage,
+		Count:       p.Count,
 	}
 }

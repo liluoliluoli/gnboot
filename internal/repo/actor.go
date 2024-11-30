@@ -48,7 +48,7 @@ func (r *ActorRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*
 		Page: &sdomain.Page{
 			CurrentPage: condition.Page.CurrentPage,
 			PageSize:    condition.Page.PageSize,
-			TotalPage:   total,
+			Count:       total,
 		},
 		List: lo.Map(list, func(item *model.Actor, index int) *sdomain.Actor {
 			return (&sdomain.Actor{}).ConvertFromRepo(item)

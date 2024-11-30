@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	"encoding/json"
 	dto "github.com/liluoliluoli/gnboot/api/genre"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
@@ -8,6 +9,14 @@ import (
 type Genre struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"` // 标题
+}
+
+func (d *Genre) MarshalBinary() ([]byte, error) {
+	return json.Marshal(d)
+}
+
+func (d *Genre) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, d)
 }
 
 func (d *Genre) ConvertFromRepo(m *model.Genre) *Genre {

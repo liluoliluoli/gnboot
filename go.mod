@@ -11,7 +11,6 @@ require (
 	github.com/go-cinch/common/middleware/logging v1.0.0
 	github.com/go-cinch/common/middleware/tenant v1.0.1
 	github.com/go-cinch/common/middleware/trace v1.0.2
-	github.com/go-cinch/common/page v1.0.4
 	github.com/go-cinch/common/plugins/gorm/filter v1.0.1
 	github.com/go-cinch/common/plugins/gorm/log v1.0.4
 	github.com/go-cinch/common/plugins/gorm/tenant v1.0.1
@@ -24,7 +23,7 @@ require (
 	github.com/go-kratos/kratos/v2 v2.8.2
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/liluoliluoli/gnboot/api v1.0.6
+	github.com/liluoliluoli/gnboot/api v1.0.7
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/samber/lo v1.47.0

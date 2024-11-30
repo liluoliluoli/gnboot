@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	"encoding/json"
 	dto "github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
@@ -11,6 +12,14 @@ type Studio struct {
 	Name    string `json:"name"` // 标题
 	Country string `json:"country"`
 	Logo    string `json:"logo"`
+}
+
+func (d *Studio) MarshalBinary() ([]byte, error) {
+	return json.Marshal(d)
+}
+
+func (d *Studio) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, d)
 }
 
 func (d *Studio) ConvertFromRepo(m *model.Studio) *Studio {

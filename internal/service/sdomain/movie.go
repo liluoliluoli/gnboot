@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	"encoding/json"
 	moviedto "github.com/liluoliluoli/gnboot/api/movie"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
@@ -39,6 +40,14 @@ type Movie struct {
 	LastPlayedTime     string                  `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
 	Subtitles          []*VideoSubtitleMapping `json:"subtitles"`          //字幕
 	Actors             []*Actor                `json:"actors"`             //演员
+}
+
+func (d *Movie) MarshalBinary() ([]byte, error) {
+	return json.Marshal(d)
+}
+
+func (d *Movie) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, d)
 }
 
 func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {

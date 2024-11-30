@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	"encoding/json"
 	dto "github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 )
@@ -13,6 +14,14 @@ type VideoSubtitleMapping struct {
 	Title     string `json:"title"`
 	Language  string `json:"language"`
 	MimeType  string `json:"mimeType"`
+}
+
+func (d *VideoSubtitleMapping) MarshalBinary() ([]byte, error) {
+	return json.Marshal(d)
+}
+
+func (d *VideoSubtitleMapping) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, d)
 }
 
 func (d *VideoSubtitleMapping) ConvertFromRepo(m *model.VideoSubtitleMapping) *VideoSubtitleMapping {

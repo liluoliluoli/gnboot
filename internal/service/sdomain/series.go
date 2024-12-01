@@ -1,7 +1,11 @@
 package sdomain
 
 import (
+	"github.com/liluoliluoli/gnboot/api/genre"
+	"github.com/liluoliluoli/gnboot/api/keyword"
+	"github.com/liluoliluoli/gnboot/api/season"
 	seriesdto "github.com/liluoliluoli/gnboot/api/series"
+	"github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
 )
@@ -29,12 +33,35 @@ func (d *Series) ConvertFromRepo(m *model.Series) *Series {
 		VoteCount:   lo.FromPtr(m.VoteCount),
 		Country:     lo.FromPtr(m.Country),
 		Trailer:     lo.FromPtr(m.Trailer),
+		Status:      m.Status,
+		SkipIntro:   lo.FromPtr(m.SkipIntro),
+		SkipEnding:  lo.FromPtr(m.SkipEnding),
 	}
 }
 
 func (d *Series) ConvertToDto() *seriesdto.SeriesResp {
 	return &seriesdto.SeriesResp{
-		Id: d.ID,
+		Id:          d.ID,
+		VoteAverage: d.VoteAverage,
+		VoteCount:   d.VoteCount,
+		Country:     d.Country,
+		Trailer:     d.Trailer,
+		Status:      d.Status,
+		SkipIntro:   d.SkipIntro,
+		SkipEnding:  d.SkipEnding,
+		Genres: lo.Map(d.Genres, func(item *Genre, index int) *genre.GenreResp {
+			return item.ConvertToDto()
+		}),
+		Studios: lo.Map(d.Studios, func(item *Studio, index int) *studio.StudioResp {
+			return item.ConvertToDto()
+		}),
+		Keywords: lo.Map(d.Keywords, func(item *Keyword, index int) *keyword.KeywordResp {
+			return item.ConvertToDto()
+		}),
+		Seasons: lo.Map(d.Seasons, func(item *Season, index int) *season.SeasonResp {
+			return item.ConvertToDto()
+		}),
+		NextToPlay: d.NextToPlay.ConvertToDto(),
 	}
 }
 

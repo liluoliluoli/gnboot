@@ -64,13 +64,12 @@ additional_properties:
 
   message SeasonResp {
     int64 id = 1;
-    string season = 2;
+    int32 season = 2;
     string seasonTitle = 3;
     int32 skipIntro = 4;
     int32 skipEnding = 5;
     int32 episodeCount = 6;
     repeated gnboot.EpisodeResp episodes = 7;
-
   }
 
 

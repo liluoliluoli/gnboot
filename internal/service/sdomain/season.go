@@ -10,6 +10,7 @@ type Season struct {
 	ID           int64      `json:"id"`
 	SeriesId     int64      `json:"seriesId"`
 	Season       int32      `json:"season"`
+	SeasonTitle  string     `json:"seasonTitle"`
 	SkipIntro    int32      `json:"skipIntro"`
 	SkipEnding   int32      `json:"skipEnding"`
 	EpisodeCount int32      `json:"episodeCount"`

@@ -61,7 +61,7 @@ func (m *SeasonResp) validate(all bool) error {
 
 	// no validation rules for Season
 
-	// no validation rules for SeasonTitle
+	// no validation rules for SeriesTitle
 
 	// no validation rules for SkipIntro
 

@@ -31,14 +31,20 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.ID = field.NewInt64(tableName, "id")
 	_episode.SeasonID = field.NewInt64(tableName, "season_id")
 	_episode.Episode = field.NewInt32(tableName, "episode")
-	_episode.SkipIntro = field.NewInt32(tableName, "skip_intro")
-	_episode.SkipEnding = field.NewInt32(tableName, "skip_ending")
 	_episode.URL = field.NewString(tableName, "url")
-	_episode.Downloaded = field.NewInt32(tableName, "downloaded")
+	_episode.Downloaded = field.NewBool(tableName, "downloaded")
 	_episode.Ext = field.NewString(tableName, "ext")
 	_episode.FileSize = field.NewInt32(tableName, "file_size")
 	_episode.CreateTime = field.NewTime(tableName, "create_time")
 	_episode.UpdateTime = field.NewTime(tableName, "update_time")
+	_episode.OriginalTitle = field.NewString(tableName, "original_title")
+	_episode.Filename = field.NewString(tableName, "filename")
+	_episode.LastPlayedTime = field.NewTime(tableName, "last_played_time")
+	_episode.Title = field.NewString(tableName, "title")
+	_episode.Poster = field.NewString(tableName, "poster")
+	_episode.Logo = field.NewString(tableName, "logo")
+	_episode.AirDate = field.NewTime(tableName, "air_date")
+	_episode.Overview = field.NewString(tableName, "overview")
 
 	_episode.fillFieldMap()
 
@@ -48,18 +54,24 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 type episode struct {
 	episodeDo episodeDo
 
-	ALL        field.Asterisk
-	ID         field.Int64  // 主键
-	SeasonID   field.Int64  // 季id
-	Episode    field.Int32  // 第几集
-	SkipIntro  field.Int32  // 片头跳过秒数
-	SkipEnding field.Int32  // 片尾跳过秒数
-	URL        field.String // 影片地址
-	Downloaded field.Int32  // 是否能下载
-	Ext        field.String // 扩展参数
-	FileSize   field.Int32  // 文件大小
-	CreateTime field.Time
-	UpdateTime field.Time
+	ALL            field.Asterisk
+	ID             field.Int64  // 主键
+	SeasonID       field.Int64  // 季id
+	Episode        field.Int32  // 第几集
+	URL            field.String // 影片地址
+	Downloaded     field.Bool   // 是否能下载
+	Ext            field.String // 扩展参数
+	FileSize       field.Int32  // 文件大小
+	CreateTime     field.Time
+	UpdateTime     field.Time
+	OriginalTitle  field.String // 原名
+	Filename       field.String // 文件名
+	LastPlayedTime field.Time   // 上次播放时间
+	Title          field.String // 标题
+	Poster         field.String // 海报
+	Logo           field.String // logo
+	AirDate        field.Time   // 首播时间
+	Overview       field.String // 简介
 
 	fieldMap map[string]field.Expr
 }
@@ -79,14 +91,20 @@ func (e *episode) updateTableName(table string) *episode {
 	e.ID = field.NewInt64(table, "id")
 	e.SeasonID = field.NewInt64(table, "season_id")
 	e.Episode = field.NewInt32(table, "episode")
-	e.SkipIntro = field.NewInt32(table, "skip_intro")
-	e.SkipEnding = field.NewInt32(table, "skip_ending")
 	e.URL = field.NewString(table, "url")
-	e.Downloaded = field.NewInt32(table, "downloaded")
+	e.Downloaded = field.NewBool(table, "downloaded")
 	e.Ext = field.NewString(table, "ext")
 	e.FileSize = field.NewInt32(table, "file_size")
 	e.CreateTime = field.NewTime(table, "create_time")
 	e.UpdateTime = field.NewTime(table, "update_time")
+	e.OriginalTitle = field.NewString(table, "original_title")
+	e.Filename = field.NewString(table, "filename")
+	e.LastPlayedTime = field.NewTime(table, "last_played_time")
+	e.Title = field.NewString(table, "title")
+	e.Poster = field.NewString(table, "poster")
+	e.Logo = field.NewString(table, "logo")
+	e.AirDate = field.NewTime(table, "air_date")
+	e.Overview = field.NewString(table, "overview")
 
 	e.fillFieldMap()
 
@@ -109,18 +127,24 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 11)
+	e.fieldMap = make(map[string]field.Expr, 17)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["season_id"] = e.SeasonID
 	e.fieldMap["episode"] = e.Episode
-	e.fieldMap["skip_intro"] = e.SkipIntro
-	e.fieldMap["skip_ending"] = e.SkipEnding
 	e.fieldMap["url"] = e.URL
 	e.fieldMap["downloaded"] = e.Downloaded
 	e.fieldMap["ext"] = e.Ext
 	e.fieldMap["file_size"] = e.FileSize
 	e.fieldMap["create_time"] = e.CreateTime
 	e.fieldMap["update_time"] = e.UpdateTime
+	e.fieldMap["original_title"] = e.OriginalTitle
+	e.fieldMap["filename"] = e.Filename
+	e.fieldMap["last_played_time"] = e.LastPlayedTime
+	e.fieldMap["title"] = e.Title
+	e.fieldMap["poster"] = e.Poster
+	e.fieldMap["logo"] = e.Logo
+	e.fieldMap["air_date"] = e.AirDate
+	e.fieldMap["overview"] = e.Overview
 }
 
 func (e episode) clone(db *gorm.DB) episode {

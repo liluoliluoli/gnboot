@@ -12,15 +12,20 @@ const TableNameSeason = "season"
 
 // Season mapped from table <season>
 type Season struct {
-	ID           int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	SeriesID     int64     `gorm:"column:series_id;type:bigint;not null;comment:连续剧id" json:"seriesId"`
-	Season       int32     `gorm:"column:season;type:int;not null;comment:第几季" json:"season"`
-	SeriesTitle  string    `gorm:"column:series_title;type:varchar(256);not null;comment:季名称" json:"seriesTitle"`
-	SkipIntro    *int32    `gorm:"column:skip_intro;type:int;comment:片头跳过秒数" json:"skipIntro"`
-	SkipEnding   *int32    `gorm:"column:skip_ending;type:int;comment:片尾跳过秒数" json:"skipEnding"`
-	EpisodeCount int32     `gorm:"column:episode_count;type:int;not null;comment:总集数" json:"episodeCount"`
-	CreateTime   time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
-	UpdateTime   time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
+	ID           int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	SeriesID     int64      `gorm:"column:series_id;type:bigint;not null;comment:连续剧id" json:"seriesId"`
+	Season       int32      `gorm:"column:season;type:int;not null;comment:第几季" json:"season"`
+	SeriesTitle  string     `gorm:"column:series_title;type:varchar(256);not null;comment:季名称" json:"seriesTitle"`
+	SkipIntro    *int32     `gorm:"column:skip_intro;type:int;comment:片头跳过秒数" json:"skipIntro"`
+	SkipEnding   *int32     `gorm:"column:skip_ending;type:int;comment:片尾跳过秒数" json:"skipEnding"`
+	EpisodeCount int32      `gorm:"column:episode_count;type:int;not null;comment:总集数" json:"episodeCount"`
+	CreateTime   time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime   time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
+	Title        *string    `gorm:"column:title;type:varchar(1024);comment:标题" json:"title"`
+	Poster       *string    `gorm:"column:poster;type:varchar(1024);comment:海报" json:"poster"`
+	Logo         *string    `gorm:"column:logo;type:varchar(1024);comment:logo" json:"logo"`
+	AirDate      *time.Time `gorm:"column:air_date;type:datetime;comment:开播时间" json:"airDate"`
+	Overview     *string    `gorm:"column:overview;type:varchar(2048);comment:简介" json:"overview"`
 }
 
 // TableName Season's table name

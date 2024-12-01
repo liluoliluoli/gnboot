@@ -63,10 +63,6 @@ func (s *SeriesService) get(ctx context.Context, id int64) (*sdomain.Series, err
 	if err != nil {
 		return nil, err
 	}
-	actorsMap, err := s.buildSeriesActorsMap(ctx, []*sdomain.Series{item})
-	if err != nil {
-		return nil, err
-	}
 	keywordsMap, err := s.buildSeriesKeywordsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
@@ -75,15 +71,9 @@ func (s *SeriesService) get(ctx context.Context, id int64) (*sdomain.Series, err
 	if err != nil {
 		return nil, err
 	}
-	subtitlesMap, err := s.buildSeriesSubtitlesMap(ctx, []*sdomain.Series{item})
-	if err != nil {
-		return nil, err
-	}
-	item.Actors = actorsMap[item.ID]
 	item.Genres = genresMap[item.ID]
 	item.Keywords = keywordsMap[item.ID]
 	item.Studios = studiosMap[item.ID]
-	item.Subtitles = subtitlesMap[item.ID]
 	return item, nil
 }
 
@@ -147,10 +137,6 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 		if err != nil {
 			return nil, err
 		}
-		actorsMap, err := s.buildSeriesActorsMap(ctx, pageResult.List)
-		if err != nil {
-			return nil, err
-		}
 		keywordsMap, err := s.buildSeriesKeywordsMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
@@ -159,14 +145,8 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 		if err != nil {
 			return nil, err
 		}
-		subtitlesMap, err := s.buildSeriesSubtitlesMap(ctx, pageResult.List)
-		if err != nil {
-			return nil, err
-		}
 		for _, item := range pageResult.List {
-			item.Actors = actorsMap[item.ID]
 			item.Genres = genresMap[item.ID]
-			item.Subtitles = subtitlesMap[item.ID]
 			item.Keywords = keywordsMap[item.ID]
 			item.Studios = studiosMap[item.ID]
 		}

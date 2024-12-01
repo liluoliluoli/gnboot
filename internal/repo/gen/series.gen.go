@@ -29,18 +29,20 @@ func newSeries(db *gorm.DB, opts ...gen.DOOption) series {
 	tableName := _series.seriesDo.TableName()
 	_series.ALL = field.NewAsterisk(tableName)
 	_series.ID = field.NewInt64(tableName, "id")
-	_series.OriginalTitle = field.NewString(tableName, "original_title")
-	_series.Status = field.NewString(tableName, "status")
 	_series.VoteAverage = field.NewFloat32(tableName, "vote_average")
 	_series.VoteCount = field.NewInt32(tableName, "vote_count")
 	_series.Country = field.NewString(tableName, "country")
 	_series.Trailer = field.NewString(tableName, "trailer")
+	_series.Status = field.NewString(tableName, "status")
 	_series.SkipIntro = field.NewInt32(tableName, "skip_intro")
 	_series.SkipEnding = field.NewInt32(tableName, "skip_ending")
-	_series.FileSize = field.NewInt32(tableName, "file_size")
-	_series.Filename = field.NewString(tableName, "filename")
-	_series.CreateTime = field.NewString(tableName, "create_time")
-	_series.UpdateTime = field.NewString(tableName, "update_time")
+	_series.CreateTime = field.NewTime(tableName, "create_time")
+	_series.UpdateTime = field.NewTime(tableName, "update_time")
+	_series.OriginalTitle = field.NewString(tableName, "original_title")
+	_series.Title = field.NewString(tableName, "title")
+	_series.Poster = field.NewString(tableName, "poster")
+	_series.Logo = field.NewString(tableName, "logo")
+	_series.Overview = field.NewString(tableName, "overview")
 
 	_series.fillFieldMap()
 
@@ -52,18 +54,20 @@ type series struct {
 
 	ALL           field.Asterisk
 	ID            field.Int64   // 主键
-	OriginalTitle field.String  // 标题
-	Status        field.String  // 状态，Returning Series, Ended, Released, Unknown
 	VoteAverage   field.Float32 // 平均评分
 	VoteCount     field.Int32   // 评分数
 	Country       field.String  // 国家
 	Trailer       field.String  // 预告片地址
+	Status        field.String  // 状态，Returning Series, Ended, Released, Unknown
 	SkipIntro     field.Int32   // 片头跳过秒数
 	SkipEnding    field.Int32   // 片尾跳过秒数
-	FileSize      field.Int32   // 文件大小
-	Filename      field.String  // 文件名
-	CreateTime    field.String  // 创建时间
-	UpdateTime    field.String  // 更新时间
+	CreateTime    field.Time    // 创建时间
+	UpdateTime    field.Time    // 更新时间
+	OriginalTitle field.String  // 原名
+	Title         field.String  // 标题
+	Poster        field.String  // 海报
+	Logo          field.String  // logo
+	Overview      field.String  // 简介
 
 	fieldMap map[string]field.Expr
 }
@@ -81,18 +85,20 @@ func (s series) As(alias string) *series {
 func (s *series) updateTableName(table string) *series {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
-	s.OriginalTitle = field.NewString(table, "original_title")
-	s.Status = field.NewString(table, "status")
 	s.VoteAverage = field.NewFloat32(table, "vote_average")
 	s.VoteCount = field.NewInt32(table, "vote_count")
 	s.Country = field.NewString(table, "country")
 	s.Trailer = field.NewString(table, "trailer")
+	s.Status = field.NewString(table, "status")
 	s.SkipIntro = field.NewInt32(table, "skip_intro")
 	s.SkipEnding = field.NewInt32(table, "skip_ending")
-	s.FileSize = field.NewInt32(table, "file_size")
-	s.Filename = field.NewString(table, "filename")
-	s.CreateTime = field.NewString(table, "create_time")
-	s.UpdateTime = field.NewString(table, "update_time")
+	s.CreateTime = field.NewTime(table, "create_time")
+	s.UpdateTime = field.NewTime(table, "update_time")
+	s.OriginalTitle = field.NewString(table, "original_title")
+	s.Title = field.NewString(table, "title")
+	s.Poster = field.NewString(table, "poster")
+	s.Logo = field.NewString(table, "logo")
+	s.Overview = field.NewString(table, "overview")
 
 	s.fillFieldMap()
 
@@ -115,20 +121,22 @@ func (s *series) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *series) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 13)
+	s.fieldMap = make(map[string]field.Expr, 15)
 	s.fieldMap["id"] = s.ID
-	s.fieldMap["original_title"] = s.OriginalTitle
-	s.fieldMap["status"] = s.Status
 	s.fieldMap["vote_average"] = s.VoteAverage
 	s.fieldMap["vote_count"] = s.VoteCount
 	s.fieldMap["country"] = s.Country
 	s.fieldMap["trailer"] = s.Trailer
+	s.fieldMap["status"] = s.Status
 	s.fieldMap["skip_intro"] = s.SkipIntro
 	s.fieldMap["skip_ending"] = s.SkipEnding
-	s.fieldMap["file_size"] = s.FileSize
-	s.fieldMap["filename"] = s.Filename
 	s.fieldMap["create_time"] = s.CreateTime
 	s.fieldMap["update_time"] = s.UpdateTime
+	s.fieldMap["original_title"] = s.OriginalTitle
+	s.fieldMap["title"] = s.Title
+	s.fieldMap["poster"] = s.Poster
+	s.fieldMap["logo"] = s.Logo
+	s.fieldMap["overview"] = s.Overview
 }
 
 func (s series) clone(db *gorm.DB) series {

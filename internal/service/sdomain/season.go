@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	episodedto "github.com/liluoliluoli/gnboot/api/episode"
 	seasondto "github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
@@ -30,7 +31,13 @@ func (d *Season) ConvertFromRepo(m *model.Season) *Season {
 
 func (d *Season) ConvertToDto() *seasondto.SeasonResp {
 	return &seasondto.SeasonResp{
-		Id:     d.ID,
-		Season: d.Season,
+		Id:           d.ID,
+		Season:       d.Season,
+		SkipIntro:    d.SkipIntro,
+		SkipEnding:   d.SkipEnding,
+		EpisodeCount: d.EpisodeCount,
+		Episodes: lo.Map(d.Episodes, func(item *Episode, index int) *episodedto.EpisodeResp {
+			return item.ConvertToDto()
+		}),
 	}
 }

@@ -47,6 +47,11 @@ func newMovie(db *gorm.DB, opts ...gen.DOOption) movie {
 	_movie.Promotional = field.NewString(tableName, "promotional")
 	_movie.CreateTime = field.NewTime(tableName, "create_time")
 	_movie.UpdateTime = field.NewTime(tableName, "update_time")
+	_movie.Title = field.NewString(tableName, "title")
+	_movie.Poster = field.NewString(tableName, "poster")
+	_movie.Logo = field.NewString(tableName, "logo")
+	_movie.AirDate = field.NewTime(tableName, "air_date")
+	_movie.Overview = field.NewString(tableName, "overview")
 
 	_movie.fillFieldMap()
 
@@ -59,7 +64,7 @@ type movie struct {
 	ALL           field.Asterisk
 	ID            field.Int64   // 主键
 	ExternalID    field.String  // 外部id
-	OriginalTitle field.String  // 标题
+	OriginalTitle field.String  // 原名
 	Status        field.String  // 状态，Returning Series, Ended, Released, Unknown
 	VoteAverage   field.Float32 // 平均评分
 	VoteCount     field.Int32   // 评分数
@@ -76,6 +81,11 @@ type movie struct {
 	Promotional   field.String  // 封面地址
 	CreateTime    field.Time    // 创建时间
 	UpdateTime    field.Time    // 更新时间
+	Title         field.String  // 标题
+	Poster        field.String  // 海报
+	Logo          field.String  // logo
+	AirDate       field.Time    // 开播时间
+	Overview      field.String  // 简介
 
 	fieldMap map[string]field.Expr
 }
@@ -111,6 +121,11 @@ func (m *movie) updateTableName(table string) *movie {
 	m.Promotional = field.NewString(table, "promotional")
 	m.CreateTime = field.NewTime(table, "create_time")
 	m.UpdateTime = field.NewTime(table, "update_time")
+	m.Title = field.NewString(table, "title")
+	m.Poster = field.NewString(table, "poster")
+	m.Logo = field.NewString(table, "logo")
+	m.AirDate = field.NewTime(table, "air_date")
+	m.Overview = field.NewString(table, "overview")
 
 	m.fillFieldMap()
 
@@ -133,7 +148,7 @@ func (m *movie) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (m *movie) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 19)
+	m.fieldMap = make(map[string]field.Expr, 24)
 	m.fieldMap["id"] = m.ID
 	m.fieldMap["external_id"] = m.ExternalID
 	m.fieldMap["original_title"] = m.OriginalTitle
@@ -153,6 +168,11 @@ func (m *movie) fillFieldMap() {
 	m.fieldMap["promotional"] = m.Promotional
 	m.fieldMap["create_time"] = m.CreateTime
 	m.fieldMap["update_time"] = m.UpdateTime
+	m.fieldMap["title"] = m.Title
+	m.fieldMap["poster"] = m.Poster
+	m.fieldMap["logo"] = m.Logo
+	m.fieldMap["air_date"] = m.AirDate
+	m.fieldMap["overview"] = m.Overview
 }
 
 func (m movie) clone(db *gorm.DB) movie {

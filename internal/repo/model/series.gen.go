@@ -4,23 +4,29 @@
 
 package model
 
+import (
+	"time"
+)
+
 const TableNameSeries = "series"
 
 // Series mapped from table <series>
 type Series struct {
-	ID            int64    `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	OriginalTitle string   `gorm:"column:original_title;type:varchar(1024);not null;comment:标题" json:"originalTitle"`
-	Status        string   `gorm:"column:status;type:varchar(64);not null;comment:状态，Returning Series, Ended, Released, Unknown" json:"status"`
-	VoteAverage   *float32 `gorm:"column:vote_average;type:float;comment:平均评分" json:"voteAverage"`
-	VoteCount     *int32   `gorm:"column:vote_count;type:int;comment:评分数" json:"voteCount"`
-	Country       *string  `gorm:"column:country;type:varchar(32);comment:国家" json:"country"`
-	Trailer       *string  `gorm:"column:trailer;type:varchar(1024);comment:预告片地址" json:"trailer"`
-	SkipIntro     *int32   `gorm:"column:skip_intro;type:int;comment:片头跳过秒数" json:"skipIntro"`
-	SkipEnding    *int32   `gorm:"column:skip_ending;type:int;comment:片尾跳过秒数" json:"skipEnding"`
-	FileSize      *int32   `gorm:"column:file_size;type:int;comment:文件大小" json:"fileSize"`
-	Filename      *string  `gorm:"column:filename;type:varchar(256);comment:文件名" json:"filename"`
-	CreateTime    string   `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
-	UpdateTime    string   `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	ID            int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	VoteAverage   *float32  `gorm:"column:vote_average;type:float;comment:平均评分" json:"voteAverage"`
+	VoteCount     *int32    `gorm:"column:vote_count;type:int;comment:评分数" json:"voteCount"`
+	Country       *string   `gorm:"column:country;type:varchar(32);comment:国家" json:"country"`
+	Trailer       *string   `gorm:"column:trailer;type:varchar(1024);comment:预告片地址" json:"trailer"`
+	Status        string    `gorm:"column:status;type:varchar(64);not null;comment:状态，Returning Series, Ended, Released, Unknown" json:"status"`
+	SkipIntro     *int32    `gorm:"column:skip_intro;type:int;comment:片头跳过秒数" json:"skipIntro"`
+	SkipEnding    *int32    `gorm:"column:skip_ending;type:int;comment:片尾跳过秒数" json:"skipEnding"`
+	CreateTime    time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime    time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	OriginalTitle *string   `gorm:"column:original_title;type:varchar(1024);comment:原名" json:"originalTitle"`
+	Title         string    `gorm:"column:title;type:varchar(1024);not null;comment:标题" json:"title"`
+	Poster        *string   `gorm:"column:poster;type:varchar(1024);comment:海报" json:"poster"`
+	Logo          *string   `gorm:"column:logo;type:varchar(1024);comment:logo" json:"logo"`
+	Overview      *string   `gorm:"column:overview;type:varchar(2048);comment:简介" json:"overview"`
 }
 
 // TableName Series's table name

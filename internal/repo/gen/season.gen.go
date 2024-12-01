@@ -37,6 +37,11 @@ func newSeason(db *gorm.DB, opts ...gen.DOOption) season {
 	_season.EpisodeCount = field.NewInt32(tableName, "episode_count")
 	_season.CreateTime = field.NewTime(tableName, "create_time")
 	_season.UpdateTime = field.NewTime(tableName, "update_time")
+	_season.Title = field.NewString(tableName, "title")
+	_season.Poster = field.NewString(tableName, "poster")
+	_season.Logo = field.NewString(tableName, "logo")
+	_season.AirDate = field.NewTime(tableName, "air_date")
+	_season.Overview = field.NewString(tableName, "overview")
 
 	_season.fillFieldMap()
 
@@ -56,6 +61,11 @@ type season struct {
 	EpisodeCount field.Int32  // 总集数
 	CreateTime   field.Time
 	UpdateTime   field.Time
+	Title        field.String // 标题
+	Poster       field.String // 海报
+	Logo         field.String // logo
+	AirDate      field.Time   // 开播时间
+	Overview     field.String // 简介
 
 	fieldMap map[string]field.Expr
 }
@@ -81,6 +91,11 @@ func (s *season) updateTableName(table string) *season {
 	s.EpisodeCount = field.NewInt32(table, "episode_count")
 	s.CreateTime = field.NewTime(table, "create_time")
 	s.UpdateTime = field.NewTime(table, "update_time")
+	s.Title = field.NewString(table, "title")
+	s.Poster = field.NewString(table, "poster")
+	s.Logo = field.NewString(table, "logo")
+	s.AirDate = field.NewTime(table, "air_date")
+	s.Overview = field.NewString(table, "overview")
 
 	s.fillFieldMap()
 
@@ -103,7 +118,7 @@ func (s *season) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *season) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 14)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["series_id"] = s.SeriesID
 	s.fieldMap["season"] = s.Season
@@ -113,6 +128,11 @@ func (s *season) fillFieldMap() {
 	s.fieldMap["episode_count"] = s.EpisodeCount
 	s.fieldMap["create_time"] = s.CreateTime
 	s.fieldMap["update_time"] = s.UpdateTime
+	s.fieldMap["title"] = s.Title
+	s.fieldMap["poster"] = s.Poster
+	s.fieldMap["logo"] = s.Logo
+	s.fieldMap["air_date"] = s.AirDate
+	s.fieldMap["overview"] = s.Overview
 }
 
 func (s season) clone(db *gorm.DB) season {

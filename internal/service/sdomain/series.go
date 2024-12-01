@@ -3,41 +3,38 @@ package sdomain
 import (
 	seriesdto "github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
+	"github.com/samber/lo"
 )
 
 type Series struct {
-	ID                 int64                   `json:"id"`
-	OriginalTitle      string                  `json:"originalTitle"`      // 标题
-	Status             string                  `json:"status"`             // 状态，Returning Series, Ended, Released, Unknown
-	VoteAverage        float32                 `json:"voteAverage"`        // 平均评分
-	VoteCount          int32                   `json:"voteCount"`          // 评分数
-	Country            string                  `json:"country"`            // 国家
-	Trailer            string                  `json:"trailer"`            // 预告片地址
-	URL                string                  `json:"url"`                // 影片地址
-	Downloaded         bool                    `json:"downloaded"`         // 是否可以下载
-	FileSize           int32                   `json:"fileSize"`           // 文件大小
-	Filename           string                  `json:"filename"`           // 文件名
-	Ext                string                  `json:"ext"`                //扩展参数
-	Genres             []*Genre                `json:"genres"`             //流派
-	Studios            []*Studio               `json:"studios"`            //出品方
-	Keywords           []*Keyword              `json:"keywords"`           //关键词
-	LastPlayedPosition int32                   `json:"lastPlayedPosition"` //上次播放位置
-	LastPlayedTime     string                  `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
-	Subtitles          []*VideoSubtitleMapping `json:"subtitles"`          //字幕
-	Actors             []*Actor                `json:"actors"`             //演员
+	ID          int64      `json:"id"`
+	VoteAverage float32    `json:"voteAverage"` // 平均评分
+	VoteCount   int32      `json:"voteCount"`   // 评分数
+	Country     string     `json:"country"`     // 国家
+	Trailer     string     `json:"trailer"`     // 预告片地址
+	Status      string     `json:"status"`      // 状态，Returning Series, Ended, Released, Unknown
+	SkipIntro   int32      `json:"skipIntro"`
+	SkipEnding  int32      `json:"skipEnding"`
+	Genres      []*Genre   `json:"genres"`     //流派
+	Studios     []*Studio  `json:"studios"`    //出品方
+	Keywords    []*Keyword `json:"keywords"`   //关键词
+	Seasons     []*Season  `json:"seasons"`    //季
+	NextToPlay  *Episode   `json:"nextToPlay"` //下一集
 }
 
-func (d *Series) ConvertFromRepo(movie *model.Series) *Series {
+func (d *Series) ConvertFromRepo(m *model.Series) *Series {
 	return &Series{
-		ID:            movie.ID,
-		OriginalTitle: movie.OriginalTitle,
+		ID:          m.ID,
+		VoteAverage: lo.FromPtr(m.VoteAverage),
+		VoteCount:   lo.FromPtr(m.VoteCount),
+		Country:     lo.FromPtr(m.Country),
+		Trailer:     lo.FromPtr(m.Trailer),
 	}
 }
 
 func (d *Series) ConvertToDto() *seriesdto.SeriesResp {
 	return &seriesdto.SeriesResp{
-		Id:            d.ID,
-		OriginalTitle: d.OriginalTitle,
+		Id: d.ID,
 	}
 }
 

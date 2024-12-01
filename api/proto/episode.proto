@@ -62,12 +62,14 @@ additional_properties:
   message EpisodeResp {
     int64 id = 1;
     int32 episode = 2;
-    int32 skipIntro = 3;
-    int32 skipEnding = 4;
-    string url = 5;
-    bool download = 6;
-    string ext = 7;
-    int32 fileSize = 8;
+    string url = 3;
+    bool download = 4;
+    string ext = 5;
+    int32 fileSize = 6;
+    repeated gnboot.SubtitleResp subtitles = 7;
+    int32 lastPlayedPosition = 8;
+    int32 skipIntro = 9;
+    int32 skipEnding = 10;
   }
 
   message GetEpisodeRequest {

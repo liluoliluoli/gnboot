@@ -61,10 +61,6 @@ func (m *EpisodeResp) validate(all bool) error {
 
 	// no validation rules for Episode
 
-	// no validation rules for SkipIntro
-
-	// no validation rules for SkipEnding
-
 	// no validation rules for Url
 
 	// no validation rules for Download
@@ -72,6 +68,46 @@ func (m *EpisodeResp) validate(all bool) error {
 	// no validation rules for Ext
 
 	// no validation rules for FileSize
+
+	for idx, item := range m.GetSubtitles() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, EpisodeRespValidationError{
+						field:  fmt.Sprintf("Subtitles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, EpisodeRespValidationError{
+						field:  fmt.Sprintf("Subtitles[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EpisodeRespValidationError{
+					field:  fmt.Sprintf("Subtitles[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for LastPlayedPosition
+
+	// no validation rules for SkipIntro
+
+	// no validation rules for SkipEnding
 
 	if len(errors) > 0 {
 		return EpisodeRespMultiError(errors)

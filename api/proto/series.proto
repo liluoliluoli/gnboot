@@ -12,6 +12,7 @@ import "proto/keyword.proto";
 import "proto/subtitle.proto";
 import "proto/actor.proto";
 import "proto/season.proto";
+import "proto/episode.proto";
 import "proto/base.proto";
 
 option go_package = "github.com/liluoliluoli/gnboot/api/series";
@@ -90,27 +91,18 @@ additional_properties:
 
   message SeriesResp {
     int64 id = 1;
-    string originalTitle = 2;
-    string status = 3;
-    float voteAverage = 4;
-    int32 voteCount = 5;
-    string country = 6;
-    string trailer = 7;
-    string url = 8;
-    bool downloaded = 9;
-    int32 fileSize = 10;
-    string filename = 11;
-    string ext = 12;
-    repeated gnboot.GenreResp genres = 13;
-    repeated gnboot.StudioResp studios = 14;
-    repeated gnboot.KeywordResp keywords = 15;
-    int32 lastPlayedPosition = 16;
-    string lastPlayedTime = 17;
-    repeated gnboot.SubtitleResp subtitles = 18;
-    repeated gnboot.ActorResp actors = 19;
-    repeated gnboot.SeasonResp seasons = 20;
-    int32 skipIntro = 21;
-    int32 skipEnding = 22;
+    float voteAverage = 2;
+    int32 voteCount = 3;
+    string country = 4;
+    string trailer = 5;
+    string status = 6;
+    int32 skipIntro = 7;
+    int32 skipEnding = 8;
+    repeated gnboot.GenreResp genres = 9;
+    repeated gnboot.StudioResp studios = 10;
+    repeated gnboot.KeywordResp keywords = 11;
+    repeated gnboot.SeasonResp seasons = 12;
+    gnboot.EpisodeResp nextToPlay = 13;
   }
 
   message CreateSeriesRequest {

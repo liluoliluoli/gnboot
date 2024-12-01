@@ -59,10 +59,6 @@ func (m *SeriesResp) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for OriginalTitle
-
-	// no validation rules for Status
-
 	// no validation rules for VoteAverage
 
 	// no validation rules for VoteCount
@@ -71,15 +67,11 @@ func (m *SeriesResp) validate(all bool) error {
 
 	// no validation rules for Trailer
 
-	// no validation rules for Url
+	// no validation rules for Status
 
-	// no validation rules for Downloaded
+	// no validation rules for SkipIntro
 
-	// no validation rules for FileSize
-
-	// no validation rules for Filename
-
-	// no validation rules for Ext
+	// no validation rules for SkipEnding
 
 	for idx, item := range m.GetGenres() {
 		_, _ = idx, item
@@ -183,78 +175,6 @@ func (m *SeriesResp) validate(all bool) error {
 
 	}
 
-	// no validation rules for LastPlayedPosition
-
-	// no validation rules for LastPlayedTime
-
-	for idx, item := range m.GetSubtitles() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SeriesRespValidationError{
-						field:  fmt.Sprintf("Subtitles[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SeriesRespValidationError{
-						field:  fmt.Sprintf("Subtitles[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SeriesRespValidationError{
-					field:  fmt.Sprintf("Subtitles[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetActors() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SeriesRespValidationError{
-						field:  fmt.Sprintf("Actors[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SeriesRespValidationError{
-						field:  fmt.Sprintf("Actors[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SeriesRespValidationError{
-					field:  fmt.Sprintf("Actors[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	for idx, item := range m.GetSeasons() {
 		_, _ = idx, item
 
@@ -289,9 +209,34 @@ func (m *SeriesResp) validate(all bool) error {
 
 	}
 
-	// no validation rules for SkipIntro
-
-	// no validation rules for SkipEnding
+	if all {
+		switch v := interface{}(m.GetNextToPlay()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "NextToPlay",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "NextToPlay",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetNextToPlay()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SeriesRespValidationError{
+				field:  "NextToPlay",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return SeriesRespMultiError(errors)

@@ -29,6 +29,7 @@ func (d *Season) ConvertFromRepo(m *model.Season) *Season {
 
 func (d *Season) ConvertToDto() *seasondto.SeasonResp {
 	return &seasondto.SeasonResp{
-		Id: d.ID,
+		Id:     d.ID,
+		Season: d.Season,
 	}
 }

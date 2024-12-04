@@ -6,12 +6,12 @@ import (
 	"github.com/go-cinch/common/worker"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
-	"github.com/liluoliluoli/gnboot/internal/task"
+	"github.com/liluoliluoli/gnboot/internal/task/i4k"
 )
 
 type Job struct {
 	c           *conf.Bootstrap
-	i4kSyncTask *task.I4kSyncTask
+	i4kSyncTask *i4k.I4kSyncTask
 	worker      *worker.Worker
 }
 
@@ -24,7 +24,7 @@ func (j *Job) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewJob(c *conf.Bootstrap, i4kSyncTask *task.I4kSyncTask) *Job {
+func NewJob(c *conf.Bootstrap, i4kSyncTask *i4k.I4kSyncTask) *Job {
 	return &Job{
 		c:           c,
 		i4kSyncTask: i4kSyncTask,
@@ -38,6 +38,14 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 		worker.WithHandler(func(ctx context.Context, p worker.Payload) error {
 			switch p.UID {
 			case "task1":
+
+				//log.WithContext(ctx).Info("task1: %s", t.payload.Payload)
+				//sum := 0
+				//for sum <= 10 {
+				//	movie.TaskList(strconv.Itoa(sum))
+				//	sum += sum
+				//}
+
 				job.i4kSyncTask.ProcessTest(&sdomain.Task{
 					Ctx:     ctx,
 					Payload: p,

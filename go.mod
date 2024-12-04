@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/go-cinch/common/constant v1.0.5
+	
 	github.com/go-cinch/common/i18n v1.0.6
 	github.com/go-cinch/common/id v1.0.4
 	github.com/go-cinch/common/log v1.1.0

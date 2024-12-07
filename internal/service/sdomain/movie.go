@@ -10,6 +10,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
@@ -93,6 +94,12 @@ type Movie struct {
 	LastPlayedTime     *time.Time              `json:"lastPlayedTime"`     //YYYY-MM-DD HH:MM:SS
 	Subtitles          []*VideoSubtitleMapping `json:"subtitles"`          //字幕
 	Actors             []*Actor                `json:"actors"`             //演员
+	Title              string                  `json:"title"`              //标题
+	Poster             string                  `json:"poster"`             //海报
+	Logo               string                  `json:"logo"`               //logo
+	AirDate            *time.Time              `json:"airDate"`            //发行日期
+	Overview           string                  `json:"overview"`           //简介
+	Favorite           bool                    `json:"favorite"`           //是否喜欢
 }
 
 func (d *Movie) MarshalBinary() ([]byte, error) {
@@ -117,6 +124,11 @@ func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {
 		FileSize:      lo.FromPtr(movie.FileSize),
 		Filename:      lo.FromPtr(movie.Filename),
 		Ext:           lo.FromPtr(movie.Ext),
+		Title:         lo.FromPtr(movie.Title),
+		Poster:        lo.FromPtr(movie.Poster),
+		Logo:          lo.FromPtr(movie.Logo),
+		AirDate:       movie.AirDate,
+		Overview:      lo.FromPtr(movie.Overview),
 	}
 }
 
@@ -150,11 +162,13 @@ func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 			return item.ConvertToDto()
 		}),
 		LastPlayedPosition: d.LastPlayedPosition,
-		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() string {
-			return d.LastPlayedTime.Format("2006-01-02 15:04:05")
-		}, func() string {
-			return ""
-		}),
+		LastPlayedTime:     lo.Ternary(d.LastPlayedTime != nil, timestamppb.New(lo.FromPtr(d.LastPlayedTime)), nil),
+		Title:              d.Title,
+		Poster:             d.Poster,
+		Logo:               d.Logo,
+		AirDate:            lo.Ternary(d.AirDate != nil, timestamppb.New(lo.FromPtr(d.AirDate)), nil),
+		Overview:           d.Overview,
+		Favorite:           d.Favorite,
 	}
 }
 

@@ -6,12 +6,14 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";
 import "proto/subtitle.proto";
 import "proto/actor.proto";
 import "proto/base.proto";
+
 
 option go_package = "github.com/liluoliluoli/gnboot/api/movie";
 
@@ -118,9 +120,15 @@ additional_properties:
     repeated gnboot.StudioResp studios = 14;
     repeated gnboot.KeywordResp keywords = 15;
     int32 lastPlayedPosition = 16;
-    string lastPlayedTime = 17;
+    google.protobuf.Timestamp lastPlayedTime = 17;
     repeated gnboot.SubtitleResp subtitles = 18;
     repeated gnboot.ActorResp actors = 19;
+    string title = 20;
+    string poster = 21;
+    string logo = 22;
+    google.protobuf.Timestamp airDate = 23;
+    string overview = 24;
+    bool favorite = 25;
   }
 
   message CreateMovieRequest {

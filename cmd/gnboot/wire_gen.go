@@ -13,7 +13,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/server"
 	"github.com/liluoliluoli/gnboot/internal/service"
-	"github.com/liluoliluoli/gnboot/internal/task"
+	"github.com/liluoliluoli/gnboot/internal/task/i4k"
 )
 
 import (
@@ -73,7 +73,7 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	actorProvider := adaptor.NewActorProvider(actorService)
 	grpcServer := server.NewGRPCServer(c, movieProvider, episodeProvider, seasonProvider, seriesProvider, genreProvider, studioProvider, keywordProvider, actorProvider)
 	httpServer := server.NewHTTPServer(c, movieProvider, episodeProvider, seasonProvider, seriesProvider, genreProvider, studioProvider, keywordProvider, actorProvider)
-	i4kSyncTask := task.NewI4kSyncTask(c, movieService)
+	i4kSyncTask := i4k.NewI4kSyncTask(c, movieService)
 	job := server.NewJob(c, i4kSyncTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {

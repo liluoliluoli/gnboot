@@ -232,6 +232,11 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie,
 				}, func() *time.Time {
 					return nil
 				})
+				item.Favorite = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() bool {
+					return moviePlayedMap[item.ID].Favorited
+				}, func() bool {
+					return false
+				})
 			}
 		}
 	}

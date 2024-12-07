@@ -21,7 +21,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/api/studio"
-	"github.com/liluoliluoli/gnboot/api/user_video_mapping"
+	"github.com/liluoliluoli/gnboot/api/user"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -39,7 +39,7 @@ func NewGRPCServer(
 	studioProvider *adaptor.StudioProvider,
 	keywordProvider *adaptor.KeywordProvider,
 	actorProvider *adaptor.ActorProvider,
-	userVideoMappingProvider *adaptor.UserVideoMappingProvider,
+	userProvider *adaptor.UserProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -82,7 +82,7 @@ func NewGRPCServer(
 	studio.RegisterStudioRemoteServiceServer(srv, studioProvider)
 	keyword.RegisterKeywordRemoteServiceServer(srv, keywordProvider)
 	actor.RegisterActorRemoteServiceServer(srv, actorProvider)
-	user_video_mapping.RegisterUserVideoMappingRemoteServiceServer(srv, userVideoMappingProvider)
+	user.RegisterUserRemoteServiceServer(srv, userProvider)
 	//TODO 追加业务注册
 	return srv
 }

@@ -54,8 +54,8 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 		return err
 	}
 	if first != nil {
-		first.Favorited = lo.ToPtr(true)
-		updates, err := r.do(ctx, tx).Updates(first)
+		first.Favorited = lo.ToPtr(favorite)
+		updates, err := r.do(ctx, tx).Select(gen.VideoUserMapping.Favorited).Updates(first)
 		if err != nil {
 			return err
 		}

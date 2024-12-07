@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-http v2.8.1
 // - protoc             v5.28.3
-// source: proto/user_video_mapping.proto
+// source: proto/user.proto
 
-package user_video_mapping
+package user
 
 import (
 	context "context"
@@ -20,21 +20,21 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationUserVideoMappingRemoteServiceUpdateFavorite = "/gnboot.UserVideoMappingRemoteService/UpdateFavorite"
-const OperationUserVideoMappingRemoteServiceUpdatePlayedStatus = "/gnboot.UserVideoMappingRemoteService/UpdatePlayedStatus"
+const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
+const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/UpdatePlayedStatus"
 
-type UserVideoMappingRemoteServiceHTTPServer interface {
+type UserRemoteServiceHTTPServer interface {
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
 	UpdatePlayedStatus(context.Context, *UpdatePlayedStatusRequest) (*emptypb.Empty, error)
 }
 
-func RegisterUserVideoMappingRemoteServiceHTTPServer(s *http.Server, srv UserVideoMappingRemoteServiceHTTPServer) {
+func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/markFavorite/update", _UserVideoMappingRemoteService_UpdateFavorite0_HTTP_Handler(srv))
-	r.POST("/playedStatus/update", _UserVideoMappingRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv))
+	r.POST("/markFavorite/update", _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv))
+	r.POST("/playedStatus/update", _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv))
 }
 
-func _UserVideoMappingRemoteService_UpdateFavorite0_HTTP_Handler(srv UserVideoMappingRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateFavoriteRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -43,7 +43,7 @@ func _UserVideoMappingRemoteService_UpdateFavorite0_HTTP_Handler(srv UserVideoMa
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserVideoMappingRemoteServiceUpdateFavorite)
+		http.SetOperation(ctx, OperationUserRemoteServiceUpdateFavorite)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateFavorite(ctx, req.(*UpdateFavoriteRequest))
 		})
@@ -56,7 +56,7 @@ func _UserVideoMappingRemoteService_UpdateFavorite0_HTTP_Handler(srv UserVideoMa
 	}
 }
 
-func _UserVideoMappingRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv UserVideoMappingRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdatePlayedStatusRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -65,7 +65,7 @@ func _UserVideoMappingRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv UserVid
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationUserVideoMappingRemoteServiceUpdatePlayedStatus)
+		http.SetOperation(ctx, OperationUserRemoteServiceUpdatePlayedStatus)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdatePlayedStatus(ctx, req.(*UpdatePlayedStatusRequest))
 		})
@@ -78,24 +78,24 @@ func _UserVideoMappingRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv UserVid
 	}
 }
 
-type UserVideoMappingRemoteServiceHTTPClient interface {
+type UserRemoteServiceHTTPClient interface {
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePlayedStatus(ctx context.Context, req *UpdatePlayedStatusRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
-type UserVideoMappingRemoteServiceHTTPClientImpl struct {
+type UserRemoteServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewUserVideoMappingRemoteServiceHTTPClient(client *http.Client) UserVideoMappingRemoteServiceHTTPClient {
-	return &UserVideoMappingRemoteServiceHTTPClientImpl{client}
+func NewUserRemoteServiceHTTPClient(client *http.Client) UserRemoteServiceHTTPClient {
+	return &UserRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *UserVideoMappingRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in *UpdateFavoriteRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in *UpdateFavoriteRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/markFavorite/update"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserVideoMappingRemoteServiceUpdateFavorite))
+	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateFavorite))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -104,11 +104,11 @@ func (c *UserVideoMappingRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context
 	return &out, nil
 }
 
-func (c *UserVideoMappingRemoteServiceHTTPClientImpl) UpdatePlayedStatus(ctx context.Context, in *UpdatePlayedStatusRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *UserRemoteServiceHTTPClientImpl) UpdatePlayedStatus(ctx context.Context, in *UpdatePlayedStatusRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/playedStatus/update"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationUserVideoMappingRemoteServiceUpdatePlayedStatus))
+	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdatePlayedStatus))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

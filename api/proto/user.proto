@@ -7,7 +7,7 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/liluoliluoli/gnboot/api/user_video_mapping";
+option go_package = "github.com/liluoliluoli/gnboot/api/user";
 
 option (openapi.v3.document) = {
   info : {title : "genre adaptor";
@@ -46,7 +46,7 @@ additional_properties:
   }
   ;
 
-  service UserVideoMappingRemoteService {
+  service UserRemoteService {
     rpc UpdateFavorite(UpdateFavoriteRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         post : "/markFavorite/update"

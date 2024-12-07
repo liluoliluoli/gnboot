@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	KeywordRemoteService_FindGenre_FullMethodName = "/gnboot.KeywordRemoteService/FindGenre"
+	KeywordRemoteService_FindKeyword_FullMethodName = "/gnboot.KeywordRemoteService/FindKeyword"
 )
 
 // KeywordRemoteServiceClient is the client API for KeywordRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KeywordRemoteServiceClient interface {
-	FindGenre(ctx context.Context, in *FindKeywordRequest, opts ...grpc.CallOption) (*FindKeywordResp, error)
+	FindKeyword(ctx context.Context, in *FindKeywordRequest, opts ...grpc.CallOption) (*FindKeywordResp, error)
 }
 
 type keywordRemoteServiceClient struct {
@@ -37,9 +37,9 @@ func NewKeywordRemoteServiceClient(cc grpc.ClientConnInterface) KeywordRemoteSer
 	return &keywordRemoteServiceClient{cc}
 }
 
-func (c *keywordRemoteServiceClient) FindGenre(ctx context.Context, in *FindKeywordRequest, opts ...grpc.CallOption) (*FindKeywordResp, error) {
+func (c *keywordRemoteServiceClient) FindKeyword(ctx context.Context, in *FindKeywordRequest, opts ...grpc.CallOption) (*FindKeywordResp, error) {
 	out := new(FindKeywordResp)
-	err := c.cc.Invoke(ctx, KeywordRemoteService_FindGenre_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, KeywordRemoteService_FindKeyword_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *keywordRemoteServiceClient) FindGenre(ctx context.Context, in *FindKeyw
 // All implementations must embed UnimplementedKeywordRemoteServiceServer
 // for forward compatibility
 type KeywordRemoteServiceServer interface {
-	FindGenre(context.Context, *FindKeywordRequest) (*FindKeywordResp, error)
+	FindKeyword(context.Context, *FindKeywordRequest) (*FindKeywordResp, error)
 	mustEmbedUnimplementedKeywordRemoteServiceServer()
 }
 
@@ -58,8 +58,8 @@ type KeywordRemoteServiceServer interface {
 type UnimplementedKeywordRemoteServiceServer struct {
 }
 
-func (UnimplementedKeywordRemoteServiceServer) FindGenre(context.Context, *FindKeywordRequest) (*FindKeywordResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindGenre not implemented")
+func (UnimplementedKeywordRemoteServiceServer) FindKeyword(context.Context, *FindKeywordRequest) (*FindKeywordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindKeyword not implemented")
 }
 func (UnimplementedKeywordRemoteServiceServer) mustEmbedUnimplementedKeywordRemoteServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterKeywordRemoteServiceServer(s grpc.ServiceRegistrar, srv KeywordRemo
 	s.RegisterService(&KeywordRemoteService_ServiceDesc, srv)
 }
 
-func _KeywordRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KeywordRemoteService_FindKeyword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FindKeywordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KeywordRemoteServiceServer).FindGenre(ctx, in)
+		return srv.(KeywordRemoteServiceServer).FindKeyword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: KeywordRemoteService_FindGenre_FullMethodName,
+		FullMethod: KeywordRemoteService_FindKeyword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KeywordRemoteServiceServer).FindGenre(ctx, req.(*FindKeywordRequest))
+		return srv.(KeywordRemoteServiceServer).FindKeyword(ctx, req.(*FindKeywordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var KeywordRemoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*KeywordRemoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "FindGenre",
-			Handler:    _KeywordRemoteService_FindGenre_Handler,
+			MethodName: "FindKeyword",
+			Handler:    _KeywordRemoteService_FindKeyword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

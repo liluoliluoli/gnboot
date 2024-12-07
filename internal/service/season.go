@@ -20,6 +20,8 @@ type SeasonService struct {
 	keywordRepo              *repo.KeywordRepo
 	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
+	seasonRepo               *repo.SeasonRepo
+	episodeRepo              *repo.EpisodeRepo
 	cache                    sdomain.Cache[*sdomain.Season]
 }
 
@@ -29,7 +31,8 @@ func NewSeasonService(c *conf.Bootstrap,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
 	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *SeasonService {
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo,
+	seasonRepo *repo.SeasonRepo, episodeRepo *repo.EpisodeRepo) *SeasonService {
 	return &SeasonService{
 		c:                        c,
 		movieRepo:                movieRepo,
@@ -42,6 +45,8 @@ func NewSeasonService(c *conf.Bootstrap,
 		keywordRepo:              keywordRepo,
 		videoKeywordMappingRepo:  videoKeywordMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
+		seasonRepo:               seasonRepo,
+		episodeRepo:              episodeRepo,
 		cache:                    repo.NewCache[*sdomain.Season](c, movieRepo.Data.Cache()),
 	}
 }
@@ -53,6 +58,17 @@ func (s *SeasonService) Get(ctx context.Context, id int64) (*sdomain.Season, err
 }
 
 func (s *SeasonService) get(ctx context.Context, id int64) (*sdomain.Season, error) {
-
-	return nil, nil
+	season, err := s.seasonRepo.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if season == nil {
+		return nil, nil
+	}
+	episodes, err := s.episodeRepo.QueryBySeasonId(ctx, season.ID)
+	if err != nil {
+		return nil, err
+	}
+	season.Episodes = episodes
+	return season, nil
 }

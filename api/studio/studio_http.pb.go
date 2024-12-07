@@ -19,18 +19,18 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationStudioRemoteServiceFindGenre = "/gnboot.StudioRemoteService/FindGenre"
+const OperationStudioRemoteServiceFindStudio = "/gnboot.StudioRemoteService/FindStudio"
 
 type StudioRemoteServiceHTTPServer interface {
-	FindGenre(context.Context, *FindStudioRequest) (*FindStudioResp, error)
+	FindStudio(context.Context, *FindStudioRequest) (*FindStudioResp, error)
 }
 
 func RegisterStudioRemoteServiceHTTPServer(s *http.Server, srv StudioRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/studio/query/all", _StudioRemoteService_FindGenre0_HTTP_Handler(srv))
+	r.POST("/studio/query/all", _StudioRemoteService_FindStudio0_HTTP_Handler(srv))
 }
 
-func _StudioRemoteService_FindGenre0_HTTP_Handler(srv StudioRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _StudioRemoteService_FindStudio0_HTTP_Handler(srv StudioRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FindStudioRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -39,9 +39,9 @@ func _StudioRemoteService_FindGenre0_HTTP_Handler(srv StudioRemoteServiceHTTPSer
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStudioRemoteServiceFindGenre)
+		http.SetOperation(ctx, OperationStudioRemoteServiceFindStudio)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.FindGenre(ctx, req.(*FindStudioRequest))
+			return srv.FindStudio(ctx, req.(*FindStudioRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -53,7 +53,7 @@ func _StudioRemoteService_FindGenre0_HTTP_Handler(srv StudioRemoteServiceHTTPSer
 }
 
 type StudioRemoteServiceHTTPClient interface {
-	FindGenre(ctx context.Context, req *FindStudioRequest, opts ...http.CallOption) (rsp *FindStudioResp, err error)
+	FindStudio(ctx context.Context, req *FindStudioRequest, opts ...http.CallOption) (rsp *FindStudioResp, err error)
 }
 
 type StudioRemoteServiceHTTPClientImpl struct {
@@ -64,11 +64,11 @@ func NewStudioRemoteServiceHTTPClient(client *http.Client) StudioRemoteServiceHT
 	return &StudioRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *StudioRemoteServiceHTTPClientImpl) FindGenre(ctx context.Context, in *FindStudioRequest, opts ...http.CallOption) (*FindStudioResp, error) {
+func (c *StudioRemoteServiceHTTPClientImpl) FindStudio(ctx context.Context, in *FindStudioRequest, opts ...http.CallOption) (*FindStudioResp, error) {
 	var out FindStudioResp
 	pattern := "/studio/query/all"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationStudioRemoteServiceFindGenre))
+	opts = append(opts, http.Operation(OperationStudioRemoteServiceFindStudio))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

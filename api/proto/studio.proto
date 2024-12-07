@@ -47,7 +47,7 @@ additional_properties:
   ;
 
   service StudioRemoteService {
-    rpc FindGenre(FindStudioRequest) returns (FindStudioResp) {
+    rpc FindStudio(FindStudioRequest) returns (FindStudioResp) {
       option (google.api.http) = {
         post : "/studio/query/all"
         body : "*"

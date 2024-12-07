@@ -398,8 +398,8 @@ func (s *SeriesService) buildSeriesNextToPlayEpisodeMap(ctx context.Context, ser
 	}
 
 	for _, seriesId := range seriesIds {
-		if _, ok := seriesSeasonMap[seriesId]; !ok {
-			if _, ok := seasonEpisodeMap[seriesSeasonMap[seriesId].ID]; !ok {
+		if _, ok := seriesSeasonMap[seriesId]; ok {
+			if _, ok = seasonEpisodeMap[seriesSeasonMap[seriesId].ID]; ok {
 				rsMap[seriesId] = seasonEpisodeMap[seriesSeasonMap[seriesId].ID]
 			}
 		}

@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	StudioRemoteService_FindGenre_FullMethodName = "/gnboot.StudioRemoteService/FindGenre"
+	StudioRemoteService_FindStudio_FullMethodName = "/gnboot.StudioRemoteService/FindStudio"
 )
 
 // StudioRemoteServiceClient is the client API for StudioRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StudioRemoteServiceClient interface {
-	FindGenre(ctx context.Context, in *FindStudioRequest, opts ...grpc.CallOption) (*FindStudioResp, error)
+	FindStudio(ctx context.Context, in *FindStudioRequest, opts ...grpc.CallOption) (*FindStudioResp, error)
 }
 
 type studioRemoteServiceClient struct {
@@ -37,9 +37,9 @@ func NewStudioRemoteServiceClient(cc grpc.ClientConnInterface) StudioRemoteServi
 	return &studioRemoteServiceClient{cc}
 }
 
-func (c *studioRemoteServiceClient) FindGenre(ctx context.Context, in *FindStudioRequest, opts ...grpc.CallOption) (*FindStudioResp, error) {
+func (c *studioRemoteServiceClient) FindStudio(ctx context.Context, in *FindStudioRequest, opts ...grpc.CallOption) (*FindStudioResp, error) {
 	out := new(FindStudioResp)
-	err := c.cc.Invoke(ctx, StudioRemoteService_FindGenre_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, StudioRemoteService_FindStudio_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *studioRemoteServiceClient) FindGenre(ctx context.Context, in *FindStudi
 // All implementations must embed UnimplementedStudioRemoteServiceServer
 // for forward compatibility
 type StudioRemoteServiceServer interface {
-	FindGenre(context.Context, *FindStudioRequest) (*FindStudioResp, error)
+	FindStudio(context.Context, *FindStudioRequest) (*FindStudioResp, error)
 	mustEmbedUnimplementedStudioRemoteServiceServer()
 }
 
@@ -58,8 +58,8 @@ type StudioRemoteServiceServer interface {
 type UnimplementedStudioRemoteServiceServer struct {
 }
 
-func (UnimplementedStudioRemoteServiceServer) FindGenre(context.Context, *FindStudioRequest) (*FindStudioResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindGenre not implemented")
+func (UnimplementedStudioRemoteServiceServer) FindStudio(context.Context, *FindStudioRequest) (*FindStudioResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindStudio not implemented")
 }
 func (UnimplementedStudioRemoteServiceServer) mustEmbedUnimplementedStudioRemoteServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterStudioRemoteServiceServer(s grpc.ServiceRegistrar, srv StudioRemote
 	s.RegisterService(&StudioRemoteService_ServiceDesc, srv)
 }
 
-func _StudioRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StudioRemoteService_FindStudio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FindStudioRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StudioRemoteServiceServer).FindGenre(ctx, in)
+		return srv.(StudioRemoteServiceServer).FindStudio(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StudioRemoteService_FindGenre_FullMethodName,
+		FullMethod: StudioRemoteService_FindStudio_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StudioRemoteServiceServer).FindGenre(ctx, req.(*FindStudioRequest))
+		return srv.(StudioRemoteServiceServer).FindStudio(ctx, req.(*FindStudioRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var StudioRemoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*StudioRemoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "FindGenre",
-			Handler:    _StudioRemoteService_FindGenre_Handler,
+			MethodName: "FindStudio",
+			Handler:    _StudioRemoteService_FindStudio_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

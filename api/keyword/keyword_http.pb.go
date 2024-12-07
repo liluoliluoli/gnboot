@@ -19,18 +19,18 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationKeywordRemoteServiceFindGenre = "/gnboot.KeywordRemoteService/FindGenre"
+const OperationKeywordRemoteServiceFindKeyword = "/gnboot.KeywordRemoteService/FindKeyword"
 
 type KeywordRemoteServiceHTTPServer interface {
-	FindGenre(context.Context, *FindKeywordRequest) (*FindKeywordResp, error)
+	FindKeyword(context.Context, *FindKeywordRequest) (*FindKeywordResp, error)
 }
 
 func RegisterKeywordRemoteServiceHTTPServer(s *http.Server, srv KeywordRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/keyword/query/all", _KeywordRemoteService_FindGenre0_HTTP_Handler(srv))
+	r.POST("/keyword/query/all", _KeywordRemoteService_FindKeyword0_HTTP_Handler(srv))
 }
 
-func _KeywordRemoteService_FindGenre0_HTTP_Handler(srv KeywordRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _KeywordRemoteService_FindKeyword0_HTTP_Handler(srv KeywordRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FindKeywordRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -39,9 +39,9 @@ func _KeywordRemoteService_FindGenre0_HTTP_Handler(srv KeywordRemoteServiceHTTPS
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationKeywordRemoteServiceFindGenre)
+		http.SetOperation(ctx, OperationKeywordRemoteServiceFindKeyword)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.FindGenre(ctx, req.(*FindKeywordRequest))
+			return srv.FindKeyword(ctx, req.(*FindKeywordRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -53,7 +53,7 @@ func _KeywordRemoteService_FindGenre0_HTTP_Handler(srv KeywordRemoteServiceHTTPS
 }
 
 type KeywordRemoteServiceHTTPClient interface {
-	FindGenre(ctx context.Context, req *FindKeywordRequest, opts ...http.CallOption) (rsp *FindKeywordResp, err error)
+	FindKeyword(ctx context.Context, req *FindKeywordRequest, opts ...http.CallOption) (rsp *FindKeywordResp, err error)
 }
 
 type KeywordRemoteServiceHTTPClientImpl struct {
@@ -64,11 +64,11 @@ func NewKeywordRemoteServiceHTTPClient(client *http.Client) KeywordRemoteService
 	return &KeywordRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *KeywordRemoteServiceHTTPClientImpl) FindGenre(ctx context.Context, in *FindKeywordRequest, opts ...http.CallOption) (*FindKeywordResp, error) {
+func (c *KeywordRemoteServiceHTTPClientImpl) FindKeyword(ctx context.Context, in *FindKeywordRequest, opts ...http.CallOption) (*FindKeywordResp, error) {
 	var out FindKeywordResp
 	pattern := "/keyword/query/all"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationKeywordRemoteServiceFindGenre))
+	opts = append(opts, http.Operation(OperationKeywordRemoteServiceFindKeyword))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

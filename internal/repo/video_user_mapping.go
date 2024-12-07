@@ -6,6 +6,8 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
+	"gorm.io/gorm"
+	"time"
 )
 
 type VideoUserMappingRepo struct {
@@ -44,4 +46,63 @@ func (r *VideoUserMappingRepo) FindByUserIdAndVideoIdAndType(ctx context.Context
 	return lo.Map(finds, func(item *model.VideoUserMapping, index int) *sdomain.VideoUserMapping {
 		return (&sdomain.VideoUserMapping{}).ConvertFromRepo(item)
 	}), nil
+}
+
+func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query, userId int64, videoId int64, videoType string, favorite bool) error {
+	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).Where(gen.VideoUserMapping.VideoType.Eq(videoType)).First()
+	if err != nil {
+		return err
+	}
+	if first != nil {
+		first.Favorited = lo.ToPtr(true)
+		updates, err := r.do(ctx, tx).Updates(first)
+		if err != nil {
+			return err
+		}
+		if updates.RowsAffected != 1 {
+			return gorm.ErrDuplicatedKey
+		}
+	} else {
+		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
+			VideoID:   videoId,
+			UserID:    userId,
+			VideoType: videoType,
+			Favorited: lo.ToPtr(favorite),
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, videoType string, position int32) error {
+	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).Where(gen.VideoUserMapping.VideoType.Eq(videoType)).First()
+	if err != nil {
+		return err
+	}
+	if first != nil {
+		first.LastPlayedPosition = lo.ToPtr(position)
+		first.LastPlayedTime = lo.ToPtr(time.Now())
+		updates, err := r.do(ctx, tx).Updates(first)
+		if err != nil {
+			return err
+		}
+		if updates.RowsAffected != 1 {
+			return gorm.ErrDuplicatedKey
+		}
+	} else {
+		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
+			VideoID:            videoId,
+			UserID:             userId,
+			VideoType:          videoType,
+			Favorited:          lo.ToPtr(false),
+			LastPlayedPosition: lo.ToPtr(position),
+			LastPlayedTime:     lo.ToPtr(time.Now()),
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

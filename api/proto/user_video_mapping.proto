@@ -7,7 +7,7 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/liluoliluoli/gnboot/api/actor";
+option go_package = "github.com/liluoliluoli/gnboot/api/user_video_mapping";
 
 option (openapi.v3.document) = {
   info : {title : "genre adaptor";
@@ -46,28 +46,31 @@ additional_properties:
   }
   ;
 
-  service ActorRemoteService {
-    rpc FindActor(FindActorRequest) returns (FindActorResp) {
+  service UserVideoMappingRemoteService {
+    rpc UpdateFavorite(UpdateFavoriteRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/actor/query/all"
+        post : "/markFavorite/update"
+        body : "*"
+      };
+    }
+    rpc UpdatePlayedStatus(UpdatePlayedStatusRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/playedStatus/update"
         body : "*"
       };
     }
   }
 
-  message ActorResp {
+
+  message UpdateFavoriteRequest {
     int64 id = 1;
-    string name = 2;
-    string originalName = 3;
-    bool adult = 4;
-    int32 gender = 5;
-    string character = 6;
-    string profile = 7;
+    string type = 2;
+    bool favorite = 3;
   }
 
-  message FindActorRequest {
-  }
 
-  message FindActorResp {
-    repeated ActorResp actors = 1;
-  }
+message UpdatePlayedStatusRequest {
+  int64 id = 1;
+  string type = 2;
+  int32 position = 3;
+}

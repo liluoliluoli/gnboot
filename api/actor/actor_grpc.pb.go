@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ActorRemoteService_FindGenre_FullMethodName = "/gnboot.ActorRemoteService/FindGenre"
+	ActorRemoteService_FindActor_FullMethodName = "/gnboot.ActorRemoteService/FindActor"
 )
 
 // ActorRemoteServiceClient is the client API for ActorRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ActorRemoteServiceClient interface {
-	FindGenre(ctx context.Context, in *FindActorRequest, opts ...grpc.CallOption) (*FindActorResp, error)
+	FindActor(ctx context.Context, in *FindActorRequest, opts ...grpc.CallOption) (*FindActorResp, error)
 }
 
 type actorRemoteServiceClient struct {
@@ -37,9 +37,9 @@ func NewActorRemoteServiceClient(cc grpc.ClientConnInterface) ActorRemoteService
 	return &actorRemoteServiceClient{cc}
 }
 
-func (c *actorRemoteServiceClient) FindGenre(ctx context.Context, in *FindActorRequest, opts ...grpc.CallOption) (*FindActorResp, error) {
+func (c *actorRemoteServiceClient) FindActor(ctx context.Context, in *FindActorRequest, opts ...grpc.CallOption) (*FindActorResp, error) {
 	out := new(FindActorResp)
-	err := c.cc.Invoke(ctx, ActorRemoteService_FindGenre_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, ActorRemoteService_FindActor_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *actorRemoteServiceClient) FindGenre(ctx context.Context, in *FindActorR
 // All implementations must embed UnimplementedActorRemoteServiceServer
 // for forward compatibility
 type ActorRemoteServiceServer interface {
-	FindGenre(context.Context, *FindActorRequest) (*FindActorResp, error)
+	FindActor(context.Context, *FindActorRequest) (*FindActorResp, error)
 	mustEmbedUnimplementedActorRemoteServiceServer()
 }
 
@@ -58,8 +58,8 @@ type ActorRemoteServiceServer interface {
 type UnimplementedActorRemoteServiceServer struct {
 }
 
-func (UnimplementedActorRemoteServiceServer) FindGenre(context.Context, *FindActorRequest) (*FindActorResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindGenre not implemented")
+func (UnimplementedActorRemoteServiceServer) FindActor(context.Context, *FindActorRequest) (*FindActorResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindActor not implemented")
 }
 func (UnimplementedActorRemoteServiceServer) mustEmbedUnimplementedActorRemoteServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterActorRemoteServiceServer(s grpc.ServiceRegistrar, srv ActorRemoteSe
 	s.RegisterService(&ActorRemoteService_ServiceDesc, srv)
 }
 
-func _ActorRemoteService_FindGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ActorRemoteService_FindActor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FindActorRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ActorRemoteServiceServer).FindGenre(ctx, in)
+		return srv.(ActorRemoteServiceServer).FindActor(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ActorRemoteService_FindGenre_FullMethodName,
+		FullMethod: ActorRemoteService_FindActor_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ActorRemoteServiceServer).FindGenre(ctx, req.(*FindActorRequest))
+		return srv.(ActorRemoteServiceServer).FindActor(ctx, req.(*FindActorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var ActorRemoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ActorRemoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "FindGenre",
-			Handler:    _ActorRemoteService_FindGenre_Handler,
+			MethodName: "FindActor",
+			Handler:    _ActorRemoteService_FindActor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

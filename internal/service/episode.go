@@ -20,6 +20,7 @@ type EpisodeService struct {
 	keywordRepo              *repo.KeywordRepo
 	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
+	episodeRepo              *repo.EpisodeRepo
 	cache                    sdomain.Cache[*sdomain.Episode]
 }
 
@@ -29,7 +30,7 @@ func NewEpisodeService(c *conf.Bootstrap,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
 	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo) *EpisodeService {
+	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo) *EpisodeService {
 	return &EpisodeService{
 		c:                        c,
 		movieRepo:                movieRepo,
@@ -42,6 +43,7 @@ func NewEpisodeService(c *conf.Bootstrap,
 		keywordRepo:              keywordRepo,
 		videoKeywordMappingRepo:  videoKeywordMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
+		episodeRepo:              episodeRepo,
 		cache:                    repo.NewCache[*sdomain.Episode](c, movieRepo.Data.Cache()),
 	}
 }
@@ -53,6 +55,9 @@ func (s *EpisodeService) Get(ctx context.Context, id int64) (*sdomain.Episode, e
 }
 
 func (s *EpisodeService) get(ctx context.Context, id int64) (*sdomain.Episode, error) {
-
-	return nil, nil
+	episode, err := s.episodeRepo.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return episode, nil
 }

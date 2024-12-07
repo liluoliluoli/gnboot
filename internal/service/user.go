@@ -5,22 +5,26 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 )
 
 type UserService struct {
-	c        *conf.Bootstrap
-	userRepo *repo.UserRepo
-	cache    sdomain.Cache[*sdomain.User]
+	c                    *conf.Bootstrap
+	userRepo             *repo.UserRepo
+	videoUserMappingRepo *repo.VideoUserMappingRepo
+	cache                sdomain.Cache[*sdomain.User]
 }
 
 func NewUserService(c *conf.Bootstrap,
 	userRepo *repo.UserRepo,
+	videoUserMappingRepo *repo.VideoUserMappingRepo,
 ) *UserService {
 	return &UserService{
-		c:        c,
-		userRepo: userRepo,
-		cache:    repo.NewCache[*sdomain.User](c, userRepo.Data.Cache()),
+		c:                    c,
+		userRepo:             userRepo,
+		videoUserMappingRepo: videoUserMappingRepo,
+		cache:                repo.NewCache[*sdomain.User](c, userRepo.Data.Cache()),
 	}
 }
 
@@ -36,4 +40,30 @@ func (s *UserService) get(ctx context.Context, id int64) (*sdomain.User, error) 
 		return nil, err
 	}
 	return item, nil
+}
+
+func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId int64, videoType string, favorite bool) error {
+	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.videoUserMappingRepo.UpdateFavorite(ctx, nil, userId, videoId, videoType, favorite)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, videoType string, position int32) error {
+	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, nil, userId, videoId, videoType, position)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
 }

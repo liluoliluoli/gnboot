@@ -47,7 +47,7 @@ additional_properties:
   ;
 
   service KeywordRemoteService {
-    rpc FindGenre(FindKeywordRequest) returns (FindKeywordResp) {
+    rpc FindKeyword(FindKeywordRequest) returns (FindKeywordResp) {
       option (google.api.http) = {
         post : "/keyword/query/all"
         body : "*"

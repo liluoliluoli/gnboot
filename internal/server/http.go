@@ -22,6 +22,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/season"
 	"github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/api/studio"
+	"github.com/liluoliluoli/gnboot/api/user_video_mapping"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -40,6 +41,7 @@ func NewHTTPServer(
 	studioProvider *adaptor.StudioProvider,
 	keywordProvider *adaptor.KeywordProvider,
 	actorProvider *adaptor.ActorProvider,
+	userVideoMappingProvider *adaptor.UserVideoMappingProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -82,6 +84,7 @@ func NewHTTPServer(
 	studio.RegisterStudioRemoteServiceHTTPServer(srv, studioProvider)
 	keyword.RegisterKeywordRemoteServiceHTTPServer(srv, keywordProvider)
 	actor.RegisterActorRemoteServiceHTTPServer(srv, actorProvider)
+	user_video_mapping.RegisterUserVideoMappingRemoteServiceHTTPServer(srv, userVideoMappingProvider)
 	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())

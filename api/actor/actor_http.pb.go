@@ -19,18 +19,18 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationActorRemoteServiceFindGenre = "/gnboot.ActorRemoteService/FindGenre"
+const OperationActorRemoteServiceFindActor = "/gnboot.ActorRemoteService/FindActor"
 
 type ActorRemoteServiceHTTPServer interface {
-	FindGenre(context.Context, *FindActorRequest) (*FindActorResp, error)
+	FindActor(context.Context, *FindActorRequest) (*FindActorResp, error)
 }
 
 func RegisterActorRemoteServiceHTTPServer(s *http.Server, srv ActorRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/actor/query/all", _ActorRemoteService_FindGenre0_HTTP_Handler(srv))
+	r.POST("/actor/query/all", _ActorRemoteService_FindActor0_HTTP_Handler(srv))
 }
 
-func _ActorRemoteService_FindGenre0_HTTP_Handler(srv ActorRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _ActorRemoteService_FindActor0_HTTP_Handler(srv ActorRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in FindActorRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -39,9 +39,9 @@ func _ActorRemoteService_FindGenre0_HTTP_Handler(srv ActorRemoteServiceHTTPServe
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationActorRemoteServiceFindGenre)
+		http.SetOperation(ctx, OperationActorRemoteServiceFindActor)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.FindGenre(ctx, req.(*FindActorRequest))
+			return srv.FindActor(ctx, req.(*FindActorRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -53,7 +53,7 @@ func _ActorRemoteService_FindGenre0_HTTP_Handler(srv ActorRemoteServiceHTTPServe
 }
 
 type ActorRemoteServiceHTTPClient interface {
-	FindGenre(ctx context.Context, req *FindActorRequest, opts ...http.CallOption) (rsp *FindActorResp, err error)
+	FindActor(ctx context.Context, req *FindActorRequest, opts ...http.CallOption) (rsp *FindActorResp, err error)
 }
 
 type ActorRemoteServiceHTTPClientImpl struct {
@@ -64,11 +64,11 @@ func NewActorRemoteServiceHTTPClient(client *http.Client) ActorRemoteServiceHTTP
 	return &ActorRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *ActorRemoteServiceHTTPClientImpl) FindGenre(ctx context.Context, in *FindActorRequest, opts ...http.CallOption) (*FindActorResp, error) {
+func (c *ActorRemoteServiceHTTPClientImpl) FindActor(ctx context.Context, in *FindActorRequest, opts ...http.CallOption) (*FindActorResp, error) {
 	var out FindActorResp
 	pattern := "/actor/query/all"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationActorRemoteServiceFindGenre))
+	opts = append(opts, http.Operation(OperationActorRemoteServiceFindActor))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

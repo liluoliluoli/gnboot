@@ -3,7 +3,6 @@ module github.com/liluoliluoli/gnboot/api
 go 1.22
 
 require (
-	github.com/go-cinch/common/proto/params v1.0.0
 	github.com/go-kratos/kratos/v2 v2.8.2
 	github.com/google/gnostic v0.7.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240903143218-8af14fe29dc1

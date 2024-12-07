@@ -105,9 +105,77 @@ func (m *EpisodeResp) validate(all bool) error {
 
 	// no validation rules for LastPlayedPosition
 
+	if all {
+		switch v := interface{}(m.GetLastPlayedTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, EpisodeRespValidationError{
+					field:  "LastPlayedTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, EpisodeRespValidationError{
+					field:  "LastPlayedTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLastPlayedTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EpisodeRespValidationError{
+				field:  "LastPlayedTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	// no validation rules for SkipIntro
 
 	// no validation rules for SkipEnding
+
+	// no validation rules for Title
+
+	// no validation rules for Poster
+
+	// no validation rules for Logo
+
+	if all {
+		switch v := interface{}(m.GetAirDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, EpisodeRespValidationError{
+					field:  "AirDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, EpisodeRespValidationError{
+					field:  "AirDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAirDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EpisodeRespValidationError{
+				field:  "AirDate",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Overview
+
+	// no validation rules for Favorite
 
 	if len(errors) > 0 {
 		return EpisodeRespMultiError(errors)

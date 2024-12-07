@@ -12,23 +12,22 @@ const TableNameEpisode = "episode"
 
 // Episode mapped from table <episode>
 type Episode struct {
-	ID             int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	SeasonID       int64      `gorm:"column:season_id;type:bigint;not null;comment:季id" json:"seasonId"`
-	Episode        int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
-	URL            string     `gorm:"column:url;type:varchar(1024);not null;comment:影片地址" json:"url"`
-	Downloaded     bool       `gorm:"column:downloaded;type:tinyint(1);not null;comment:是否能下载" json:"downloaded"`
-	Ext            *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
-	FileSize       *int32     `gorm:"column:file_size;type:int;comment:文件大小" json:"fileSize"`
-	CreateTime     time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
-	UpdateTime     time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
-	OriginalTitle  *string    `gorm:"column:original_title;type:varchar(1024);comment:原名" json:"originalTitle"`
-	Filename       string     `gorm:"column:filename;type:varchar(255);not null;comment:文件名" json:"filename"`
-	LastPlayedTime *time.Time `gorm:"column:last_played_time;type:datetime;comment:上次播放时间" json:"lastPlayedTime"`
-	Title          *string    `gorm:"column:title;type:varchar(1024);comment:标题" json:"title"`
-	Poster         *string    `gorm:"column:poster;type:varchar(1024);comment:海报" json:"poster"`
-	Logo           *string    `gorm:"column:logo;type:varchar(1024);comment:logo" json:"logo"`
-	AirDate        *time.Time `gorm:"column:air_date;type:datetime;comment:首播时间" json:"airDate"`
-	Overview       *string    `gorm:"column:overview;type:varchar(2048);comment:简介" json:"overview"`
+	ID            int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	SeasonID      int64      `gorm:"column:season_id;type:bigint;not null;comment:季id" json:"seasonId"`
+	Episode       int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
+	URL           string     `gorm:"column:url;type:varchar(1024);not null;comment:影片地址" json:"url"`
+	Downloaded    bool       `gorm:"column:downloaded;type:tinyint(1);not null;comment:是否能下载" json:"downloaded"`
+	Ext           *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
+	FileSize      *int32     `gorm:"column:file_size;type:int;comment:文件大小" json:"fileSize"`
+	CreateTime    time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime" json:"createTime"`
+	UpdateTime    time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime" json:"updateTime"`
+	OriginalTitle *string    `gorm:"column:original_title;type:varchar(1024);comment:原名" json:"originalTitle"`
+	Filename      string     `gorm:"column:filename;type:varchar(255);not null;comment:文件名" json:"filename"`
+	Title         *string    `gorm:"column:title;type:varchar(1024);comment:标题" json:"title"`
+	Poster        *string    `gorm:"column:poster;type:varchar(1024);comment:海报" json:"poster"`
+	Logo          *string    `gorm:"column:logo;type:varchar(1024);comment:logo" json:"logo"`
+	AirDate       *time.Time `gorm:"column:air_date;type:datetime;comment:首播时间" json:"airDate"`
+	Overview      *string    `gorm:"column:overview;type:varchar(2048);comment:简介" json:"overview"`
 }
 
 // TableName Episode's table name

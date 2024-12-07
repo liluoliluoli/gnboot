@@ -57,3 +57,13 @@ func (r *SeriesRepo) Page(ctx context.Context, condition *sdomain.SearchSeries) 
 		}),
 	}, nil
 }
+
+func (r *SeriesRepo) QueryByIds(ctx context.Context, ids []int64) ([]*sdomain.Series, error) {
+	finds, err := r.do(ctx, nil).Where(gen.Series.ID.In(ids...)).Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	return lo.Map(finds, func(item *model.Series, index int) *sdomain.Series {
+		return (&sdomain.Series{}).ConvertFromRepo(item)
+	}), nil
+}

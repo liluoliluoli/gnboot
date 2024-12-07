@@ -6,6 +6,7 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";
@@ -72,6 +73,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc NextToPlaySeries(NextToPlaySeriesRequest) returns (SearchSeriesResp) {
+      option (google.api.http) = {
+        post : "/series/nextToPlay/query/all"
+        body : "*"
+      };
+    }
     rpc UpdateSeries(UpdateSeriesRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         put : "/series/update"
@@ -103,6 +110,16 @@ additional_properties:
     repeated gnboot.KeywordResp keywords = 11;
     repeated gnboot.SeasonResp seasons = 12;
     gnboot.EpisodeResp nextToPlay = 13;
+    string originalTitle = 14;
+    google.protobuf.Timestamp lastPlayedTime = 15;
+    string filename = 16;
+    repeated gnboot.ActorResp actors = 19;
+    string title = 20;
+    string poster = 21;
+    string logo = 22;
+    google.protobuf.Timestamp airDate = 23;
+    string overview = 24;
+    bool favorite = 25;
   }
 
   message CreateSeriesRequest {
@@ -129,6 +146,10 @@ additional_properties:
   message GetSeriesRequest {
     int64 id = 1;
   }
+
+message NextToPlaySeriesRequest {
+  Page page = 1;
+}
 
   message UpdateSeriesRequest {
     int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];

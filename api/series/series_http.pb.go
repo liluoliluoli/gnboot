@@ -25,6 +25,7 @@ const OperationSeriesRemoteServiceDeleteSeries = "/gnboot.SeriesRemoteService/De
 const OperationSeriesRemoteServiceFilterSeries = "/gnboot.SeriesRemoteService/FilterSeries"
 const OperationSeriesRemoteServiceFindSeries = "/gnboot.SeriesRemoteService/FindSeries"
 const OperationSeriesRemoteServiceGetSeries = "/gnboot.SeriesRemoteService/GetSeries"
+const OperationSeriesRemoteServiceNextToPlaySeries = "/gnboot.SeriesRemoteService/NextToPlaySeries"
 const OperationSeriesRemoteServiceUpdateSeries = "/gnboot.SeriesRemoteService/UpdateSeries"
 
 type SeriesRemoteServiceHTTPServer interface {
@@ -32,6 +33,7 @@ type SeriesRemoteServiceHTTPServer interface {
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	GetSeries(context.Context, *GetSeriesRequest) (*SeriesResp, error)
+	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error)
 	UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error)
 }
 
@@ -40,6 +42,7 @@ func RegisterSeriesRemoteServiceHTTPServer(s *http.Server, srv SeriesRemoteServi
 	r.GET("/series/query/id", _SeriesRemoteService_GetSeries0_HTTP_Handler(srv))
 	r.POST("/series/query/all", _SeriesRemoteService_FindSeries0_HTTP_Handler(srv))
 	r.POST("/series/query/filter", _SeriesRemoteService_FilterSeries0_HTTP_Handler(srv))
+	r.POST("/series/nextToPlay/query/all", _SeriesRemoteService_NextToPlaySeries0_HTTP_Handler(srv))
 	r.PATCH("/series/update", _SeriesRemoteService_UpdateSeries0_HTTP_Handler(srv))
 	r.PUT("/series/update", _SeriesRemoteService_UpdateSeries1_HTTP_Handler(srv))
 	r.DELETE("/series/delete", _SeriesRemoteService_DeleteSeries0_HTTP_Handler(srv))
@@ -98,6 +101,28 @@ func _SeriesRemoteService_FilterSeries0_HTTP_Handler(srv SeriesRemoteServiceHTTP
 		http.SetOperation(ctx, OperationSeriesRemoteServiceFilterSeries)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.FilterSeries(ctx, req.(*FilterSeriesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SearchSeriesResp)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _SeriesRemoteService_NextToPlaySeries0_HTTP_Handler(srv SeriesRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in NextToPlaySeriesRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSeriesRemoteServiceNextToPlaySeries)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.NextToPlaySeries(ctx, req.(*NextToPlaySeriesRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -176,6 +201,7 @@ type SeriesRemoteServiceHTTPClient interface {
 	FilterSeries(ctx context.Context, req *FilterSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	FindSeries(ctx context.Context, req *FindSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	GetSeries(ctx context.Context, req *GetSeriesRequest, opts ...http.CallOption) (rsp *SeriesResp, err error)
+	NextToPlaySeries(ctx context.Context, req *NextToPlaySeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	UpdateSeries(ctx context.Context, req *UpdateSeriesRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -233,6 +259,19 @@ func (c *SeriesRemoteServiceHTTPClientImpl) GetSeries(ctx context.Context, in *G
 	opts = append(opts, http.Operation(OperationSeriesRemoteServiceGetSeries))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *SeriesRemoteServiceHTTPClientImpl) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...http.CallOption) (*SearchSeriesResp, error) {
+	var out SearchSeriesResp
+	pattern := "/series/nextToPlay/query/all"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationSeriesRemoteServiceNextToPlaySeries))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

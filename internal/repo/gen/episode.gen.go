@@ -39,7 +39,6 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 	_episode.OriginalTitle = field.NewString(tableName, "original_title")
 	_episode.Filename = field.NewString(tableName, "filename")
-	_episode.LastPlayedTime = field.NewTime(tableName, "last_played_time")
 	_episode.Title = field.NewString(tableName, "title")
 	_episode.Poster = field.NewString(tableName, "poster")
 	_episode.Logo = field.NewString(tableName, "logo")
@@ -54,24 +53,23 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 type episode struct {
 	episodeDo episodeDo
 
-	ALL            field.Asterisk
-	ID             field.Int64  // 主键
-	SeasonID       field.Int64  // 季id
-	Episode        field.Int32  // 第几集
-	URL            field.String // 影片地址
-	Downloaded     field.Bool   // 是否能下载
-	Ext            field.String // 扩展参数
-	FileSize       field.Int32  // 文件大小
-	CreateTime     field.Time
-	UpdateTime     field.Time
-	OriginalTitle  field.String // 原名
-	Filename       field.String // 文件名
-	LastPlayedTime field.Time   // 上次播放时间
-	Title          field.String // 标题
-	Poster         field.String // 海报
-	Logo           field.String // logo
-	AirDate        field.Time   // 首播时间
-	Overview       field.String // 简介
+	ALL           field.Asterisk
+	ID            field.Int64  // 主键
+	SeasonID      field.Int64  // 季id
+	Episode       field.Int32  // 第几集
+	URL           field.String // 影片地址
+	Downloaded    field.Bool   // 是否能下载
+	Ext           field.String // 扩展参数
+	FileSize      field.Int32  // 文件大小
+	CreateTime    field.Time
+	UpdateTime    field.Time
+	OriginalTitle field.String // 原名
+	Filename      field.String // 文件名
+	Title         field.String // 标题
+	Poster        field.String // 海报
+	Logo          field.String // logo
+	AirDate       field.Time   // 首播时间
+	Overview      field.String // 简介
 
 	fieldMap map[string]field.Expr
 }
@@ -99,7 +97,6 @@ func (e *episode) updateTableName(table string) *episode {
 	e.UpdateTime = field.NewTime(table, "update_time")
 	e.OriginalTitle = field.NewString(table, "original_title")
 	e.Filename = field.NewString(table, "filename")
-	e.LastPlayedTime = field.NewTime(table, "last_played_time")
 	e.Title = field.NewString(table, "title")
 	e.Poster = field.NewString(table, "poster")
 	e.Logo = field.NewString(table, "logo")
@@ -127,7 +124,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 17)
+	e.fieldMap = make(map[string]field.Expr, 16)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["season_id"] = e.SeasonID
 	e.fieldMap["episode"] = e.Episode
@@ -139,7 +136,6 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["update_time"] = e.UpdateTime
 	e.fieldMap["original_title"] = e.OriginalTitle
 	e.fieldMap["filename"] = e.Filename
-	e.fieldMap["last_played_time"] = e.LastPlayedTime
 	e.fieldMap["title"] = e.Title
 	e.fieldMap["poster"] = e.Poster
 	e.fieldMap["logo"] = e.Logo

@@ -110,7 +110,7 @@ func (s *MovieService) get(ctx context.Context, id int64, userId int64) (*sdomai
 			return 0
 		})
 		item.LastPlayedTime = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() *time.Time {
-			return lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)
+			return moviePlayedMap[item.ID].LastPlayedTime
 		}, func() *time.Time {
 			return nil
 		})
@@ -228,7 +228,7 @@ func (s *MovieService) page(ctx context.Context, condition *sdomain.SearchMovie,
 					return 0
 				})
 				item.LastPlayedTime = lo.TernaryF(moviePlayedMap[item.ID] != nil, func() *time.Time {
-					return lo.ToPtr(moviePlayedMap[item.ID].LastPlayedTime)
+					return moviePlayedMap[item.ID].LastPlayedTime
 				}, func() *time.Time {
 					return nil
 				})

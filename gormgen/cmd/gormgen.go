@@ -31,8 +31,6 @@ func init() {
 	tableMap["video_user_mapping"] = "VideoUserMapping"
 }
 
-// 注意: 请使用package运行模式, 而非单个文件运行模式, 否则会提示找不到func定义
-// 参考: https://stackoverflow.com/questions/28153203/undefined-function-declared-in-another-file
 func main() {
 	// 加载配置
 	dsn := "gnvideo:7H5rdOAIMA815pXz@tcp(mysql.sqlpub.com:3306)/gnvideo?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms"

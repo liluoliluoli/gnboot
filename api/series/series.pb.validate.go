@@ -238,6 +238,112 @@ func (m *SeriesResp) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for OriginalTitle
+
+	if all {
+		switch v := interface{}(m.GetLastPlayedTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "LastPlayedTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "LastPlayedTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLastPlayedTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SeriesRespValidationError{
+				field:  "LastPlayedTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Filename
+
+	for idx, item := range m.GetActors() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SeriesRespValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SeriesRespValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SeriesRespValidationError{
+					field:  fmt.Sprintf("Actors[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Title
+
+	// no validation rules for Poster
+
+	// no validation rules for Logo
+
+	if all {
+		switch v := interface{}(m.GetAirDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "AirDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SeriesRespValidationError{
+					field:  "AirDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAirDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SeriesRespValidationError{
+				field:  "AirDate",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Overview
+
+	// no validation rules for Favorite
+
 	if len(errors) > 0 {
 		return SeriesRespMultiError(errors)
 	}
@@ -986,6 +1092,137 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetSeriesRequestValidationError{}
+
+// Validate checks the field values on NextToPlaySeriesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *NextToPlaySeriesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NextToPlaySeriesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NextToPlaySeriesRequestMultiError, or nil if none found.
+func (m *NextToPlaySeriesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NextToPlaySeriesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, NextToPlaySeriesRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, NextToPlaySeriesRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return NextToPlaySeriesRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return NextToPlaySeriesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// NextToPlaySeriesRequestMultiError is an error wrapping multiple validation
+// errors returned by NextToPlaySeriesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type NextToPlaySeriesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NextToPlaySeriesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NextToPlaySeriesRequestMultiError) AllErrors() []error { return m }
+
+// NextToPlaySeriesRequestValidationError is the validation error returned by
+// NextToPlaySeriesRequest.Validate if the designated constraints aren't met.
+type NextToPlaySeriesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NextToPlaySeriesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NextToPlaySeriesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NextToPlaySeriesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NextToPlaySeriesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NextToPlaySeriesRequestValidationError) ErrorName() string {
+	return "NextToPlaySeriesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e NextToPlaySeriesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNextToPlaySeriesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NextToPlaySeriesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NextToPlaySeriesRequestValidationError{}
 
 // Validate checks the field values on UpdateSeriesRequest with the rules
 // defined in the proto definition for this message. If any rules are

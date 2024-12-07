@@ -6,6 +6,7 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "proto/genre.proto";
 import "proto/studio.proto";
 import "proto/keyword.proto";
@@ -68,8 +69,15 @@ additional_properties:
     int32 fileSize = 6;
     repeated gnboot.SubtitleResp subtitles = 7;
     int32 lastPlayedPosition = 8;
-    int32 skipIntro = 9;
-    int32 skipEnding = 10;
+    google.protobuf.Timestamp lastPlayedTime= 9;
+    int32 skipIntro = 10;
+    int32 skipEnding = 11;
+    string title = 12;
+    string poster = 13;
+    string logo = 14;
+    google.protobuf.Timestamp airDate = 15;
+    string overview = 16;
+    bool favorite = 17;
   }
 
   message GetEpisodeRequest {

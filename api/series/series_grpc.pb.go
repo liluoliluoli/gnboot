@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	SeriesRemoteService_GetSeries_FullMethodName    = "/gnboot.SeriesRemoteService/GetSeries"
-	SeriesRemoteService_FindSeries_FullMethodName   = "/gnboot.SeriesRemoteService/FindSeries"
-	SeriesRemoteService_FilterSeries_FullMethodName = "/gnboot.SeriesRemoteService/FilterSeries"
-	SeriesRemoteService_UpdateSeries_FullMethodName = "/gnboot.SeriesRemoteService/UpdateSeries"
-	SeriesRemoteService_DeleteSeries_FullMethodName = "/gnboot.SeriesRemoteService/DeleteSeries"
+	SeriesRemoteService_GetSeries_FullMethodName        = "/gnboot.SeriesRemoteService/GetSeries"
+	SeriesRemoteService_FindSeries_FullMethodName       = "/gnboot.SeriesRemoteService/FindSeries"
+	SeriesRemoteService_FilterSeries_FullMethodName     = "/gnboot.SeriesRemoteService/FilterSeries"
+	SeriesRemoteService_NextToPlaySeries_FullMethodName = "/gnboot.SeriesRemoteService/NextToPlaySeries"
+	SeriesRemoteService_UpdateSeries_FullMethodName     = "/gnboot.SeriesRemoteService/UpdateSeries"
+	SeriesRemoteService_DeleteSeries_FullMethodName     = "/gnboot.SeriesRemoteService/DeleteSeries"
 )
 
 // SeriesRemoteServiceClient is the client API for SeriesRemoteService service.
@@ -35,6 +36,7 @@ type SeriesRemoteServiceClient interface {
 	GetSeries(ctx context.Context, in *GetSeriesRequest, opts ...grpc.CallOption) (*SeriesResp, error)
 	FindSeries(ctx context.Context, in *FindSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
 	FilterSeries(ctx context.Context, in *FilterSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
+	NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
 	UpdateSeries(ctx context.Context, in *UpdateSeriesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteSeries(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -74,6 +76,15 @@ func (c *seriesRemoteServiceClient) FilterSeries(ctx context.Context, in *Filter
 	return out, nil
 }
 
+func (c *seriesRemoteServiceClient) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error) {
+	out := new(SearchSeriesResp)
+	err := c.cc.Invoke(ctx, SeriesRemoteService_NextToPlaySeries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *seriesRemoteServiceClient) UpdateSeries(ctx context.Context, in *UpdateSeriesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, SeriesRemoteService_UpdateSeries_FullMethodName, in, out, opts...)
@@ -99,6 +110,7 @@ type SeriesRemoteServiceServer interface {
 	GetSeries(context.Context, *GetSeriesRequest) (*SeriesResp, error)
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
+	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error)
 	UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error)
 	DeleteSeries(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSeriesRemoteServiceServer()
@@ -116,6 +128,9 @@ func (UnimplementedSeriesRemoteServiceServer) FindSeries(context.Context, *FindS
 }
 func (UnimplementedSeriesRemoteServiceServer) FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FilterSeries not implemented")
+}
+func (UnimplementedSeriesRemoteServiceServer) NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NextToPlaySeries not implemented")
 }
 func (UnimplementedSeriesRemoteServiceServer) UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSeries not implemented")
@@ -190,6 +205,24 @@ func _SeriesRemoteService_FilterSeries_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SeriesRemoteService_NextToPlaySeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NextToPlaySeriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeriesRemoteServiceServer).NextToPlaySeries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeriesRemoteService_NextToPlaySeries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeriesRemoteServiceServer).NextToPlaySeries(ctx, req.(*NextToPlaySeriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SeriesRemoteService_UpdateSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSeriesRequest)
 	if err := dec(in); err != nil {
@@ -244,6 +277,10 @@ var SeriesRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FilterSeries",
 			Handler:    _SeriesRemoteService_FilterSeries_Handler,
+		},
+		{
+			MethodName: "NextToPlaySeries",
+			Handler:    _SeriesRemoteService_NextToPlaySeries_Handler,
 		},
 		{
 			MethodName: "UpdateSeries",

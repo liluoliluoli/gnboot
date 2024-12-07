@@ -14,12 +14,59 @@ import (
 )
 
 type CreateMovie struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	ID            int64
+	ExternalID    string
+	OriginalTitle string
+	Status        string
+	VoteAverage   float32
+	VoteCount     int32
+	Country       string
+	Trailer       string
+	URL           string
+	Downloaded    bool
+	FileSize      int32
+	Filename      string
+	Ext           string
+	Platform      string
+	Year          string
+	Definition    string
+	Promotional   string
+	CreateTime    *time.Time
+	UpdateTime    *time.Time
+	Title         string
+	Poster        string
+	Logo          string
+	AirDate       *time.Time
+	Overview      string
 }
 
 func (d *CreateMovie) ConvertToRepo() *model.Movie {
-	return &model.Movie{}
+	return &model.Movie{
+		ID:            d.ID,
+		ExternalID:    lo.ToPtr(d.ExternalID),
+		OriginalTitle: d.OriginalTitle,
+		Status:        d.Status,
+		VoteAverage:   lo.ToPtr(d.VoteAverage),
+		VoteCount:     lo.ToPtr(d.VoteCount),
+		Country:       lo.ToPtr(d.Country),
+		Trailer:       lo.ToPtr(d.Trailer),
+		URL:           d.URL,
+		Downloaded:    d.Downloaded,
+		FileSize:      lo.ToPtr(d.FileSize),
+		Filename:      lo.ToPtr(d.Filename),
+		Ext:           lo.ToPtr(d.Ext),
+		Platform:      lo.ToPtr(d.Platform),
+		Year:          lo.ToPtr(d.Year),
+		Definition:    lo.ToPtr(d.Definition),
+		Promotional:   lo.ToPtr(d.Promotional),
+		CreateTime:    lo.FromPtr(d.CreateTime),
+		UpdateTime:    lo.FromPtr(d.UpdateTime),
+		Title:         lo.ToPtr(d.Title),
+		Poster:        lo.ToPtr(d.Poster),
+		Logo:          lo.ToPtr(d.Logo),
+		AirDate:       d.AirDate,
+		Overview:      lo.ToPtr(d.Overview),
+	}
 }
 
 func (d *CreateMovie) ConvertFromDto(req *moviedto.CreateMovieRequest) *CreateMovie {

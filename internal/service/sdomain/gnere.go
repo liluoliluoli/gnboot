@@ -28,7 +28,7 @@ func (d *Genre) ConvertFromRepo(m *model.Genre) *Genre {
 
 func (d *Genre) ConvertToDto() *dto.GenreResp {
 	return &dto.GenreResp{
-		Id:   d.ID,
+		Id:   int32(d.ID),
 		Name: d.Name,
 	}
 }

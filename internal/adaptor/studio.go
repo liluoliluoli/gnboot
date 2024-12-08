@@ -26,7 +26,7 @@ func (s *StudioProvider) FindStudio(ctx context.Context, req *studio.FindStudioR
 		Studios: lo.Map(res, func(item *sdomain.Studio, index int) *studio.StudioResp {
 			return &studio.StudioResp{
 				Name:    item.Name,
-				Id:      item.ID,
+				Id:      int32(item.ID),
 				Country: item.Country,
 				Logo:    item.Logo,
 			}

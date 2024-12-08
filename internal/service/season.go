@@ -6,6 +6,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/samber/lo"
 )
 
 type SeasonService struct {
@@ -22,6 +23,7 @@ type SeasonService struct {
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
 	seasonRepo               *repo.SeasonRepo
 	episodeRepo              *repo.EpisodeRepo
+	seriesRepo               *repo.SeriesRepo
 	cache                    sdomain.Cache[*sdomain.Season]
 }
 
@@ -32,7 +34,7 @@ func NewSeasonService(c *conf.Bootstrap,
 	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
 	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo,
-	seasonRepo *repo.SeasonRepo, episodeRepo *repo.EpisodeRepo) *SeasonService {
+	seasonRepo *repo.SeasonRepo, episodeRepo *repo.EpisodeRepo, seriesRepo *repo.SeriesRepo) *SeasonService {
 	return &SeasonService{
 		c:                        c,
 		movieRepo:                movieRepo,
@@ -47,6 +49,7 @@ func NewSeasonService(c *conf.Bootstrap,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
 		seasonRepo:               seasonRepo,
 		episodeRepo:              episodeRepo,
+		seriesRepo:               seriesRepo,
 		cache:                    repo.NewCache[*sdomain.Season](c, movieRepo.Data.Cache()),
 	}
 }
@@ -71,4 +74,36 @@ func (s *SeasonService) get(ctx context.Context, id int64) (*sdomain.Season, err
 	}
 	season.Episodes = episodes
 	return season, nil
+}
+
+func (s *SeasonService) FindBySeriesId(ctx context.Context, seriesId int64, actors []*sdomain.Actor) ([]*sdomain.Season, error) {
+	return s.cache.List(ctx, cache_util.GetCacheActionName(seriesId), func(action string, ctx context.Context) ([]*sdomain.Season, error) {
+		return s.findBySeriesId(ctx, seriesId, actors)
+	})
+}
+
+func (s *SeasonService) findBySeriesId(ctx context.Context, seriesId int64, actors []*sdomain.Actor) ([]*sdomain.Season, error) {
+	series, err := s.seriesRepo.Get(ctx, seriesId)
+	if err != nil {
+		return nil, err
+	}
+	seasons, err := s.seasonRepo.QueryBySeriesId(ctx, seriesId)
+	if err != nil {
+		return nil, err
+	}
+	for _, season := range seasons {
+		episodes, err := s.episodeRepo.QueryBySeasonId(ctx, season.ID)
+		if err != nil {
+			return nil, err
+		}
+		season.Episodes = lo.Map(episodes, func(item *sdomain.Episode, index int) *sdomain.Episode {
+			item.SeriesTitle = series.Title
+			item.SeasonTitle = season.Title
+			item.SeasonId = season.ID
+			item.Season = season.Season
+			item.Actors = actors
+			return item
+		})
+	}
+	return seasons, nil
 }

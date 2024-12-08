@@ -25,6 +25,7 @@ type SeriesService struct {
 	seasonRepo               *repo.SeasonRepo
 	episodeRepo              *repo.EpisodeRepo
 	videoUserMappingRepo     *repo.VideoUserMappingRepo
+	seasonService            *SeasonService
 	cache                    sdomain.Cache[*sdomain.Series]
 }
 
@@ -37,7 +38,8 @@ func NewSeriesService(c *conf.Bootstrap,
 	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo,
 	seasonRepo *repo.SeasonRepo,
 	episodeRepo *repo.EpisodeRepo,
-	videoUserMappingRepo *repo.VideoUserMappingRepo) *SeriesService {
+	videoUserMappingRepo *repo.VideoUserMappingRepo,
+	seasonService *SeasonService) *SeriesService {
 	return &SeriesService{
 		c:                        c,
 		seriesRepo:               seriesRepo,
@@ -53,6 +55,7 @@ func NewSeriesService(c *conf.Bootstrap,
 		seasonRepo:               seasonRepo,
 		episodeRepo:              episodeRepo,
 		videoUserMappingRepo:     videoUserMappingRepo,
+		seasonService:            seasonService,
 		cache:                    repo.NewCache[*sdomain.Series](c, seriesRepo.Data.Cache()),
 	}
 }
@@ -72,31 +75,31 @@ func (s *SeriesService) get(ctx context.Context, id int64, userId int64) (*sdoma
 	if err != nil {
 		return nil, err
 	}
+	item.Genres = genresMap[item.ID]
 	keywordsMap, err := s.buildSeriesKeywordsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
+	item.Keywords = keywordsMap[item.ID]
 	studiosMap, err := s.buildSeriesStudiosMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
+	item.Studios = studiosMap[item.ID]
 	actorsMap, err := s.buildSeriesActorsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
+	item.Actors = actorsMap[item.ID]
 	seasonsMap, err := s.buildSeriesSeasonsMap(ctx, []*sdomain.Series{item})
 	if err != nil {
 		return nil, err
 	}
+	item.Seasons = seasonsMap[item.ID]
 	nextToPlayEpisodeMap, err := s.buildSeriesNextToPlayEpisodeMap(ctx, []*sdomain.Series{item}, userId)
 	if err != nil {
 		return nil, err
 	}
-	item.Genres = genresMap[item.ID]
-	item.Keywords = keywordsMap[item.ID]
-	item.Studios = studiosMap[item.ID]
-	item.Actors = actorsMap[item.ID]
-	item.Seasons = seasonsMap[item.ID]
 	item.NextToPlay = nextToPlayEpisodeMap[item.ID]
 	return item, nil
 }
@@ -193,6 +196,12 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 		if err != nil {
 			return nil, err
 		}
+		for _, item := range pageResult.List {
+			item.Genres = genresMap[item.ID]
+			item.Keywords = keywordsMap[item.ID]
+			item.Studios = studiosMap[item.ID]
+			item.Actors = actorsMap[item.ID]
+		}
 		seasonsMap, err := s.buildSeriesSeasonsMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
@@ -202,10 +211,6 @@ func (s *SeriesService) page(ctx context.Context, condition *sdomain.SearchSerie
 			return nil, err
 		}
 		for _, item := range pageResult.List {
-			item.Genres = genresMap[item.ID]
-			item.Keywords = keywordsMap[item.ID]
-			item.Studios = studiosMap[item.ID]
-			item.Actors = actorsMap[item.ID]
 			item.Seasons = seasonsMap[item.ID]
 			item.NextToPlay = nextToPlayEpisodeMap[item.ID]
 		}
@@ -342,32 +347,19 @@ func (s *SeriesService) buildSeriesSubtitlesMap(ctx context.Context, series []*s
 
 // 补齐season
 func (s *SeriesService) buildSeriesSeasonsMap(ctx context.Context, series []*sdomain.Series) (map[int64][]*sdomain.Season, error) {
-	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
-		return item.ID
-	})
 	rsMap := make(map[int64][]*sdomain.Season)
-	for _, seriesId := range seriesIds {
-		seasons, err := s.seasonRepo.QueryBySeriesId(ctx, seriesId)
+	for _, ser := range series {
+		seasons, err := s.seasonService.FindBySeriesId(ctx, ser.ID, ser.Actors)
 		if err != nil {
 			return nil, err
 		}
-		for _, season := range seasons {
-			episodes, err := s.episodeRepo.QueryBySeasonId(ctx, season.ID)
-			if err != nil {
-				return nil, err
-			}
-			season.Episodes = episodes
-		}
-		rsMap[seriesId] = seasons
+		rsMap[ser.ID] = seasons
 	}
 	return rsMap, nil
 }
 
 // 补齐next to play episode，写入时要保证一个series只会有一条episode记录
 func (s *SeriesService) buildSeriesNextToPlayEpisodeMap(ctx context.Context, series []*sdomain.Series, userId int64) (map[int64]*sdomain.Episode, error) {
-	seriesIds := lo.Map(series, func(item *sdomain.Series, index int) int64 {
-		return item.ID
-	})
 	rsMap := make(map[int64]*sdomain.Episode)
 	userEpisodeMappings, err := s.videoUserMappingRepo.FindByUserIdAndVideoIdAndType(ctx, userId, nil, constant.VideoType_episode)
 	if err != nil {
@@ -397,10 +389,11 @@ func (s *SeriesService) buildSeriesNextToPlayEpisodeMap(ctx context.Context, ser
 		return nil, err
 	}
 
-	for _, seriesId := range seriesIds {
-		if _, ok := seriesSeasonMap[seriesId]; ok {
-			if _, ok = seasonEpisodeMap[seriesSeasonMap[seriesId].ID]; ok {
-				rsMap[seriesId] = seasonEpisodeMap[seriesSeasonMap[seriesId].ID]
+	for _, ser := range series {
+		if _, ok := seriesSeasonMap[ser.ID]; ok {
+			if _, ok = seasonEpisodeMap[seriesSeasonMap[ser.ID].ID]; ok {
+				rsMap[ser.ID] = seasonEpisodeMap[seriesSeasonMap[ser.ID].ID]
+				rsMap[ser.ID].Actors = ser.Actors
 			}
 		}
 	}

@@ -26,7 +26,7 @@ func (s *ActorProvider) FindActor(ctx context.Context, req *actor.FindActorReque
 		Actors: lo.Map(res, func(item *sdomain.Actor, index int) *actor.ActorResp {
 			return &actor.ActorResp{
 				Name: item.Name,
-				Id:   item.ID,
+				Id:   int32(item.ID),
 			}
 		}),
 	}, nil

@@ -19,7 +19,7 @@ func NewSeriesProvider(series *service.SeriesService) *SeriesProvider {
 }
 
 func (s *SeriesProvider) GetSeries(ctx context.Context, req *series.GetSeriesRequest) (*series.SeriesResp, error) {
-	res, err := s.series.Get(ctx, req.Id, 1)
+	res, err := s.series.Get(ctx, int64(req.Id), 1)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (s *SeriesProvider) FindSeries(ctx context.Context, req *series.FindSeriesR
 func (s *SeriesProvider) FilterSeries(ctx context.Context, req *series.FilterSeriesRequest) (*series.SearchSeriesResp, error) {
 	condition := &sdomain.SearchSeries{
 		Page: page_util.ToDomainPage(req.Page),
-		Id:   req.Id,
+		Id:   int64(req.Id),
 		Type: req.Type,
 	}
 	res, err := s.series.Page(ctx, condition, 1)

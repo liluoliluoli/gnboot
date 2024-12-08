@@ -61,7 +61,7 @@ additional_properties:
   }
 
   message EpisodeResp {
-    int64 id = 1;
+    int32 id = 1;
     int32 episode = 2;
     string url = 3;
     bool download = 4;
@@ -78,8 +78,13 @@ additional_properties:
     google.protobuf.Timestamp airDate = 15;
     string overview = 16;
     bool favorite = 17;
+    int32 seasonId = 18;
+    int32 season = 19;
+    string seasonTitle = 20;
+    string seriesTitle = 21;
+    repeated gnboot.ActorResp actors = 22;
   }
 
   message GetEpisodeRequest {
-    int64 id = 1;
+    int32 id = 1;
   }

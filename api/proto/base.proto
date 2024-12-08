@@ -14,7 +14,7 @@ message Page {
   int32 currentPage = 1;
   int32 pageSize = 2;
   int32 totalPage = 3;
-  int64 count = 4;
+  int32 count = 4;
 }
 
 message IdsRequest {

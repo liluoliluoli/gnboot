@@ -38,7 +38,7 @@ func (d *Actor) ConvertFromRepo(m *model.Actor) *Actor {
 
 func (d *Actor) ConvertToDto() *dto.ActorResp {
 	return &dto.ActorResp{
-		Id:           d.ID,
+		Id:           int32(d.ID),
 		Name:         d.Name,
 		OriginalName: d.OriginalName,
 		Adult:        d.Adult,

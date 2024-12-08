@@ -28,7 +28,7 @@ func (d *Keyword) ConvertFromRepo(m *model.Keyword) *Keyword {
 
 func (d *Keyword) ConvertToDto() *dto.KeywordResp {
 	return &dto.KeywordResp{
-		Id:   d.ID,
+		Id:   int32(d.ID),
 		Name: d.Name,
 	}
 }

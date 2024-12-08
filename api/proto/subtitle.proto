@@ -57,7 +57,7 @@ additional_properties:
   }
 
   message SubtitleResp {
-    int64 id = 1;
+    int32 id = 1;
     string url = 2;
     string title = 3;
     string language = 4;

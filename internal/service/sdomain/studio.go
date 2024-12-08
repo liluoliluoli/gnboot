@@ -33,7 +33,7 @@ func (d *Studio) ConvertFromRepo(m *model.Studio) *Studio {
 
 func (d *Studio) ConvertToDto() *dto.StudioResp {
 	return &dto.StudioResp{
-		Id:      d.ID,
+		Id:      int32(d.ID),
 		Name:    d.Name,
 		Country: d.Country,
 		Logo:    d.Logo,

@@ -97,7 +97,7 @@ additional_properties:
   }
 
   message SeriesResp {
-    int64 id = 1;
+    int32 id = 1;
     float voteAverage = 2;
     int32 voteCount = 3;
     string country = 4;
@@ -139,12 +139,12 @@ additional_properties:
 
   message FilterSeriesRequest {
     Page page = 1;
-    int64 id = 2;
+    int32 id = 2;
     string type = 3;
   }
 
   message GetSeriesRequest {
-    int64 id = 1;
+    int32 id = 1;
   }
 
 message NextToPlaySeriesRequest {
@@ -152,6 +152,6 @@ message NextToPlaySeriesRequest {
 }
 
   message UpdateSeriesRequest {
-    int64 id = 1 [ (google.api.field_behavior) = REQUIRED ];
+    int32 id = 1 [ (google.api.field_behavior) = REQUIRED ];
     optional string name = 2;
   }

@@ -38,7 +38,7 @@ func (d *VideoSubtitleMapping) ConvertFromRepo(m *model.VideoSubtitleMapping) *V
 
 func (d *VideoSubtitleMapping) ConvertToDto() *dto.SubtitleResp {
 	return &dto.SubtitleResp{
-		Id:       d.ID,
+		Id:       int32(d.ID),
 		Url:      d.Url,
 		Title:    d.Title,
 		Language: d.Language,

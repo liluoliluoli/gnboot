@@ -17,7 +17,7 @@ func NewUserProvider(user *service.UserService) *UserProvider {
 }
 
 func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavoriteRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdateFavorite(ctx, 1, req.Id, req.Type, req.Favorite)
+	err := s.user.UpdateFavorite(ctx, 1, int64(req.Id), req.Type, req.Favorite)
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavor
 }
 
 func (s *UserProvider) UpdatePlayedStatus(ctx context.Context, req *user.UpdatePlayedStatusRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdatePlayStatus(ctx, 1, req.Id, req.Type, req.Position)
+	err := s.user.UpdatePlayStatus(ctx, 1, int64(req.Id), req.Type, req.Position)
 	if err != nil {
 		return nil, err
 	}

@@ -59,7 +59,7 @@ func (d *Series) ConvertFromRepo(m *model.Series) *Series {
 
 func (d *Series) ConvertToDto() *seriesdto.SeriesResp {
 	return &seriesdto.SeriesResp{
-		Id:          d.ID,
+		Id:          int32(d.ID),
 		VoteAverage: d.VoteAverage,
 		VoteCount:   d.VoteCount,
 		Country:     d.Country,

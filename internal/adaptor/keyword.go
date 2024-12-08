@@ -26,7 +26,7 @@ func (s *KeywordProvider) FindKeyword(ctx context.Context, req *keyword.FindKeyw
 		Keywords: lo.Map(res, func(item *sdomain.Keyword, index int) *keyword.KeywordResp {
 			return &keyword.KeywordResp{
 				Name: item.Name,
-				Id:   item.ID,
+				Id:   int32(item.ID),
 			}
 		}),
 	}, nil

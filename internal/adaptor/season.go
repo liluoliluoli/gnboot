@@ -16,7 +16,7 @@ func NewSeasonProvider(season *service.SeasonService) *SeasonProvider {
 }
 
 func (s *SeasonProvider) GetSeason(ctx context.Context, req *season.GetSeasonRequest) (*season.SeasonResp, error) {
-	res, err := s.season.Get(ctx, req.Id)
+	res, err := s.season.Get(ctx, int64(req.Id))
 	if err != nil {
 		return nil, err
 	}

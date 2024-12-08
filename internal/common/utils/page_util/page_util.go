@@ -24,6 +24,6 @@ func ToAdaptorPage(p *sdomain.Page) *api.Page {
 		CurrentPage: p.CurrentPage,
 		PageSize:    p.PageSize,
 		TotalPage:   lo.Ternary(int32(p.Count)%p.PageSize == 0, int32(p.Count)/p.PageSize, int32(p.Count)/p.PageSize+1),
-		Count:       p.Count,
+		Count:       int32(p.Count),
 	}
 }

@@ -29,7 +29,7 @@ func (s *MovieProvider) CreateMovie(ctx context.Context, req *movie.CreateMovieR
 }
 
 func (s *MovieProvider) GetMovie(ctx context.Context, req *movie.GetMovieRequest) (*movie.MovieResp, error) {
-	res, err := s.movie.Get(ctx, req.Id, 1)
+	res, err := s.movie.Get(ctx, int64(req.Id), 1)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (s *MovieProvider) FindMovie(ctx context.Context, req *movie.FindMovieReque
 func (s *MovieProvider) FilterMovie(ctx context.Context, req *movie.FilterMovieRequest) (*movie.SearchMovieResp, error) {
 	condition := &sdomain.SearchMovie{
 		Page:             page_util.ToDomainPage(req.Page),
-		Id:               req.Id,
+		Id:               int64(req.Id),
 		Type:             req.Type,
 		FilterByNextPlay: false,
 	}

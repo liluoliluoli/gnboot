@@ -26,7 +26,7 @@ func (s *GenreProvider) FindGenre(ctx context.Context, req *genre.FindGenreReque
 		Genres: lo.Map(res, func(item *sdomain.Genre, index int) *genre.GenreResp {
 			return &genre.GenreResp{
 				Name: item.Name,
-				Id:   item.ID,
+				Id:   int32(item.ID),
 			}
 		}),
 	}, nil

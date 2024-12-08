@@ -177,6 +177,48 @@ func (m *EpisodeResp) validate(all bool) error {
 
 	// no validation rules for Favorite
 
+	// no validation rules for SeasonId
+
+	// no validation rules for Season
+
+	// no validation rules for SeasonTitle
+
+	// no validation rules for SeriesTitle
+
+	for idx, item := range m.GetActors() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, EpisodeRespValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, EpisodeRespValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EpisodeRespValidationError{
+					field:  fmt.Sprintf("Actors[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return EpisodeRespMultiError(errors)
 	}

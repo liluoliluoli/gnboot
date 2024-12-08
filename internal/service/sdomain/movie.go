@@ -134,7 +134,7 @@ func (d *Movie) ConvertFromRepo(movie *model.Movie) *Movie {
 
 func (d *Movie) ConvertToDto() *moviedto.MovieResp {
 	return &moviedto.MovieResp{
-		Id:            d.ID,
+		Id:            int32(d.ID),
 		OriginalTitle: d.OriginalTitle,
 		Status:        d.Status,
 		VoteAverage:   d.VoteAverage,

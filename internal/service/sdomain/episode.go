@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	actordto "github.com/liluoliluoli/gnboot/api/actor"
 	episodedto "github.com/liluoliluoli/gnboot/api/episode"
 	subtitledto "github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
@@ -12,6 +13,9 @@ import (
 type Episode struct {
 	ID                 int64                   `json:"id"`
 	SeasonId           int64                   `json:"seasonId"`
+	Season             int32                   `json:"season"`
+	SeriesTitle        string                  `json:"seriesTitle"`
+	SeasonTitle        string                  `json:"seasonTitle"`
 	Episode            int32                   `json:"episode"`
 	Url                string                  `json:"url"`
 	Downloaded         bool                    `json:"downloaded"`
@@ -27,6 +31,7 @@ type Episode struct {
 	AirDate            *time.Time              `json:"airDate"`            //发行日期
 	Overview           string                  `json:"overview"`           //简介
 	Favorite           bool                    `json:"favorite"`           //是否喜欢
+	Actors             []*Actor                `json:"actors"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -49,7 +54,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 
 func (d *Episode) ConvertToDto() *episodedto.EpisodeResp {
 	return &episodedto.EpisodeResp{
-		Id:       d.ID,
+		Id:       int32(d.ID),
 		Episode:  d.Episode,
 		Url:      d.Url,
 		Download: d.Downloaded,
@@ -66,5 +71,12 @@ func (d *Episode) ConvertToDto() *episodedto.EpisodeResp {
 		AirDate:            lo.Ternary(d.AirDate != nil, timestamppb.New(lo.FromPtr(d.AirDate)), nil),
 		Overview:           d.Overview,
 		Favorite:           d.Favorite,
+		Season:             d.Season,
+		SeasonTitle:        d.SeasonTitle,
+		SeasonId:           int32(d.SeasonId),
+		SeriesTitle:        d.SeriesTitle,
+		Actors: lo.Map(d.Actors, func(item *Actor, index int) *actordto.ActorResp {
+			return item.ConvertToDto()
+		}),
 	}
 }

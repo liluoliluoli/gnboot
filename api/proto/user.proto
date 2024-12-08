@@ -63,14 +63,14 @@ additional_properties:
 
 
   message UpdateFavoriteRequest {
-    int64 id = 1;
+    int32 id = 1;
     string type = 2;
     bool favorite = 3;
   }
 
 
 message UpdatePlayedStatusRequest {
-  int64 id = 1;
+  int32 id = 1;
   string type = 2;
   int32 position = 3;
 }

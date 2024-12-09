@@ -73,7 +73,7 @@ additional_properties:
         body : "*"
       };
     }
-    rpc NextToPlaySeries(NextToPlaySeriesRequest) returns (SearchSeriesResp) {
+    rpc NextToPlaySeries(NextToPlaySeriesRequest) returns (NextToPlaySeriesResp) {
       option (google.api.http) = {
         post : "/series/nextToPlay/query/all"
         body : "*"
@@ -135,6 +135,11 @@ additional_properties:
   message SearchSeriesResp {
     Page page = 1;
     repeated SeriesResp list = 2;
+  }
+
+  message NextToPlaySeriesResp{
+    Page page = 1;
+    repeated gnboot.EpisodeResp list = 2;
   }
 
   message FilterSeriesRequest {

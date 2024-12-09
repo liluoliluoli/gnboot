@@ -33,7 +33,7 @@ type SeriesRemoteServiceHTTPServer interface {
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	GetSeries(context.Context, *GetSeriesRequest) (*SeriesResp, error)
-	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error)
+	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*NextToPlaySeriesResp, error)
 	UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error)
 }
 
@@ -128,7 +128,7 @@ func _SeriesRemoteService_NextToPlaySeries0_HTTP_Handler(srv SeriesRemoteService
 		if err != nil {
 			return err
 		}
-		reply := out.(*SearchSeriesResp)
+		reply := out.(*NextToPlaySeriesResp)
 		return ctx.Result(200, reply)
 	}
 }
@@ -201,7 +201,7 @@ type SeriesRemoteServiceHTTPClient interface {
 	FilterSeries(ctx context.Context, req *FilterSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	FindSeries(ctx context.Context, req *FindSeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
 	GetSeries(ctx context.Context, req *GetSeriesRequest, opts ...http.CallOption) (rsp *SeriesResp, err error)
-	NextToPlaySeries(ctx context.Context, req *NextToPlaySeriesRequest, opts ...http.CallOption) (rsp *SearchSeriesResp, err error)
+	NextToPlaySeries(ctx context.Context, req *NextToPlaySeriesRequest, opts ...http.CallOption) (rsp *NextToPlaySeriesResp, err error)
 	UpdateSeries(ctx context.Context, req *UpdateSeriesRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -265,8 +265,8 @@ func (c *SeriesRemoteServiceHTTPClientImpl) GetSeries(ctx context.Context, in *G
 	return &out, nil
 }
 
-func (c *SeriesRemoteServiceHTTPClientImpl) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...http.CallOption) (*SearchSeriesResp, error) {
-	var out SearchSeriesResp
+func (c *SeriesRemoteServiceHTTPClientImpl) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...http.CallOption) (*NextToPlaySeriesResp, error) {
+	var out NextToPlaySeriesResp
 	pattern := "/series/nextToPlay/query/all"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationSeriesRemoteServiceNextToPlaySeries))

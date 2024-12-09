@@ -60,6 +60,7 @@ func (d *Episode) ConvertToDto() *episodedto.EpisodeResp {
 		Download: d.Downloaded,
 		Ext:      d.Ext,
 		FileSize: d.FileSize,
+		Filename: d.Filename,
 		Subtitles: lo.Map(d.Subtitles, func(item *VideoSubtitleMapping, index int) *subtitledto.SubtitleResp {
 			return item.ConvertToDto()
 		}),

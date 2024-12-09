@@ -2,6 +2,7 @@ package adaptor
 
 import (
 	"context"
+	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/series"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/page_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
@@ -78,7 +79,7 @@ func (s *SeriesProvider) FilterSeries(ctx context.Context, req *series.FilterSer
 	}, nil
 }
 
-func (s *SeriesProvider) NextToPlaySeries(ctx context.Context, req *series.NextToPlaySeriesRequest) (*series.SearchSeriesResp, error) {
+func (s *SeriesProvider) NextToPlaySeries(ctx context.Context, req *series.NextToPlaySeriesRequest) (*series.NextToPlaySeriesResp, error) {
 	condition := &sdomain.SearchSeries{
 		Page:             page_util.ToDomainPage(req.Page),
 		FilterByNextPlay: true,
@@ -87,10 +88,10 @@ func (s *SeriesProvider) NextToPlaySeries(ctx context.Context, req *series.NextT
 	if err != nil {
 		return nil, err
 	}
-	return &series.SearchSeriesResp{
+	return &series.NextToPlaySeriesResp{
 		Page: page_util.ToAdaptorPage(res.Page),
-		List: lo.Map(res.List, func(item *sdomain.Series, index int) *series.SeriesResp {
-			return item.ConvertToDto()
+		List: lo.Map(res.List, func(item *sdomain.Series, index int) *episode.EpisodeResp {
+			return item.Seasons[0].Episodes[0].ConvertToDto()
 		}),
 	}, nil
 }

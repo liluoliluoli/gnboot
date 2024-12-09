@@ -14,10 +14,11 @@ var host = "http://43.143.112.172:8168"
 var movieListURL = host + "/4k/getlist.php?calss=%E7%94%B5%E5%BD%B1&area=&year=&type=&pg="
 
 // 视频详情页
+var movieDInfoURL = host + "/4k/getinfo.php?id=900427"
 var movieDetailURL = host + "/aliyun/getlist.php?fileid=null&marker=null&token=null&from=&id="
 
 // 视频播放
-//var playURL = host + "/aliyun/getlist.php?uid=zwbzwbxz&ukey=1234512345&fileid=null&marker=null&token=null&from=&id="
+var playURL = "/aliyun/api.php?from=xiaobai&uid=zwbzwbxz&ukey=1234512345&type=1&share_id=3086f655bfc4daf515371a&file_id=67137d247d28e886e02d4918ab0e7472489c5df6&drive_id=4b829802eda084b64b&appid=1020240302"
 
 func main() {
 	sum := 0

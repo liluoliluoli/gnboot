@@ -36,7 +36,7 @@ type SeriesRemoteServiceClient interface {
 	GetSeries(ctx context.Context, in *GetSeriesRequest, opts ...grpc.CallOption) (*SeriesResp, error)
 	FindSeries(ctx context.Context, in *FindSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
 	FilterSeries(ctx context.Context, in *FilterSeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
-	NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error)
+	NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*NextToPlaySeriesResp, error)
 	UpdateSeries(ctx context.Context, in *UpdateSeriesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteSeries(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -76,8 +76,8 @@ func (c *seriesRemoteServiceClient) FilterSeries(ctx context.Context, in *Filter
 	return out, nil
 }
 
-func (c *seriesRemoteServiceClient) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*SearchSeriesResp, error) {
-	out := new(SearchSeriesResp)
+func (c *seriesRemoteServiceClient) NextToPlaySeries(ctx context.Context, in *NextToPlaySeriesRequest, opts ...grpc.CallOption) (*NextToPlaySeriesResp, error) {
+	out := new(NextToPlaySeriesResp)
 	err := c.cc.Invoke(ctx, SeriesRemoteService_NextToPlaySeries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ type SeriesRemoteServiceServer interface {
 	GetSeries(context.Context, *GetSeriesRequest) (*SeriesResp, error)
 	FindSeries(context.Context, *FindSeriesRequest) (*SearchSeriesResp, error)
 	FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error)
-	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error)
+	NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*NextToPlaySeriesResp, error)
 	UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error)
 	DeleteSeries(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSeriesRemoteServiceServer()
@@ -129,7 +129,7 @@ func (UnimplementedSeriesRemoteServiceServer) FindSeries(context.Context, *FindS
 func (UnimplementedSeriesRemoteServiceServer) FilterSeries(context.Context, *FilterSeriesRequest) (*SearchSeriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FilterSeries not implemented")
 }
-func (UnimplementedSeriesRemoteServiceServer) NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*SearchSeriesResp, error) {
+func (UnimplementedSeriesRemoteServiceServer) NextToPlaySeries(context.Context, *NextToPlaySeriesRequest) (*NextToPlaySeriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NextToPlaySeries not implemented")
 }
 func (UnimplementedSeriesRemoteServiceServer) UpdateSeries(context.Context, *UpdateSeriesRequest) (*emptypb.Empty, error) {

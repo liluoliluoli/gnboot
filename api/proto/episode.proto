@@ -83,6 +83,7 @@ additional_properties:
     string seasonTitle = 20;
     string seriesTitle = 21;
     repeated gnboot.ActorResp actors = 22;
+    string filename = 23;
   }
 
   message GetEpisodeRequest {

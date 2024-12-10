@@ -219,6 +219,8 @@ func (m *EpisodeResp) validate(all bool) error {
 
 	}
 
+	// no validation rules for Filename
+
 	if len(errors) > 0 {
 		return EpisodeRespMultiError(errors)
 	}

@@ -29,6 +29,8 @@ func main() {
 }
 
 func TaskList(page string) {
+	//电影字段
+	countryCapitalMap := make(map[string]string)
 
 	var movieList MovieList
 	var listRe = "{\"list\": " + utils.FastGetWithDo(movieListURL+page) + "}"
@@ -45,6 +47,30 @@ func TaskList(page string) {
 		log.Info("ID: %s, Title: %s, Year: %s, Remarks: %s, Pic: %s\n",
 			movie.ID, movie.Title, movie.Year, movie.Remarks, movie.Pic)
 	}
+
+	countryCapitalMap["external_id"] = ""
+	countryCapitalMap["original_title"] = ""
+	countryCapitalMap["status"] = ""
+	countryCapitalMap["vote_average"] = ""
+	countryCapitalMap["vote_count"] = ""
+	countryCapitalMap["country"] = ""
+	countryCapitalMap["trailer"] = ""
+	countryCapitalMap["url"] = ""
+	countryCapitalMap["downloaded"] = ""
+	countryCapitalMap["file_size"] = ""
+	countryCapitalMap["filename"] = ""
+	countryCapitalMap["ext"] = ""
+	countryCapitalMap["platform"] = ""
+	countryCapitalMap["year"] = ""
+	countryCapitalMap["definition"] = ""
+	countryCapitalMap["promotional"] = ""
+	countryCapitalMap["create_time"] = ""
+	countryCapitalMap["update_time"] = ""
+	countryCapitalMap["title"] = ""
+	countryCapitalMap["poster"] = ""
+	countryCapitalMap["logo"] = ""
+	countryCapitalMap["air_date"] = ""
+	countryCapitalMap["overview"] = ""
 
 }
 

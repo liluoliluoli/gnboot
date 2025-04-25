@@ -58,6 +58,19 @@ func (s *VideoProvider) SearchVideo(ctx context.Context, req *video.SearchVideoR
 	}, nil
 }
 
+func (s *VideoProvider) PageFavorites(ctx context.Context, req *video.PageFavoritesRequest) (*video.SearchVideoResp, error) {
+	res, err := s.video.PageFavorites(ctx, 1, page_util.ToDomainPage(req.Page))
+	if err != nil {
+		return nil, err
+	}
+	return &video.SearchVideoResp{
+		Page: page_util.ToAdaptorPage(res.Page),
+		List: lo.Map(res.List, func(item *sdomain.Video, index int) *video.Video {
+			return item.ConvertToDto()
+		}),
+	}, nil
+}
+
 func (s *VideoProvider) UpdateMovie(ctx context.Context, req *video.UpdateVideoRequest) (*emptypb.Empty, error) {
 	err := s.video.Update(ctx, (&sdomain.UpdateVideo{}).ConvertFromDto(req))
 	return &emptypb.Empty{}, err

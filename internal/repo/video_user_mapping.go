@@ -6,7 +6,6 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -47,17 +46,15 @@ func (r *VideoUserMappingRepo) FindByUserIdAndVideoIds(ctx context.Context, user
 
 func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query, userId int64, videoId int64, favorite bool) error {
 	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).First()
-	if err != nil {
+	if handleQueryError(ctx, err) != nil {
 		return err
 	}
+
 	if first != nil {
 		first.IsFavorite = favorite
-		updates, err := r.do(ctx, tx).Select(gen.VideoUserMapping.IsFavorite).Updates(first)
+		_, err := r.do(ctx, tx).Select(gen.VideoUserMapping.IsFavorite).Updates(first)
 		if err != nil {
 			return err
-		}
-		if updates.RowsAffected != 1 {
-			return gorm.ErrDuplicatedKey
 		}
 	} else {
 		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
@@ -74,19 +71,16 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 
 func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, episodeId int64, position int64) error {
 	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).First()
-	if err != nil {
+	if handleQueryError(ctx, err) != nil {
 		return err
 	}
 	if first != nil {
 		first.LastPlayedPosition = lo.ToPtr(position)
 		first.LastPlayedTime = lo.ToPtr(time.Now())
 		first.LastPlayedEpisodeID = lo.ToPtr(episodeId)
-		updates, err := r.do(ctx, tx).Updates(first)
+		_, err := r.do(ctx, tx).Updates(first)
 		if err != nil {
 			return err
-		}
-		if updates.RowsAffected != 1 {
-			return gorm.ErrDuplicatedKey
 		}
 	} else {
 		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
@@ -102,4 +96,22 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 		}
 	}
 	return nil
+}
+
+func (r *VideoUserMappingRepo) Page(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.VideoUserMapping], error) {
+	do := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId))
+	list, total, err := do.FindByPage(int((page.CurrentPage-1)*page.PageSize), int(page.PageSize))
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	return &sdomain.PageResult[*sdomain.VideoUserMapping]{
+		Page: &sdomain.Page{
+			CurrentPage: page.CurrentPage,
+			PageSize:    page.PageSize,
+			Count:       total,
+		},
+		List: lo.Map(list, func(item *model.VideoUserMapping, index int) *sdomain.VideoUserMapping {
+			return (&sdomain.VideoUserMapping{}).ConvertFromRepo(item)
+		}),
+	}, nil
 }

@@ -13,7 +13,7 @@ const TableNameAppVersion = "app_version"
 // AppVersion mapped from table <app_version>
 type AppVersion struct {
 	ID          int64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	VersionCode int32     `gorm:"column:version_code;type:int;not null;comment:版本数字代号，100" json:"versionCode"`
+	VersionCode string    `gorm:"column:version_code;type:varchar(255);not null;comment:版本数字代号，100" json:"versionCode"`
 	VersionName string    `gorm:"column:version_name;type:varchar(16);not null;comment:版本名称，1.0.0" json:"versionName"`
 	PublishTime time.Time `gorm:"column:publish_time;type:datetime;not null;comment:发布时间" json:"publishTime"`
 	Remark      *string   `gorm:"column:remark;type:text;comment:备注" json:"remark"`

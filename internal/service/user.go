@@ -42,10 +42,31 @@ func (s *UserService) get(ctx context.Context, id int64) (*sdomain.User, error) 
 	return item, nil
 }
 
+func (s *UserService) QueryByUserName(ctx context.Context, userName string) (*sdomain.User, error) {
+	item, err := s.userRepo.GetByUserName(ctx, userName)
+	if err != nil {
+		return nil, err
+	}
+	return item, nil
+}
+
+func (s *UserService) UpdateSessionToken(ctx context.Context, user *sdomain.User) error {
+	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.userRepo.Update(ctx, tx, user)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
 func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId int64, favorite bool) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoUserMappingRepo.UpdateFavorite(ctx, nil, userId, videoId, favorite)
+			return s.videoUserMappingRepo.UpdateFavorite(ctx, tx, userId, videoId, favorite)
 		})
 		if err != nil {
 			return err
@@ -58,7 +79,20 @@ func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId 
 func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, episodeId int64, position int64) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, nil, userId, videoId, episodeId, position)
+			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, tx, userId, videoId, episodeId, position)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+func (s *UserService) Create(ctx context.Context, userName string, password string) error {
+	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.userRepo.Create(ctx, tx, userName, password)
 		})
 		if err != nil {
 			return err

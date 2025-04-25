@@ -20,10 +20,16 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationUserRemoteServiceCreate = "/gnboot.UserRemoteService/Create"
+const OperationUserRemoteServiceLogin = "/gnboot.UserRemoteService/Login"
+const OperationUserRemoteServiceLogout = "/gnboot.UserRemoteService/Logout"
 const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
 const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/UpdatePlayedStatus"
 
 type UserRemoteServiceHTTPServer interface {
+	Create(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
+	Login(context.Context, *LoginUserRequest) (*LoginUserResp, error)
+	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
 	UpdatePlayedStatus(context.Context, *UpdatePlayedStatusRequest) (*emptypb.Empty, error)
 }
@@ -32,6 +38,9 @@ func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHT
 	r := s.Route("/")
 	r.POST("/user/updateFavorite", _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv))
 	r.POST("/user/updatePlayedStatus", _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv))
+	r.POST("/user/create", _UserRemoteService_Create0_HTTP_Handler(srv))
+	r.POST("/user/login", _UserRemoteService_Login0_HTTP_Handler(srv))
+	r.POST("/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -78,7 +87,76 @@ func _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv UserRemoteServiceHT
 	}
 }
 
+func _UserRemoteService_Create0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceCreate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Create(ctx, req.(*CreateUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _UserRemoteService_Login0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LoginUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceLogin)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Login(ctx, req.(*LoginUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LoginUserResp)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _UserRemoteService_Logout0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LogoutUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceLogout)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Logout(ctx, req.(*LogoutUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LogoutUserResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserRemoteServiceHTTPClient interface {
+	Create(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Login(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResp, err error)
+	Logout(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResp, err error)
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePlayedStatus(ctx context.Context, req *UpdatePlayedStatusRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
@@ -89,6 +167,45 @@ type UserRemoteServiceHTTPClientImpl struct {
 
 func NewUserRemoteServiceHTTPClient(client *http.Client) UserRemoteServiceHTTPClient {
 	return &UserRemoteServiceHTTPClientImpl{client}
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) Create(ctx context.Context, in *CreateUserRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/user/create"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) Login(ctx context.Context, in *LoginUserRequest, opts ...http.CallOption) (*LoginUserResp, error) {
+	var out LoginUserResp
+	pattern := "/user/login"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceLogin))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) Logout(ctx context.Context, in *LogoutUserRequest, opts ...http.CallOption) (*LogoutUserResp, error) {
+	var out LogoutUserResp
+	pattern := "/user/logout"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceLogout))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in *UpdateFavoriteRequest, opts ...http.CallOption) (*emptypb.Empty, error) {

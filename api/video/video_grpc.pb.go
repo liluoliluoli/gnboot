@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	VideoRemoteService_CreateVideo_FullMethodName = "/gnboot.VideoRemoteService/CreateVideo"
-	VideoRemoteService_GetVideo_FullMethodName    = "/gnboot.VideoRemoteService/GetVideo"
-	VideoRemoteService_SearchVideo_FullMethodName = "/gnboot.VideoRemoteService/SearchVideo"
-	VideoRemoteService_UpdateVideo_FullMethodName = "/gnboot.VideoRemoteService/UpdateVideo"
-	VideoRemoteService_DeleteVideo_FullMethodName = "/gnboot.VideoRemoteService/DeleteVideo"
+	VideoRemoteService_CreateVideo_FullMethodName   = "/gnboot.VideoRemoteService/CreateVideo"
+	VideoRemoteService_GetVideo_FullMethodName      = "/gnboot.VideoRemoteService/GetVideo"
+	VideoRemoteService_SearchVideo_FullMethodName   = "/gnboot.VideoRemoteService/SearchVideo"
+	VideoRemoteService_UpdateVideo_FullMethodName   = "/gnboot.VideoRemoteService/UpdateVideo"
+	VideoRemoteService_DeleteVideo_FullMethodName   = "/gnboot.VideoRemoteService/DeleteVideo"
+	VideoRemoteService_PageFavorites_FullMethodName = "/gnboot.VideoRemoteService/PageFavorites"
 )
 
 // VideoRemoteServiceClient is the client API for VideoRemoteService service.
@@ -38,6 +39,7 @@ type VideoRemoteServiceClient interface {
 	SearchVideo(ctx context.Context, in *SearchVideoRequest, opts ...grpc.CallOption) (*SearchVideoResp, error)
 	UpdateVideo(ctx context.Context, in *UpdateVideoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteVideo(ctx context.Context, in *api.IdsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PageFavorites(ctx context.Context, in *PageFavoritesRequest, opts ...grpc.CallOption) (*SearchVideoResp, error)
 }
 
 type videoRemoteServiceClient struct {
@@ -93,6 +95,15 @@ func (c *videoRemoteServiceClient) DeleteVideo(ctx context.Context, in *api.IdsR
 	return out, nil
 }
 
+func (c *videoRemoteServiceClient) PageFavorites(ctx context.Context, in *PageFavoritesRequest, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+	out := new(SearchVideoResp)
+	err := c.cc.Invoke(ctx, VideoRemoteService_PageFavorites_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoRemoteServiceServer is the server API for VideoRemoteService service.
 // All implementations must embed UnimplementedVideoRemoteServiceServer
 // for forward compatibility
@@ -103,6 +114,7 @@ type VideoRemoteServiceServer interface {
 	SearchVideo(context.Context, *SearchVideoRequest) (*SearchVideoResp, error)
 	UpdateVideo(context.Context, *UpdateVideoRequest) (*emptypb.Empty, error)
 	DeleteVideo(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
+	PageFavorites(context.Context, *PageFavoritesRequest) (*SearchVideoResp, error)
 	mustEmbedUnimplementedVideoRemoteServiceServer()
 }
 
@@ -124,6 +136,9 @@ func (UnimplementedVideoRemoteServiceServer) UpdateVideo(context.Context, *Updat
 }
 func (UnimplementedVideoRemoteServiceServer) DeleteVideo(context.Context, *api.IdsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
+}
+func (UnimplementedVideoRemoteServiceServer) PageFavorites(context.Context, *PageFavoritesRequest) (*SearchVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PageFavorites not implemented")
 }
 func (UnimplementedVideoRemoteServiceServer) mustEmbedUnimplementedVideoRemoteServiceServer() {}
 
@@ -228,6 +243,24 @@ func _VideoRemoteService_DeleteVideo_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VideoRemoteService_PageFavorites_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageFavoritesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoRemoteServiceServer).PageFavorites(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VideoRemoteService_PageFavorites_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoRemoteServiceServer).PageFavorites(ctx, req.(*PageFavoritesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VideoRemoteService_ServiceDesc is the grpc.ServiceDesc for VideoRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -254,6 +287,10 @@ var VideoRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteVideo",
 			Handler:    _VideoRemoteService_DeleteVideo_Handler,
+		},
+		{
+			MethodName: "PageFavorites",
+			Handler:    _VideoRemoteService_PageFavorites_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

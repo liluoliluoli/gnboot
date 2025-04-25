@@ -2,22 +2,33 @@ package adaptor
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/liluoliluoli/gnboot/api/user"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
+	jwtutil "github.com/liluoliluoli/gnboot/internal/common/utils/jwt_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/security_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type UserProvider struct {
 	user.UnimplementedUserRemoteServiceServer
-	user *service.UserService
+	user   *service.UserService
+	client redis.UniversalClient
 }
 
-func NewUserProvider(user *service.UserService) *UserProvider {
-	return &UserProvider{user: user}
+func NewUserProvider(user *service.UserService, client redis.UniversalClient) *UserProvider {
+	return &UserProvider{
+		user:   user,
+		client: client,
+	}
 }
 
 func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavoriteRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdateFavorite(ctx, int64(req.UserId), int64(req.VideoId), req.Favorite)
+	err := s.user.UpdateFavorite(ctx, 1, int64(req.VideoId), req.Favorite)
 	if err != nil {
 		return nil, err
 	}
@@ -25,9 +36,79 @@ func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavor
 }
 
 func (s *UserProvider) UpdatePlayedStatus(ctx context.Context, req *user.UpdatePlayedStatusRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdatePlayStatus(ctx, int64(req.UserId), int64(req.VideoId), int64(req.EpisodeId), int64(req.Position))
+	err := s.user.UpdatePlayStatus(ctx, 1, int64(req.VideoId), int64(req.EpisodeId), int64(req.Position))
 	if err != nil {
 		return nil, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (s *UserProvider) Create(ctx context.Context, req *user.CreateUserRequest) (*emptypb.Empty, error) {
+	if req.Password != req.ConfirmPassword {
+		return &emptypb.Empty{}, errors.New("两次密码不一致")
+	}
+	err := s.user.Create(ctx, req.UserName, security_util.SignByHMACSha256(req.Password, constant.SYS_PWD))
+	if err != nil {
+		return &emptypb.Empty{}, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*user.LoginUserResp, error) {
+	rs, err := s.user.QueryByUserName(ctx, req.UserName)
+	if err != nil {
+		return nil, err
+	}
+	if rs == nil {
+		return nil, errors.New("用户名或密码错误")
+	}
+	if rs.Password != security_util.SignByHMACSha256(req.Password, constant.SYS_PWD) {
+		return nil, errors.New("密码错误")
+	}
+	authorization, err := jwtutil.GenerateUserToken(&jwtutil.UserClaims{
+		UserName: req.UserName,
+	}, constant.SYS_PWD)
+	if err != nil {
+		return nil, err
+	}
+	err = s.client.Set(ctx, fmt.Sprintf(constant.UserTokenPrefix, authorization), req.UserName, 0).Err()
+	if err != nil {
+		return nil, err
+	}
+	rs.SessionToken = fmt.Sprintf(constant.UserTokenPrefix, authorization)
+	err = s.user.UpdateSessionToken(ctx, rs)
+	if err != nil {
+		return nil, err
+	}
+	return &user.LoginUserResp{
+		Authorization: fmt.Sprintf(constant.UserTokenPrefix, authorization),
+	}, nil
+}
+
+func (s *UserProvider) Logout(ctx context.Context, req *user.LogoutUserRequest) (*user.LogoutUserResp, error) {
+	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	if err != nil {
+		return nil, err
+	}
+	rs, err := s.user.QueryByUserName(ctx, userName)
+	if err != nil {
+		return nil, err
+	}
+	if rs == nil {
+		return nil, errors.New("用户不存在")
+	}
+	sessionToken, err := context_util.GetGenericContext[string](ctx, constant.CTX_SessionToken)
+	if err != nil {
+		return nil, err
+	}
+	err = s.client.Del(ctx, sessionToken).Err()
+	if err != nil {
+		return nil, err
+	}
+	rs.SessionToken = "-1"
+	err = s.user.UpdateSessionToken(ctx, rs)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
 }

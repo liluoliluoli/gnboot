@@ -24,6 +24,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationVideoRemoteServiceCreateVideo = "/gnboot.VideoRemoteService/CreateVideo"
 const OperationVideoRemoteServiceDeleteVideo = "/gnboot.VideoRemoteService/DeleteVideo"
 const OperationVideoRemoteServiceGetVideo = "/gnboot.VideoRemoteService/GetVideo"
+const OperationVideoRemoteServicePageFavorites = "/gnboot.VideoRemoteService/PageFavorites"
 const OperationVideoRemoteServiceSearchVideo = "/gnboot.VideoRemoteService/SearchVideo"
 const OperationVideoRemoteServiceUpdateVideo = "/gnboot.VideoRemoteService/UpdateVideo"
 
@@ -32,6 +33,7 @@ type VideoRemoteServiceHTTPServer interface {
 	CreateVideo(context.Context, *CreateVideoRequest) (*emptypb.Empty, error)
 	DeleteVideo(context.Context, *api.IdsRequest) (*emptypb.Empty, error)
 	GetVideo(context.Context, *GetVideoRequest) (*Video, error)
+	PageFavorites(context.Context, *PageFavoritesRequest) (*SearchVideoResp, error)
 	SearchVideo(context.Context, *SearchVideoRequest) (*SearchVideoResp, error)
 	UpdateVideo(context.Context, *UpdateVideoRequest) (*emptypb.Empty, error)
 }
@@ -44,6 +46,7 @@ func RegisterVideoRemoteServiceHTTPServer(s *http.Server, srv VideoRemoteService
 	r.PATCH("/video/update", _VideoRemoteService_UpdateVideo0_HTTP_Handler(srv))
 	r.PUT("/video/update", _VideoRemoteService_UpdateVideo1_HTTP_Handler(srv))
 	r.DELETE("/video/delete", _VideoRemoteService_DeleteVideo0_HTTP_Handler(srv))
+	r.POST("/user/queryFavorites", _VideoRemoteService_PageFavorites0_HTTP_Handler(srv))
 }
 
 func _VideoRemoteService_CreateVideo0_HTTP_Handler(srv VideoRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -172,10 +175,33 @@ func _VideoRemoteService_DeleteVideo0_HTTP_Handler(srv VideoRemoteServiceHTTPSer
 	}
 }
 
+func _VideoRemoteService_PageFavorites0_HTTP_Handler(srv VideoRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in PageFavoritesRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationVideoRemoteServicePageFavorites)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PageFavorites(ctx, req.(*PageFavoritesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SearchVideoResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type VideoRemoteServiceHTTPClient interface {
 	CreateVideo(ctx context.Context, req *CreateVideoRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteVideo(ctx context.Context, req *api.IdsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetVideo(ctx context.Context, req *GetVideoRequest, opts ...http.CallOption) (rsp *Video, err error)
+	PageFavorites(ctx context.Context, req *PageFavoritesRequest, opts ...http.CallOption) (rsp *SearchVideoResp, err error)
 	SearchVideo(ctx context.Context, req *SearchVideoRequest, opts ...http.CallOption) (rsp *SearchVideoResp, err error)
 	UpdateVideo(ctx context.Context, req *UpdateVideoRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
@@ -221,6 +247,19 @@ func (c *VideoRemoteServiceHTTPClientImpl) GetVideo(ctx context.Context, in *Get
 	opts = append(opts, http.Operation(OperationVideoRemoteServiceGetVideo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *VideoRemoteServiceHTTPClientImpl) PageFavorites(ctx context.Context, in *PageFavoritesRequest, opts ...http.CallOption) (*SearchVideoResp, error) {
+	var out SearchVideoResp
+	pattern := "/user/queryFavorites"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationVideoRemoteServicePageFavorites))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

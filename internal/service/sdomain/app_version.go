@@ -1,14 +1,16 @@
 package sdomain
 
 import (
+	appversiondto "github.com/liluoliluoli/gnboot/api/appversion"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
 type AppVersion struct {
 	ID          int64     `json:"id"`
-	VersionCode int32     `json:"versionCode"`
+	VersionCode string    `json:"versionCode"`
 	VersionName string    `json:"versionName"`
 	ForceUpdate bool      `json:"forceUpdate"`
 	ApkUrl      string    `json:"apkUrl"`
@@ -25,5 +27,17 @@ func (d *AppVersion) ConvertFromRepo(m *model.AppVersion) *AppVersion {
 		ApkUrl:      m.ApkURL,
 		PublishTime: m.PublishTime,
 		Remark:      lo.FromPtr(m.Remark),
+	}
+}
+
+func (d *AppVersion) ConvertToDto() *appversiondto.AppVersion {
+	return &appversiondto.AppVersion{
+		Id:            int32(d.ID),
+		VersionCode:   d.VersionCode,
+		VersionName:   d.VersionName,
+		ForceUpdate:   d.ForceUpdate,
+		ApkUrl:        d.ApkUrl,
+		PublishedTime: timestamppb.New(d.PublishTime),
+		Remark:        d.Remark,
 	}
 }

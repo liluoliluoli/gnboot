@@ -102,10 +102,10 @@ func TryLock(ctx context.Context, key string, tryLockTime time.Duration, expirat
 	defer lock.UnLock(ctx)
 	locked, err := lock.TryLock(ctx, tryLockTime)
 	if err != nil {
-		return gerror.NewBizErrorWithCause(gerror.TooManyRequest, err, "get lock failed")
+		return gerror.ErrTooManyRequests(ctx)
 	}
 	if !locked {
-		return gerror.NewBizError(gerror.TooManyRequest, key+" is locking")
+		return gerror.ErrTooManyRequests(ctx)
 	}
 	err = lockFunc(ctx)
 	if err != nil {

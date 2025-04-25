@@ -123,14 +123,14 @@ func (d *Video) ConvertToDto() *videodto.Video {
 }
 
 type VideoSearch struct {
-	Page   *Page  `json:"page"`
-	Search string `json:"search"`
-	Id     int64  `json:"id"`
-	Type   string `json:"type"`
-	Sort   string `json:"sort"`
-	Genre  string `json:"genre"`
-	Region string `json:"region"`
-	Year   string `json:"year"`
+	Page   *Page   `json:"page"`
+	Search string  `json:"search"`
+	Ids    []int64 `json:"ids"`
+	Type   string  `json:"type"`
+	Sort   string  `json:"sort"`
+	Genre  string  `json:"genre"`
+	Region string  `json:"region"`
+	Year   string  `json:"year"`
 }
 
 type UpdateVideo struct {

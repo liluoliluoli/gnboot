@@ -84,6 +84,12 @@ additional_properties:
         delete : "/video/delete"
       };
     }
+    rpc PageFavorites(PageFavoritesRequest) returns (gnboot.SearchVideoResp) {
+      option (google.api.http) = {
+        post : "/user/queryFavorites"
+        body : "*"
+      };
+    }
   }
 
   message Video {
@@ -128,4 +134,8 @@ additional_properties:
   message UpdateVideoRequest {
     int32 id = 1 [ (google.api.field_behavior) = REQUIRED ];
     optional string name = 2;
+  }
+
+  message PageFavoritesRequest {
+    Page page = 1;
   }

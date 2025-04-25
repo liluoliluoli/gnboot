@@ -41,8 +41,8 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 	if condition.Search != "" {
 		do = do.Where(gen.Video.Title.Like("%" + condition.Search + "%"))
 	}
-	if condition.Id != 0 {
-		do = do.Where(gen.Video.ID.Eq(condition.Id))
+	if len(condition.Ids) > 0 {
+		do = do.Where(gen.Video.ID.In(condition.Ids...))
 	}
 	if condition.Type != "" {
 		do = do.Where(gen.Video.VideoType.Eq(condition.Type))
@@ -60,7 +60,7 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 		do = do.Order(gen.Video.VoteCount.Desc())
 	} else if condition.Sort == constant.SortByRate {
 		do = do.Order(gen.Video.VoteRate.Desc())
-	} else if condition.Sort == constant.SortByRate {
+	} else if condition.Sort == constant.SortByPublish {
 		do = do.Order(gen.Video.PublishMonth.Desc())
 	} else {
 		do = do.Order(gen.Video.UpdateTime.Desc())

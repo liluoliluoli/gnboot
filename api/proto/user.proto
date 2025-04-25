@@ -6,6 +6,8 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
+import "proto/video.proto";
+import "proto/base.proto";
 
 option go_package = "github.com/liluoliluoli/gnboot/api/user";
 
@@ -58,19 +60,55 @@ additional_properties:
         body : "*"
       };
     }
+    rpc Create(CreateUserRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/user/create"
+        body : "*"
+      };
+    }
+    rpc Login(LoginUserRequest) returns (LoginUserResp) {
+      option (google.api.http) = {
+        post : "/user/login"
+        body : "*"
+      };
+    }
+    rpc Logout(LogoutUserRequest) returns (LogoutUserResp) {
+      option (google.api.http) = {
+        post : "/user/logout"
+        body : "*"
+      };
+    }
   }
 
 
   message UpdateFavoriteRequest {
-    int32 userId = 1;
-    int32 videoId = 2;
-    bool favorite = 3;
+    int32 videoId = 1;
+    bool favorite = 2;
   }
 
+  message UpdatePlayedStatusRequest {
+    int32 videoId = 1;
+    int32 episodeId = 2;
+    int32 position = 3;
+  }
 
-message UpdatePlayedStatusRequest {
-  int32 userId = 1;
-  int32 videoId = 2;
-  int32 episodeId = 3;
-  int32 position = 4;
-}
+  message CreateUserRequest{
+    string userName = 1;
+    string password = 2;
+    string confirmPassword = 3;
+  }
+
+  message LoginUserRequest{
+    string userName = 1;
+    string password = 2;
+  }
+
+  message LoginUserResp{
+    string authorization = 1;
+  }
+
+  message LogoutUserRequest{
+  }
+
+  message LogoutUserResp{
+  }

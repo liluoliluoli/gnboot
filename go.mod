@@ -40,7 +40,10 @@ require (
 	gorm.io/plugin/dbresolver v1.4.1
 )
 
-require github.com/valyala/fasthttp v1.57.0
+require (
+	github.com/golang-jwt/jwt/v5 v5.1.0
+	github.com/valyala/fasthttp v1.57.0
+)
 
 require (
 	dario.cat/mergo v1.0.0 // indirect

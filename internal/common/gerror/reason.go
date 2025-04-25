@@ -12,6 +12,12 @@ var (
 	ErrIdempotentMissingToken = func(ctx context.Context) error {
 		return reason.ErrorIllegalParameter(i18n.FromContext(ctx).T(constant.IdempotentMissingToken))
 	}
+	ErrAuthMissingToken = func(ctx context.Context) error {
+		return reason.ErrorIllegalParameter(i18n.FromContext(ctx).T(constant.JwtMissingToken))
+	}
+	ErrAuthInvalidToken = func(ctx context.Context) error {
+		return reason.ErrorIllegalParameter(i18n.FromContext(ctx).T(constant.JwtTokenInvalid))
+	}
 	ErrTooManyRequests = func(ctx context.Context) error {
 		return reason.ErrorTooManyRequests(i18n.FromContext(ctx).T(constant.TooManyRequests))
 	}
@@ -32,6 +38,9 @@ var (
 	}
 	ErrDataConvert = func(ctx context.Context, args ...string) error {
 		return i18n.NewError(ctx, "data.convert", reason.ErrorIllegalParameter, args...)
+	}
+	ErrJwtSign = func(ctx context.Context, args ...string) error {
+		return i18n.NewError(ctx, constant.JwtTokenParseFail, reason.ErrorIllegalParameter, args...)
 	}
 )
 

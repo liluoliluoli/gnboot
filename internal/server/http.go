@@ -14,12 +14,14 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
+	"github.com/liluoliluoli/gnboot/api/appversion"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/user"
 	"github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/text/language"
 	nethttp "net/http"
 )
@@ -30,6 +32,8 @@ func NewHTTPServer(
 	videoProvider *adaptor.VideoProvider,
 	episodeProvider *adaptor.EpisodeProvider,
 	userProvider *adaptor.UserProvider,
+	appVersionProvider *adaptor.AppVersionProvider,
+	client redis.UniversalClient,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -53,6 +57,7 @@ func NewHTTPServer(
 		middlewares = append(middlewares, validate.Validator())
 	}
 	middlewares = append(middlewares, localMiddleware.HttpDisableTimeoutPropagation())
+	middlewares = append(middlewares, localMiddleware.Auth(client))
 	var opts = []http.ServerOption{http.Middleware(middlewares...)}
 	if c.Server.Http.Network != "" {
 		opts = append(opts, http.Network(c.Server.Http.Network))
@@ -67,6 +72,7 @@ func NewHTTPServer(
 	video.RegisterVideoRemoteServiceHTTPServer(srv, videoProvider)
 	episode.RegisterEpisodeRemoteServiceHTTPServer(srv, episodeProvider)
 	user.RegisterUserRemoteServiceHTTPServer(srv, userProvider)
+	appversion.RegisterAppVersionRemoteServiceHTTPServer(srv, appVersionProvider)
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())
 	return srv

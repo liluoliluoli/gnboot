@@ -133,6 +133,37 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 	return pageResult, nil
 }
 
+func (s *VideoService) PageFavorites(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
+	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(userId, page), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Video], error) {
+		return s.pageFavorites(ctx, userId, page)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return rp, nil
+}
+
+func (s *VideoService) pageFavorites(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
+	pageResult, err := s.videoUserMappingRepo.Page(ctx, userId, page)
+	if err != nil {
+		return nil, err
+	}
+	if pageResult != nil && len(pageResult.List) != 0 {
+		return s.Page(ctx, &sdomain.VideoSearch{
+			Ids: lo.Map(pageResult.List, func(item *sdomain.VideoUserMapping, index int) int64 {
+				return item.ID
+			}),
+		}, userId)
+	}
+	return &sdomain.PageResult[*sdomain.Video]{
+		Page: &sdomain.Page{
+			CurrentPage: page.CurrentPage,
+			PageSize:    page.PageSize,
+			Count:       0,
+		},
+	}, nil
+}
+
 func (s *VideoService) Update(ctx context.Context, item *sdomain.UpdateVideo) error {
 	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {

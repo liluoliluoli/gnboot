@@ -10,7 +10,7 @@ import (
 
 type EpisodeService struct {
 	c                        *conf.Bootstrap
-	movieRepo                *repo.VideoRepo
+	videoRepo                *repo.VideoRepo
 	actorRepo                *repo.ActorRepo
 	videoActorMappingRepo    *repo.VideoActorMappingRepo
 	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
@@ -19,17 +19,17 @@ type EpisodeService struct {
 }
 
 func NewEpisodeService(c *conf.Bootstrap,
-	movieRepo *repo.VideoRepo,
+	videoRepo *repo.VideoRepo,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo) *EpisodeService {
 	return &EpisodeService{
 		c:                        c,
-		movieRepo:                movieRepo,
+		videoRepo:                videoRepo,
 		actorRepo:                actorRepo,
 		videoActorMappingRepo:    videoActorMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
 		episodeRepo:              episodeRepo,
-		cache:                    repo.NewCache[*sdomain.Episode](c, movieRepo.Data.Cache()),
+		cache:                    repo.NewCache[*sdomain.Episode](c, videoRepo.Data.Cache()),
 	}
 }
 

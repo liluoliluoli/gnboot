@@ -29,7 +29,7 @@ func newAppVersion(db *gorm.DB, opts ...gen.DOOption) appVersion {
 	tableName := _appVersion.appVersionDo.TableName()
 	_appVersion.ALL = field.NewAsterisk(tableName)
 	_appVersion.ID = field.NewInt64(tableName, "id")
-	_appVersion.VersionCode = field.NewInt32(tableName, "version_code")
+	_appVersion.VersionCode = field.NewString(tableName, "version_code")
 	_appVersion.VersionName = field.NewString(tableName, "version_name")
 	_appVersion.PublishTime = field.NewTime(tableName, "publish_time")
 	_appVersion.Remark = field.NewString(tableName, "remark")
@@ -46,7 +46,7 @@ type appVersion struct {
 
 	ALL         field.Asterisk
 	ID          field.Int64  // 主键
-	VersionCode field.Int32  // 版本数字代号，100
+	VersionCode field.String // 版本数字代号，100
 	VersionName field.String // 版本名称，1.0.0
 	PublishTime field.Time   // 发布时间
 	Remark      field.String // 备注
@@ -69,7 +69,7 @@ func (a appVersion) As(alias string) *appVersion {
 func (a *appVersion) updateTableName(table string) *appVersion {
 	a.ALL = field.NewAsterisk(table)
 	a.ID = field.NewInt64(table, "id")
-	a.VersionCode = field.NewInt32(table, "version_code")
+	a.VersionCode = field.NewString(table, "version_code")
 	a.VersionName = field.NewString(table, "version_name")
 	a.PublishTime = field.NewTime(table, "publish_time")
 	a.Remark = field.NewString(table, "remark")

@@ -13,12 +13,14 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/liluoliluoli/gnboot/api/appversion"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/api/user"
 	"github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/text/language"
 )
 
@@ -28,6 +30,8 @@ func NewGRPCServer(
 	videoProvider *adaptor.VideoProvider,
 	episodeProvider *adaptor.EpisodeProvider,
 	userProvider *adaptor.UserProvider,
+	appVersionProvider *adaptor.AppVersionProvider,
+	client redis.UniversalClient,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
 		recovery.Recovery(),
@@ -50,6 +54,7 @@ func NewGRPCServer(
 	if c.Server.Validate {
 		middlewares = append(middlewares, validate.Validator())
 	}
+	middlewares = append(middlewares, localMiddleware.Auth(client))
 	var opts = []grpc.ServerOption{grpc.Middleware(middlewares...)}
 	if c.Server.Grpc.Network != "" {
 		opts = append(opts, grpc.Network(c.Server.Grpc.Network))
@@ -65,5 +70,6 @@ func NewGRPCServer(
 	video.RegisterVideoRemoteServiceServer(srv, videoProvider)
 	episode.RegisterEpisodeRemoteServiceServer(srv, episodeProvider)
 	user.RegisterUserRemoteServiceServer(srv, userProvider)
+	appversion.RegisterAppVersionRemoteServiceServer(srv, appVersionProvider)
 	return srv
 }

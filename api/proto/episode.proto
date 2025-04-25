@@ -49,22 +49,24 @@ additional_properties:
   ;
 
   service EpisodeRemoteService {
-    rpc GetEpisodePlayUrl(GetEpisodeRequest) returns (EpisodeResp) {
+    rpc GetEpisode(GetEpisodeRequest) returns (Episode) {
       option (google.api.http) = {
-        get : "/episode/get"
+        post : "/episode/get"
+        body : "*"
       };
     }
   }
 
-  message EpisodeResp {
+  message Episode {
     int32 id = 1;
     int32 videoId = 2;
     int32 episode = 3;
-    string url = 4;
-    string platform = 5;
-    string ext = 6;
-    int32 duration = 7;
-    repeated gnboot.Subtitle subtitles = 8;
+    string episodeTitle = 4;
+    string url = 5;
+    string platform = 6;
+    string ext = 7;
+    int32 duration = 8;
+    repeated gnboot.Subtitle subtitles = 9;
   }
 
   message GetEpisodeRequest {

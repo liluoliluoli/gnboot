@@ -15,7 +15,7 @@ func NewEpisodeProvider(episode *service.EpisodeService) *EpisodeProvider {
 	return &EpisodeProvider{episode: episode}
 }
 
-func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisodeRequest) (*episode.EpisodeResp, error) {
+func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisodeRequest) (*episode.Episode, error) {
 	res, err := s.episode.Get(ctx, int64(req.Id))
 	if err != nil {
 		return nil, err

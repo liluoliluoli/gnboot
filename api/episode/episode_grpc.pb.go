@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EpisodeRemoteService_GetEpisodePlayUrl_FullMethodName = "/gnboot.EpisodeRemoteService/GetEpisodePlayUrl"
+	EpisodeRemoteService_GetEpisode_FullMethodName = "/gnboot.EpisodeRemoteService/GetEpisode"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EpisodeRemoteServiceClient interface {
-	GetEpisodePlayUrl(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*EpisodeResp, error)
+	GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -37,9 +37,9 @@ func NewEpisodeRemoteServiceClient(cc grpc.ClientConnInterface) EpisodeRemoteSer
 	return &episodeRemoteServiceClient{cc}
 }
 
-func (c *episodeRemoteServiceClient) GetEpisodePlayUrl(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*EpisodeResp, error) {
-	out := new(EpisodeResp)
-	err := c.cc.Invoke(ctx, EpisodeRemoteService_GetEpisodePlayUrl_FullMethodName, in, out, opts...)
+func (c *episodeRemoteServiceClient) GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error) {
+	out := new(Episode)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_GetEpisode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *episodeRemoteServiceClient) GetEpisodePlayUrl(ctx context.Context, in *
 // All implementations must embed UnimplementedEpisodeRemoteServiceServer
 // for forward compatibility
 type EpisodeRemoteServiceServer interface {
-	GetEpisodePlayUrl(context.Context, *GetEpisodeRequest) (*EpisodeResp, error)
+	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -58,8 +58,8 @@ type EpisodeRemoteServiceServer interface {
 type UnimplementedEpisodeRemoteServiceServer struct {
 }
 
-func (UnimplementedEpisodeRemoteServiceServer) GetEpisodePlayUrl(context.Context, *GetEpisodeRequest) (*EpisodeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEpisodePlayUrl not implemented")
+func (UnimplementedEpisodeRemoteServiceServer) GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEpisode not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -74,20 +74,20 @@ func RegisterEpisodeRemoteServiceServer(s grpc.ServiceRegistrar, srv EpisodeRemo
 	s.RegisterService(&EpisodeRemoteService_ServiceDesc, srv)
 }
 
-func _EpisodeRemoteService_GetEpisodePlayUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _EpisodeRemoteService_GetEpisode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetEpisodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EpisodeRemoteServiceServer).GetEpisodePlayUrl(ctx, in)
+		return srv.(EpisodeRemoteServiceServer).GetEpisode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EpisodeRemoteService_GetEpisodePlayUrl_FullMethodName,
+		FullMethod: EpisodeRemoteService_GetEpisode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EpisodeRemoteServiceServer).GetEpisodePlayUrl(ctx, req.(*GetEpisodeRequest))
+		return srv.(EpisodeRemoteServiceServer).GetEpisode(ctx, req.(*GetEpisodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -100,8 +100,8 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*EpisodeRemoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetEpisodePlayUrl",
-			Handler:    _EpisodeRemoteService_GetEpisodePlayUrl_Handler,
+			MethodName: "GetEpisode",
+			Handler:    _EpisodeRemoteService_GetEpisode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

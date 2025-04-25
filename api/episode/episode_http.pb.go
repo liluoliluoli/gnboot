@@ -19,38 +19,41 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationEpisodeRemoteServiceGetEpisodePlayUrl = "/gnboot.EpisodeRemoteService/GetEpisodePlayUrl"
+const OperationEpisodeRemoteServiceGetEpisode = "/gnboot.EpisodeRemoteService/GetEpisode"
 
 type EpisodeRemoteServiceHTTPServer interface {
-	GetEpisodePlayUrl(context.Context, *GetEpisodeRequest) (*EpisodeResp, error)
+	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
 }
 
 func RegisterEpisodeRemoteServiceHTTPServer(s *http.Server, srv EpisodeRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/episode/get", _EpisodeRemoteService_GetEpisodePlayUrl0_HTTP_Handler(srv))
+	r.POST("/episode/get", _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv))
 }
 
-func _EpisodeRemoteService_GetEpisodePlayUrl0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
+func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetEpisodeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationEpisodeRemoteServiceGetEpisodePlayUrl)
+		http.SetOperation(ctx, OperationEpisodeRemoteServiceGetEpisode)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetEpisodePlayUrl(ctx, req.(*GetEpisodeRequest))
+			return srv.GetEpisode(ctx, req.(*GetEpisodeRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*EpisodeResp)
+		reply := out.(*Episode)
 		return ctx.Result(200, reply)
 	}
 }
 
 type EpisodeRemoteServiceHTTPClient interface {
-	GetEpisodePlayUrl(ctx context.Context, req *GetEpisodeRequest, opts ...http.CallOption) (rsp *EpisodeResp, err error)
+	GetEpisode(ctx context.Context, req *GetEpisodeRequest, opts ...http.CallOption) (rsp *Episode, err error)
 }
 
 type EpisodeRemoteServiceHTTPClientImpl struct {
@@ -61,13 +64,13 @@ func NewEpisodeRemoteServiceHTTPClient(client *http.Client) EpisodeRemoteService
 	return &EpisodeRemoteServiceHTTPClientImpl{client}
 }
 
-func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisodePlayUrl(ctx context.Context, in *GetEpisodeRequest, opts ...http.CallOption) (*EpisodeResp, error) {
-	var out EpisodeResp
+func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...http.CallOption) (*Episode, error) {
+	var out Episode
 	pattern := "/episode/get"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisodePlayUrl))
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisode))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

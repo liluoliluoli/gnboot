@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on EpisodeResp with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on Episode with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *EpisodeResp) Validate() error {
+func (m *Episode) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on EpisodeResp with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in EpisodeRespMultiError, or
-// nil if none found.
-func (m *EpisodeResp) ValidateAll() error {
+// ValidateAll checks the field values on Episode with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in EpisodeMultiError, or nil if none found.
+func (m *Episode) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *EpisodeResp) validate(all bool) error {
+func (m *Episode) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -62,6 +61,8 @@ func (m *EpisodeResp) validate(all bool) error {
 	// no validation rules for VideoId
 
 	// no validation rules for Episode
+
+	// no validation rules for EpisodeTitle
 
 	// no validation rules for Url
 
@@ -78,7 +79,7 @@ func (m *EpisodeResp) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, EpisodeRespValidationError{
+					errors = append(errors, EpisodeValidationError{
 						field:  fmt.Sprintf("Subtitles[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -86,7 +87,7 @@ func (m *EpisodeResp) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, EpisodeRespValidationError{
+					errors = append(errors, EpisodeValidationError{
 						field:  fmt.Sprintf("Subtitles[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -95,7 +96,7 @@ func (m *EpisodeResp) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return EpisodeRespValidationError{
+				return EpisodeValidationError{
 					field:  fmt.Sprintf("Subtitles[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -106,18 +107,18 @@ func (m *EpisodeResp) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return EpisodeRespMultiError(errors)
+		return EpisodeMultiError(errors)
 	}
 
 	return nil
 }
 
-// EpisodeRespMultiError is an error wrapping multiple validation errors
-// returned by EpisodeResp.ValidateAll() if the designated constraints aren't met.
-type EpisodeRespMultiError []error
+// EpisodeMultiError is an error wrapping multiple validation errors returned
+// by Episode.ValidateAll() if the designated constraints aren't met.
+type EpisodeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m EpisodeRespMultiError) Error() string {
+func (m EpisodeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -126,11 +127,11 @@ func (m EpisodeRespMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m EpisodeRespMultiError) AllErrors() []error { return m }
+func (m EpisodeMultiError) AllErrors() []error { return m }
 
-// EpisodeRespValidationError is the validation error returned by
-// EpisodeResp.Validate if the designated constraints aren't met.
-type EpisodeRespValidationError struct {
+// EpisodeValidationError is the validation error returned by Episode.Validate
+// if the designated constraints aren't met.
+type EpisodeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -138,22 +139,22 @@ type EpisodeRespValidationError struct {
 }
 
 // Field function returns field value.
-func (e EpisodeRespValidationError) Field() string { return e.field }
+func (e EpisodeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e EpisodeRespValidationError) Reason() string { return e.reason }
+func (e EpisodeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e EpisodeRespValidationError) Cause() error { return e.cause }
+func (e EpisodeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e EpisodeRespValidationError) Key() bool { return e.key }
+func (e EpisodeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e EpisodeRespValidationError) ErrorName() string { return "EpisodeRespValidationError" }
+func (e EpisodeValidationError) ErrorName() string { return "EpisodeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e EpisodeRespValidationError) Error() string {
+func (e EpisodeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -165,14 +166,14 @@ func (e EpisodeRespValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sEpisodeResp.%s: %s%s",
+		"invalid %sEpisode.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = EpisodeRespValidationError{}
+var _ error = EpisodeValidationError{}
 
 var _ interface {
 	Field() string
@@ -180,7 +181,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = EpisodeRespValidationError{}
+} = EpisodeValidationError{}
 
 // Validate checks the field values on GetEpisodeRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

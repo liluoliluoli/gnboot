@@ -33,15 +33,15 @@ func ParseJWT(tokenString string, secretKey string) (jwt.MapClaims, bool, error)
 }
 
 func GenerateJwt(claims jwt.MapClaims, secretKey string) (string, error) {
-	// 兼容Java版本，先解密base64，得到 []byte
-	secret, err := base64.StdEncoding.DecodeString(secretKey)
-	if err != nil {
-		return "", err
-	}
+	//// 兼容Java版本，先解密base64，得到 []byte
+	//secret, err := base64.StdEncoding.DecodeString(secretKey)
+	//if err != nil {
+	//	return "", err
+	//}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 
-	tokenString, err := token.SignedString(secret)
+	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}

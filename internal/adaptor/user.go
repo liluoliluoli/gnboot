@@ -11,6 +11,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/security_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/redis/go-redis/v9"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -75,7 +76,7 @@ func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	rs.SessionToken = fmt.Sprintf(constant.UserTokenPrefix, authorization)
+	rs.SessionToken = lo.ToPtr(fmt.Sprintf(constant.UserTokenPrefix, authorization))
 	err = s.user.UpdateSessionToken(ctx, rs)
 	if err != nil {
 		return nil, err
@@ -105,7 +106,7 @@ func (s *UserProvider) Logout(ctx context.Context, req *user.LogoutUserRequest) 
 	if err != nil {
 		return nil, err
 	}
-	rs.SessionToken = "-1"
+	rs.SessionToken = lo.ToPtr("-1")
 	err = s.user.UpdateSessionToken(ctx, rs)
 	if err != nil {
 		return nil, err

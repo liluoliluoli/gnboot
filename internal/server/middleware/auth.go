@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	kratosHttp "github.com/go-kratos/kratos/v2/transport/http"
@@ -28,7 +27,7 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 					path = ht.Request().URL.Path
 				}
 			}
-			if method == "create" || path == "create" {
+			if method == "POST" && (path == "/user/create" || path == "/user/login") {
 				return handler(ctx, req)
 			}
 
@@ -37,12 +36,15 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 				err = gerror.ErrAuthMissingToken(ctx)
 				return
 			}
-			userName := client.Get(ctx, fmt.Sprintf(constant.UserTokenPrefix, token)).String()
-			if userName == "" {
+			result, err := client.Get(ctx, token).Result()
+			if err != nil {
 				return nil, gerror.ErrAuthInvalidToken(ctx)
 			}
-			context_util.SetContext[string](ctx, constant.CTX_UserName, userName)
-			context_util.SetContext[string](ctx, constant.CTX_SessionToken, fmt.Sprintf(constant.UserTokenPrefix, token))
+			if result == "" {
+				return nil, gerror.ErrAuthInvalidToken(ctx)
+			}
+			ctx = context_util.SetContext[string](ctx, constant.CTX_UserName, result)
+			ctx = context_util.SetContext[string](ctx, constant.CTX_SessionToken, token)
 			return handler(ctx, req)
 		}
 	}

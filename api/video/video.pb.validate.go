@@ -74,34 +74,7 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for Ext
 
-	if all {
-		switch v := interface{}(m.GetPublishTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, VideoValidationError{
-					field:  "PublishTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, VideoValidationError{
-					field:  "PublishTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPublishTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return VideoValidationError{
-				field:  "PublishTime",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PublishMonth
 
 	// no validation rules for Thumbnail
 

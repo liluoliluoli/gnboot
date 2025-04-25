@@ -5,6 +5,7 @@ import (
 	videodto "github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
@@ -82,8 +83,8 @@ func (d *Video) UnmarshalBinary(data []byte) error {
 func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 	return &Video{
 		ID:           m.ID,
-		Title:        d.Title,
-		VideoType:    d.VideoType,
+		Title:        m.Title,
+		VideoType:    m.VideoType,
 		VoteRate:     lo.FromPtr(m.VoteRate),
 		VoteCount:    lo.FromPtr(m.VoteCount),
 		Region:       lo.FromPtr(m.Region),
@@ -101,8 +102,23 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 
 func (d *Video) ConvertToDto() *videodto.Video {
 	return &videodto.Video{
-		Id:  int32(d.ID),
-		Ext: d.Ext,
+		Id:           int32(d.ID),
+		Title:        d.Title,
+		VideoType:    d.VideoType,
+		VoteRate:     d.VoteRate,
+		VoteCount:    int32(d.VoteCount),
+		Region:       d.Region,
+		TotalEpisode: d.TotalEpisode,
+		Description:  d.Description,
+		Ext:          d.Ext,
+		PublishMonth: d.PublishMonth,
+		Thumbnail:    d.Thumbnail,
+		Genres:       d.Genres,
+		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() *timestamppb.Timestamp {
+			return timestamppb.New(lo.FromPtr(d.LastPlayedTime))
+		}, func() *timestamppb.Timestamp {
+			return nil
+		}),
 	}
 }
 

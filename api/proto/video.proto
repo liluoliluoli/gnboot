@@ -96,7 +96,7 @@ additional_properties:
     int32 totalEpisode = 7;
     string description = 8;
     string ext = 9;
-    google.protobuf.Timestamp publishTime = 10;
+    string publishMonth = 10;
     string thumbnail = 11;
     string genres = 12;
     google.protobuf.Timestamp lastPlayedTime = 13;

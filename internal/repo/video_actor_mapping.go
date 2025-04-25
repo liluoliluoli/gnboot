@@ -26,8 +26,8 @@ func (r *VideoActorMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVide
 	}
 }
 
-func (r *VideoActorMappingRepo) FindByVideoIdAndType(ctx context.Context, videoId []int64, videoType string) ([]*sdomain.VideoActorMapping, error) {
-	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.VideoID.In(videoId...)).Where(gen.VideoActorMapping.VideoType.Eq(videoType)).Find()
+func (r *VideoActorMappingRepo) FindByVideoIds(ctx context.Context, videoIds []int64) ([]*sdomain.VideoActorMapping, error) {
+	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.VideoID.In(videoIds...)).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}
@@ -36,8 +36,8 @@ func (r *VideoActorMappingRepo) FindByVideoIdAndType(ctx context.Context, videoI
 	}), nil
 }
 
-func (r *VideoActorMappingRepo) FindByActorIdAndVideoType(ctx context.Context, actorId int64, videoType string) ([]*sdomain.VideoActorMapping, error) {
-	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.ActorID.Eq(actorId)).Where(gen.VideoActorMapping.VideoType.Eq(videoType)).Find()
+func (r *VideoActorMappingRepo) FindByActorId(ctx context.Context, actorId int64) ([]*sdomain.VideoActorMapping, error) {
+	finds, err := r.do(ctx, nil).Where(gen.VideoActorMapping.ActorID.Eq(actorId)).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

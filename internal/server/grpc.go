@@ -13,15 +13,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/liluoliluoli/gnboot/api/actor"
 	"github.com/liluoliluoli/gnboot/api/episode"
-	"github.com/liluoliluoli/gnboot/api/genre"
-	"github.com/liluoliluoli/gnboot/api/keyword"
-	"github.com/liluoliluoli/gnboot/api/movie"
-	"github.com/liluoliluoli/gnboot/api/season"
-	"github.com/liluoliluoli/gnboot/api/series"
-	"github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/api/user"
+	"github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -31,14 +25,8 @@ import (
 // NewGRPCServer new a gRPC server.
 func NewGRPCServer(
 	c *conf.Bootstrap,
-	movieProvider *adaptor.MovieProvider,
+	videoProvider *adaptor.VideoProvider,
 	episodeProvider *adaptor.EpisodeProvider,
-	seasonProvider *adaptor.SeasonProvider,
-	seriesProvider *adaptor.SeriesProvider,
-	genreProvider *adaptor.GenreProvider,
-	studioProvider *adaptor.StudioProvider,
-	keywordProvider *adaptor.KeywordProvider,
-	actorProvider *adaptor.ActorProvider,
 	userProvider *adaptor.UserProvider,
 ) *grpc.Server {
 	middlewares := []middleware.Middleware{
@@ -74,15 +62,8 @@ func NewGRPCServer(
 	}
 	opts = append(opts, grpc.UnaryInterceptor(localMiddleware.GrpcUnaryDisableTimeoutPropagation()))
 	srv := grpc.NewServer(opts...)
-	movie.RegisterMovieRemoteServiceServer(srv, movieProvider)
+	video.RegisterVideoRemoteServiceServer(srv, videoProvider)
 	episode.RegisterEpisodeRemoteServiceServer(srv, episodeProvider)
-	season.RegisterSeasonRemoteServiceServer(srv, seasonProvider)
-	series.RegisterSeriesRemoteServiceServer(srv, seriesProvider)
-	genre.RegisterGenreRemoteServiceServer(srv, genreProvider)
-	studio.RegisterStudioRemoteServiceServer(srv, studioProvider)
-	keyword.RegisterKeywordRemoteServiceServer(srv, keywordProvider)
-	actor.RegisterActorRemoteServiceServer(srv, actorProvider)
 	user.RegisterUserRemoteServiceServer(srv, userProvider)
-	//TODO 追加业务注册
 	return srv
 }

@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package gnboot;
+
+import "openapiv3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "proto/subtitle.proto";
+import "proto/actor.proto";
+import "proto/base.proto";
+
+
+option go_package = "github.com/liluoliluoli/gnboot/api/video";
+
+option (openapi.v3.document) = {
+  info : {title : "video";
+version : "1.0.0";
+}
+components : {
+security_schemes: {
+additional_properties:
+  [{
+    name:
+      "BearerAuth";
+    value: {
+    security_scheme: {
+    type:
+      "http";
+    scheme:
+      "bearer";
+    }
+    }
+  }]
+}
+}
+  security: [
+    {
+      additional_properties: [
+        {
+          name: "BearerAuth";
+          value: {
+            value: []
+          }
+  }
+      ]
+      }
+  ]
+  }
+  ;
+
+  service VideoRemoteService {
+    // create one Movie record
+    rpc CreateVideo(CreateVideoRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/video/create"
+        body : "*"
+      };
+    }
+    rpc GetVideo(GetVideoRequest) returns (Video) {
+      option (google.api.http) = {
+        get : "/video/queryById"
+      };
+    }
+    rpc SearchVideo(SearchVideoRequest) returns (SearchVideoResp) {
+      option (google.api.http) = {
+        post : "/video/search"
+        body : "*"
+      };
+    }
+    rpc UpdateVideo(UpdateVideoRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        put : "/video/update"
+        body : "*",
+        additional_bindings {
+          patch : "/video/update",
+          body : "*",
+        }
+      };
+    }
+    rpc DeleteVideo(IdsRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        delete : "/video/delete"
+      };
+    }
+  }
+
+  message Video {
+    int32 id = 1;
+    string title = 2;
+    string videoType = 3;
+    float voteRate = 4;
+    int32 voteCount = 5;
+    string region = 6;
+    int32 totalEpisode = 7;
+    string description = 8;
+    string ext = 9;
+    google.protobuf.Timestamp publishTime = 10;
+    string thumbnail = 11;
+    string genres = 12;
+    google.protobuf.Timestamp lastPlayedTime = 13;
+  }
+
+  message CreateVideoRequest {
+    string name = 1 [ (google.api.field_behavior) = REQUIRED ];
+  }
+
+  message SearchVideoRequest {
+    Page page = 1;
+    optional string search = 2;
+    optional string sort = 3;
+    optional string genre = 4;
+    optional string region = 5;
+    optional string year = 6;
+    optional string videoType = 7;
+  }
+
+  message SearchVideoResp {
+    Page page = 1;
+    repeated Video list = 2;
+  }
+
+  message GetVideoRequest {
+    int32 id = 1;
+  }
+
+  message UpdateVideoRequest {
+    int32 id = 1 [ (google.api.field_behavior) = REQUIRED ];
+    optional string name = 2;
+  }

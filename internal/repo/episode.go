@@ -34,8 +34,8 @@ func (r *EpisodeRepo) Get(ctx context.Context, id int64) (*sdomain.Episode, erro
 	return (&sdomain.Episode{}).ConvertFromRepo(find), nil
 }
 
-func (r *EpisodeRepo) QueryBySeasonId(ctx context.Context, seasonId int64) ([]*sdomain.Episode, error) {
-	finds, err := r.do(ctx, nil).Where(gen.Episode.SeasonID.Eq(seasonId)).Order(gen.Episode.Episode).Find()
+func (r *EpisodeRepo) QueryByVideoId(ctx context.Context, videoId int64) ([]*sdomain.Episode, error) {
+	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.Episode).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

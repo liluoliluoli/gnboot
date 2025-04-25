@@ -13,21 +13,13 @@ import (
 var tableMap = make(map[string]string)
 
 func init() {
-	tableMap["actor"] = "Actor"
 	tableMap["app_version"] = "AppVersion"
+	tableMap["actor"] = "Actor"
+	tableMap["video"] = "Video"
 	tableMap["episode"] = "Episode"
-	tableMap["genre"] = "Genre"
-	tableMap["keyword"] = "Keyword"
-	tableMap["movie"] = "Movie"
-	tableMap["season"] = "Season"
-	tableMap["series"] = "Series"
-	tableMap["studio"] = "Studio"
 	tableMap["user"] = "User"
 	tableMap["video_actor_mapping"] = "VideoActorMapping"
-	tableMap["video_genre_mapping"] = "VideoGenreMapping"
-	tableMap["video_keyword_mapping"] = "VideoKeywordMapping"
-	tableMap["video_studio_mapping"] = "VideoStudioMapping"
-	tableMap["video_subtitle_mapping"] = "VideoSubtitleMapping"
+	tableMap["episode_subtitle_mapping"] = "EpisodeSubtitleMapping"
 	tableMap["video_user_mapping"] = "VideoUserMapping"
 }
 

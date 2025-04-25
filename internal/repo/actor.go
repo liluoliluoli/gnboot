@@ -35,27 +35,6 @@ func (r *ActorRepo) Get(ctx context.Context, id int64) (*sdomain.Actor, error) {
 	return (&sdomain.Actor{}).ConvertFromRepo(find), nil
 }
 
-func (r *ActorRepo) Page(ctx context.Context, condition *sdomain.SearchMovie) (*sdomain.PageResult[*sdomain.Actor], error) {
-	do := r.do(ctx, nil)
-	if condition.Search != "" {
-		do = do.Where(gen.Movie.OriginalTitle.Like("%" + condition.Search + "%"))
-	}
-	list, total, err := do.Order(gen.Movie.UpdateTime.Desc()).FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
-	if err != nil {
-		return nil, handleQueryError(ctx, err)
-	}
-	return &sdomain.PageResult[*sdomain.Actor]{
-		Page: &sdomain.Page{
-			CurrentPage: condition.Page.CurrentPage,
-			PageSize:    condition.Page.PageSize,
-			Count:       total,
-		},
-		List: lo.Map(list, func(item *model.Actor, index int) *sdomain.Actor {
-			return (&sdomain.Actor{}).ConvertFromRepo(item)
-		}),
-	}, nil
-}
-
 func (r *ActorRepo) FindByIds(ctx context.Context, ids []int64) ([]*sdomain.Actor, error) {
 	finds, err := r.do(ctx, nil).Where(gen.Actor.ID.In(ids...)).Find()
 	if err != nil {
@@ -76,21 +55,13 @@ func (r *ActorRepo) FindAll(ctx context.Context) ([]*sdomain.Actor, error) {
 	}), nil
 }
 
-func (r *ActorRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateMovie) error {
+func (r *ActorRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateVideo) error {
 	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
 	if err != nil {
 		return err
 	}
 	if updates.RowsAffected != 1 {
 		return gorm.ErrDuplicatedKey
-	}
-	return nil
-}
-
-func (r *ActorRepo) Delete(ctx context.Context, tx *gen.Query, ids ...int64) error {
-	_, err := r.do(ctx, tx).Where(gen.Movie.ID.In(ids...)).Delete()
-	if err != nil {
-		return err
 	}
 	return nil
 }

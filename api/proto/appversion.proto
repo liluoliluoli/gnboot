@@ -6,12 +6,12 @@ import "openapiv3/annotations.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
-import "proto/base.proto";
+import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/liluoliluoli/gnboot/api/subtitle";
+option go_package = "github.com/liluoliluoli/gnboot/api/appversion";
 
 option (openapi.v3.document) = {
-  info : {title : "subtitle";
+  info : {title : "appVersion";
 version : "1.0.0";
 }
 components : {
@@ -46,10 +46,24 @@ additional_properties:
   }
   ;
 
-  message Subtitle {
+  service AppVersionRemoteService {
+    rpc GetLastVersion(GetLastAppVersionRequest) returns (AppVersion) {
+      option (google.api.http) = {
+        post : "/version/getLastVersion"
+        body : "*"
+      };
+    }
+  }
+
+  message AppVersion {
     int32 id = 1;
-    string url = 2;
-    string title = 3;
-    string language = 4;
-    string mimeType = 5;
+    string versionCode = 2;
+    string versionName = 3;
+    google.protobuf.Timestamp publishedTime = 4;
+    bool forceUpdate = 5;
+    string apkUrl = 6;
+    string remark = 7;
+  }
+
+  message GetLastAppVersionRequest {
   }

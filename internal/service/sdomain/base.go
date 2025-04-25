@@ -45,9 +45,3 @@ type Page struct {
 	TotalPage   int32 `json:"totalPage"`
 	Count       int64 `json:"count"`
 }
-
-type Sort struct {
-	Filter    string `json:"filter"`
-	Type      string `json:"type"`
-	Direction string `json:"direction"`
-}

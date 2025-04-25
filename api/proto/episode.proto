@@ -7,18 +7,14 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-import "proto/genre.proto";
-import "proto/studio.proto";
-import "proto/keyword.proto";
 import "proto/subtitle.proto";
 import "proto/actor.proto";
 
 option go_package = "github.com/liluoliluoli/gnboot/api/episode";
 
 option (openapi.v3.document) = {
-  info : {title : "episode adaptor";
+  info : {title : "episode";
 version : "1.0.0";
-description : "This is episode adaptor docs";
 }
 components : {
 security_schemes: {
@@ -53,37 +49,22 @@ additional_properties:
   ;
 
   service EpisodeRemoteService {
-    rpc GetEpisode(GetEpisodeRequest) returns (EpisodeResp) {
+    rpc GetEpisodePlayUrl(GetEpisodeRequest) returns (EpisodeResp) {
       option (google.api.http) = {
-        get : "/episode/query/id"
+        get : "/episode/get"
       };
     }
   }
 
   message EpisodeResp {
     int32 id = 1;
-    int32 episode = 2;
-    string url = 3;
-    bool download = 4;
-    string ext = 5;
-    int32 fileSize = 6;
-    repeated gnboot.SubtitleResp subtitles = 7;
-    int32 lastPlayedPosition = 8;
-    google.protobuf.Timestamp lastPlayedTime= 9;
-    int32 skipIntro = 10;
-    int32 skipEnding = 11;
-    string title = 12;
-    string poster = 13;
-    string logo = 14;
-    google.protobuf.Timestamp airDate = 15;
-    string overview = 16;
-    bool favorite = 17;
-    int32 seasonId = 18;
-    int32 season = 19;
-    string seasonTitle = 20;
-    string seriesTitle = 21;
-    repeated gnboot.ActorResp actors = 22;
-    string filename = 23;
+    int32 videoId = 2;
+    int32 episode = 3;
+    string url = 4;
+    string platform = 5;
+    string ext = 6;
+    int32 duration = 7;
+    repeated gnboot.Subtitle subtitles = 8;
   }
 
   message GetEpisodeRequest {

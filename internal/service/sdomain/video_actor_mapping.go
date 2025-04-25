@@ -17,7 +17,6 @@ func (d *VideoActorMapping) ConvertFromRepo(m *model.VideoActorMapping) *VideoAc
 	return &VideoActorMapping{
 		ID:        m.ID,
 		VideoId:   m.VideoID,
-		VideoType: m.VideoType,
 		ActorId:   m.ActorID,
 		Character: lo.FromPtr(m.Character),
 	}

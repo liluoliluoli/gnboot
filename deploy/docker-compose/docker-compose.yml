@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  gntv-db:
+    image: mysql
+    hostname: gndb
+    container_name: gndb
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_DATABASE=gnvideo
+    volumes:
+      - ./data/mysql/user:/var/lib/mysql
+      - ./conf/mysql/conf.d:/etc/mysql/conf.d
+  cache-redis:
+    image: redis
+    hostname: cache-redis
+    volumes:
+      - ./data/redis/cache/:/data
+      - ./conf/redis/cache/redis.conf:/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    command: ["redis-server","/etc/redis/redis.conf"]

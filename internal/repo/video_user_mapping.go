@@ -28,16 +28,13 @@ func (r *VideoUserMappingRepo) do(ctx context.Context, tx *gen.Query) gen.IVideo
 	}
 }
 
-func (r *VideoUserMappingRepo) FindByUserIdAndVideoIdAndType(ctx context.Context, userId int64, videoIds []int64, videoType string) ([]*sdomain.VideoUserMapping, error) {
+func (r *VideoUserMappingRepo) FindByUserIdAndVideoIds(ctx context.Context, userId int64, videoIds []int64) ([]*sdomain.VideoUserMapping, error) {
 	do := r.do(ctx, nil)
 	if userId != 0 {
 		do = do.Where(gen.VideoUserMapping.UserID.Eq(userId))
 	}
 	if len(videoIds) > 0 {
-		do.Where(gen.VideoUserMapping.VideoID.In(videoIds...))
-	}
-	if videoType != "" {
-		do = do.Where(gen.VideoUserMapping.VideoType.Eq(videoType))
+		do = do.Where(gen.VideoUserMapping.VideoID.In(videoIds...))
 	}
 	finds, err := do.Find()
 	if err != nil {
@@ -48,14 +45,14 @@ func (r *VideoUserMappingRepo) FindByUserIdAndVideoIdAndType(ctx context.Context
 	}), nil
 }
 
-func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query, userId int64, videoId int64, videoType string, favorite bool) error {
-	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).Where(gen.VideoUserMapping.VideoType.Eq(videoType)).First()
+func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query, userId int64, videoId int64, favorite bool) error {
+	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).First()
 	if err != nil {
 		return err
 	}
 	if first != nil {
-		first.Favorited = lo.ToPtr(favorite)
-		updates, err := r.do(ctx, tx).Select(gen.VideoUserMapping.Favorited).Updates(first)
+		first.IsFavorite = favorite
+		updates, err := r.do(ctx, tx).Select(gen.VideoUserMapping.IsFavorite).Updates(first)
 		if err != nil {
 			return err
 		}
@@ -64,10 +61,9 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 		}
 	} else {
 		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
-			VideoID:   videoId,
-			UserID:    userId,
-			VideoType: videoType,
-			Favorited: lo.ToPtr(favorite),
+			VideoID:    videoId,
+			UserID:     userId,
+			IsFavorite: favorite,
 		})
 		if err != nil {
 			return err
@@ -76,14 +72,15 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 	return nil
 }
 
-func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, videoType string, position int32) error {
-	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).Where(gen.VideoUserMapping.VideoType.Eq(videoType)).First()
+func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, episodeId int64, position int64) error {
+	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).First()
 	if err != nil {
 		return err
 	}
 	if first != nil {
 		first.LastPlayedPosition = lo.ToPtr(position)
 		first.LastPlayedTime = lo.ToPtr(time.Now())
+		first.LastPlayedEpisodeID = lo.ToPtr(episodeId)
 		updates, err := r.do(ctx, tx).Updates(first)
 		if err != nil {
 			return err
@@ -93,12 +90,12 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 		}
 	} else {
 		err = r.do(ctx, tx).Create(&model.VideoUserMapping{
-			VideoID:            videoId,
-			UserID:             userId,
-			VideoType:          videoType,
-			Favorited:          lo.ToPtr(false),
-			LastPlayedPosition: lo.ToPtr(position),
-			LastPlayedTime:     lo.ToPtr(time.Now()),
+			VideoID:             videoId,
+			UserID:              userId,
+			IsFavorite:          false,
+			LastPlayedEpisodeID: lo.ToPtr(episodeId),
+			LastPlayedPosition:  lo.ToPtr(position),
+			LastPlayedTime:      lo.ToPtr(time.Now()),
 		})
 		if err != nil {
 			return err

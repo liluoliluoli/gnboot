@@ -10,38 +10,23 @@ import (
 
 type EpisodeService struct {
 	c                        *conf.Bootstrap
-	movieRepo                *repo.MovieRepo
-	genreRepo                *repo.GenreRepo
-	videoGenreMappingRepo    *repo.VideoGenreMappingRepo
+	movieRepo                *repo.VideoRepo
 	actorRepo                *repo.ActorRepo
 	videoActorMappingRepo    *repo.VideoActorMappingRepo
-	studioRepo               *repo.StudioRepo
-	videoStudioMappingRepo   *repo.VideoStudioMappingRepo
-	keywordRepo              *repo.KeywordRepo
-	videoKeywordMappingRepo  *repo.VideoKeywordMappingRepo
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo
+	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
 	episodeRepo              *repo.EpisodeRepo
 	cache                    sdomain.Cache[*sdomain.Episode]
 }
 
 func NewEpisodeService(c *conf.Bootstrap,
-	movieRepo *repo.MovieRepo,
-	genreRepo *repo.GenreRepo, videoGenreMappingRepo *repo.VideoGenreMappingRepo,
+	movieRepo *repo.VideoRepo,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
-	studioRepo *repo.StudioRepo, videoStudioMappingRepo *repo.VideoStudioMappingRepo,
-	keywordRepo *repo.KeywordRepo, videoKeywordMappingRepo *repo.VideoKeywordMappingRepo,
-	videoSubtitleMappingRepo *repo.VideoSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo) *EpisodeService {
+	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo) *EpisodeService {
 	return &EpisodeService{
 		c:                        c,
 		movieRepo:                movieRepo,
-		genreRepo:                genreRepo,
-		videoGenreMappingRepo:    videoGenreMappingRepo,
 		actorRepo:                actorRepo,
 		videoActorMappingRepo:    videoActorMappingRepo,
-		studioRepo:               studioRepo,
-		videoStudioMappingRepo:   videoStudioMappingRepo,
-		keywordRepo:              keywordRepo,
-		videoKeywordMappingRepo:  videoKeywordMappingRepo,
 		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
 		episodeRepo:              episodeRepo,
 		cache:                    repo.NewCache[*sdomain.Episode](c, movieRepo.Data.Cache()),
@@ -59,5 +44,10 @@ func (s *EpisodeService) get(ctx context.Context, id int64) (*sdomain.Episode, e
 	if err != nil {
 		return nil, err
 	}
+	subtitleMappings, err := s.videoSubtitleMappingRepo.FindByEpisodeId(ctx, episode.ID)
+	if err != nil {
+		return nil, err
+	}
+	episode.Subtitles = subtitleMappings
 	return episode, nil
 }

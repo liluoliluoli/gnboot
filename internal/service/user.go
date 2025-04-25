@@ -42,10 +42,10 @@ func (s *UserService) get(ctx context.Context, id int64) (*sdomain.User, error) 
 	return item, nil
 }
 
-func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId int64, videoType string, favorite bool) error {
+func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId int64, favorite bool) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoUserMappingRepo.UpdateFavorite(ctx, nil, userId, videoId, videoType, favorite)
+			return s.videoUserMappingRepo.UpdateFavorite(ctx, nil, userId, videoId, favorite)
 		})
 		if err != nil {
 			return err
@@ -55,10 +55,10 @@ func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId 
 	return err
 }
 
-func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, videoType string, position int32) error {
+func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, episodeId int64, position int64) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, nil, userId, videoId, videoType, position)
+			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, nil, userId, videoId, episodeId, position)
 		})
 		if err != nil {
 			return err

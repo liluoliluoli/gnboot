@@ -14,15 +14,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/kratos/v2/transport/http/pprof"
-	"github.com/liluoliluoli/gnboot/api/actor"
 	"github.com/liluoliluoli/gnboot/api/episode"
-	"github.com/liluoliluoli/gnboot/api/genre"
-	"github.com/liluoliluoli/gnboot/api/keyword"
-	"github.com/liluoliluoli/gnboot/api/movie"
-	"github.com/liluoliluoli/gnboot/api/season"
-	"github.com/liluoliluoli/gnboot/api/series"
-	"github.com/liluoliluoli/gnboot/api/studio"
 	"github.com/liluoliluoli/gnboot/api/user"
+	"github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
@@ -33,14 +27,8 @@ import (
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(
 	c *conf.Bootstrap,
-	movieProvider *adaptor.MovieProvider,
+	videoProvider *adaptor.VideoProvider,
 	episodeProvider *adaptor.EpisodeProvider,
-	seasonProvider *adaptor.SeasonProvider,
-	seriesProvider *adaptor.SeriesProvider,
-	genreProvider *adaptor.GenreProvider,
-	studioProvider *adaptor.StudioProvider,
-	keywordProvider *adaptor.KeywordProvider,
-	actorProvider *adaptor.ActorProvider,
 	userProvider *adaptor.UserProvider,
 ) *http.Server {
 	middlewares := []middleware.Middleware{
@@ -76,16 +64,9 @@ func NewHTTPServer(
 		opts = append(opts, http.Timeout(c.Server.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	movie.RegisterMovieRemoteServiceHTTPServer(srv, movieProvider)
+	video.RegisterVideoRemoteServiceHTTPServer(srv, videoProvider)
 	episode.RegisterEpisodeRemoteServiceHTTPServer(srv, episodeProvider)
-	season.RegisterSeasonRemoteServiceHTTPServer(srv, seasonProvider)
-	series.RegisterSeriesRemoteServiceHTTPServer(srv, seriesProvider)
-	genre.RegisterGenreRemoteServiceHTTPServer(srv, genreProvider)
-	studio.RegisterStudioRemoteServiceHTTPServer(srv, studioProvider)
-	keyword.RegisterKeywordRemoteServiceHTTPServer(srv, keywordProvider)
-	actor.RegisterActorRemoteServiceHTTPServer(srv, actorProvider)
 	user.RegisterUserRemoteServiceHTTPServer(srv, userProvider)
-	//TODO 追加业务注册
 	srv.HandlePrefix("/debug/pprof", pprof.NewHandler())
 	srv.HandlePrefix("/pub/healthcheck", HealthHandler())
 	return srv

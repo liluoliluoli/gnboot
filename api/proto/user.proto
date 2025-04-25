@@ -10,9 +10,8 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/liluoliluoli/gnboot/api/user";
 
 option (openapi.v3.document) = {
-  info : {title : "genre adaptor";
+  info : {title : "user";
 version : "1.0.0";
-description : "This is genre adaptor docs";
 }
 components : {
 security_schemes: {
@@ -49,13 +48,13 @@ additional_properties:
   service UserRemoteService {
     rpc UpdateFavorite(UpdateFavoriteRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/markFavorite/update"
+        post : "/user/updateFavorite"
         body : "*"
       };
     }
     rpc UpdatePlayedStatus(UpdatePlayedStatusRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/playedStatus/update"
+        post : "/user/updatePlayedStatus"
         body : "*"
       };
     }
@@ -63,14 +62,15 @@ additional_properties:
 
 
   message UpdateFavoriteRequest {
-    int32 id = 1;
-    string type = 2;
+    int32 userId = 1;
+    int32 videoId = 2;
     bool favorite = 3;
   }
 
 
 message UpdatePlayedStatusRequest {
-  int32 id = 1;
-  string type = 2;
-  int32 position = 3;
+  int32 userId = 1;
+  int32 videoId = 2;
+  int32 episodeId = 3;
+  int32 position = 4;
 }

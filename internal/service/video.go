@@ -1,0 +1,202 @@
+package service
+
+import (
+	"context"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
+	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/repo/gen"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/samber/lo"
+)
+
+type VideoService struct {
+	c                        *conf.Bootstrap
+	videoRepo                *repo.VideoRepo
+	actorRepo                *repo.ActorRepo
+	videoActorMappingRepo    *repo.VideoActorMappingRepo
+	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
+	userRepo                 *repo.UserRepo
+	videoUserMappingRepo     *repo.VideoUserMappingRepo
+	episodeRepo              *repo.EpisodeRepo
+	cache                    sdomain.Cache[*sdomain.Video]
+}
+
+func NewVideoService(c *conf.Bootstrap,
+	videoRepo *repo.VideoRepo,
+	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
+	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo,
+	userRepo *repo.UserRepo, videoUserMappingRepo *repo.VideoUserMappingRepo,
+	episodeRepo *repo.EpisodeRepo) *VideoService {
+	return &VideoService{
+		c:                        c,
+		videoRepo:                videoRepo,
+		actorRepo:                actorRepo,
+		videoActorMappingRepo:    videoActorMappingRepo,
+		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
+		userRepo:                 userRepo,
+		videoUserMappingRepo:     videoUserMappingRepo,
+		episodeRepo:              episodeRepo,
+		cache:                    repo.NewCache[*sdomain.Video](c, videoRepo.Data.Cache()),
+	}
+}
+
+func (s *VideoService) Create(ctx context.Context, item *sdomain.CreateVideo) error {
+	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.videoRepo.Create(ctx, tx, item)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+func (s *VideoService) Get(ctx context.Context, id int64, userId int64) (*sdomain.Video, error) {
+	return s.cache.Get(ctx, cache_util.GetCacheActionName(id), func(action string, ctx context.Context) (*sdomain.Video, error) {
+		return s.get(ctx, id, userId)
+	})
+}
+
+func (s *VideoService) get(ctx context.Context, id int64, userId int64) (*sdomain.Video, error) {
+	item, err := s.videoRepo.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	actorsMap, err := s.buildVideoActorsMap(ctx, []*sdomain.Video{item})
+	if err != nil {
+		return nil, err
+	}
+	item.Actors = actorsMap[item.ID]
+
+	episodes, err := s.episodeRepo.QueryByVideoId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	item.Episodes = episodes
+
+	if userId != 0 {
+		videoPlayedMap, err := s.buildVideoLastPlayedInfo(ctx, userId, []*sdomain.Video{item})
+		if err != nil {
+			return nil, err
+		}
+		if videoPlayedMap[item.ID] != nil {
+			item.LastPlayedTime = videoPlayedMap[item.ID].LastPlayedTime
+			item.LastPlayedEpisodeId = videoPlayedMap[item.ID].LastPlayedEpisodeId
+			item.LastPlayedPosition = videoPlayedMap[item.ID].LastPlayedPosition
+		}
+	}
+
+	return item, nil
+}
+
+func (s *VideoService) Page(ctx context.Context, condition *sdomain.VideoSearch, userId int64) (*sdomain.PageResult[*sdomain.Video], error) {
+	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(condition), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Video], error) {
+		return s.page(ctx, condition, userId)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return rp, nil
+}
+
+func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch, userId int64) (*sdomain.PageResult[*sdomain.Video], error) {
+	pageResult, err := s.videoRepo.Page(ctx, condition)
+	if err != nil {
+		return nil, err
+	}
+	if pageResult != nil && len(pageResult.List) != 0 {
+		actorsMap, err := s.buildVideoActorsMap(ctx, pageResult.List)
+		if err != nil {
+			return nil, err
+		}
+		var videoPlayedMap map[int64]*sdomain.VideoUserMapping
+		if userId != 0 {
+			videoPlayedMap, err = s.buildVideoLastPlayedInfo(ctx, userId, pageResult.List)
+			if err != nil {
+				return nil, err
+			}
+		}
+		for _, item := range pageResult.List {
+			item.Actors = actorsMap[item.ID]
+			if userId != 0 {
+				if videoPlayedMap[item.ID] != nil {
+					item.LastPlayedTime = videoPlayedMap[item.ID].LastPlayedTime
+					item.LastPlayedEpisodeId = videoPlayedMap[item.ID].LastPlayedEpisodeId
+					item.LastPlayedPosition = videoPlayedMap[item.ID].LastPlayedPosition
+				}
+			}
+		}
+	}
+	return pageResult, nil
+}
+
+func (s *VideoService) Update(ctx context.Context, item *sdomain.UpdateVideo) error {
+	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.videoRepo.Update(ctx, tx, item)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+func (s *VideoService) Delete(ctx context.Context, ids ...int64) error {
+	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+		err := s.cache.Flush(ctx, func(ctx context.Context) error {
+			return s.videoRepo.Delete(ctx, tx, ids...)
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
+
+// 补齐actor
+func (s *VideoService) buildVideoActorsMap(ctx context.Context, videos []*sdomain.Video) (map[int64][]*sdomain.Actor, error) {
+	videoIds := lo.Map(videos, func(item *sdomain.Video, index int) int64 {
+		return item.ID
+	})
+	actorMappings, err := s.videoActorMappingRepo.FindByVideoIds(ctx, videoIds)
+	if err != nil {
+		return nil, err
+	}
+	actors, err := s.actorRepo.FindByIds(ctx, lo.Map(actorMappings, func(item *sdomain.VideoActorMapping, index int) int64 {
+		return item.ActorId
+	}))
+	if err != nil {
+		return nil, err
+	}
+	actorsMap := lo.SliceToMap(actors, func(item *sdomain.Actor) (int64, *sdomain.Actor) {
+		return item.ID, item
+	})
+	rsMap := make(map[int64][]*sdomain.Actor)
+	for _, actorMapping := range actorMappings {
+		if _, ok := rsMap[actorMapping.VideoId]; !ok {
+			rsMap[actorMapping.VideoId] = make([]*sdomain.Actor, 0)
+		}
+		rsMap[actorMapping.VideoId] = append(rsMap[actorMapping.VideoId], actorsMap[actorMapping.ActorId])
+	}
+	return rsMap, nil
+}
+
+// 补齐最后播放信息
+func (s *VideoService) buildVideoLastPlayedInfo(ctx context.Context, userId int64, videos []*sdomain.Video) (map[int64]*sdomain.VideoUserMapping, error) {
+	videoIds := lo.Map(videos, func(item *sdomain.Video, index int) int64 {
+		return item.ID
+	})
+	userMappings, err := s.videoUserMappingRepo.FindByUserIdAndVideoIds(ctx, userId, videoIds)
+	if err != nil {
+		return nil, err
+	}
+	return lo.SliceToMap(userMappings, func(item *sdomain.VideoUserMapping) (int64, *sdomain.VideoUserMapping) {
+		return item.VideoId, item
+	}), nil
+}

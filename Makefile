@@ -92,9 +92,6 @@ all:
 	make gen;
 	make lint;
 
-local:
-	cinch run
-
 # show help
 help:
 	@echo ''

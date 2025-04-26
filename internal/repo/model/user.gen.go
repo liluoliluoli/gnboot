@@ -17,7 +17,6 @@ type User struct {
 	Password            string     `gorm:"column:password;type:varchar(1024);not null;comment:密码" json:"password"`
 	AliToken            *string    `gorm:"column:ali_token;type:varchar(1024);comment:阿里云盘token" json:"aliToken"`
 	AliTokenExpiredTime *time.Time `gorm:"column:ali_token_expired_time;type:datetime;comment:阿里云盘token过期时间" json:"aliTokenExpiredTime"`
-	WatchCount          *int32     `gorm:"column:watch_count;type:int;comment:当天观看集数，每天从0开始算" json:"watchCount"`
 	SessionToken        *string    `gorm:"column:session_token;type:varchar(1024);comment:session token，登录使用" json:"sessionToken"`
 }
 

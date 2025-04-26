@@ -13,7 +13,10 @@ const (
 	SortByRate    Sort = "rate"
 )
 
-const UserTokenPrefix = "ut_%s"
+const RK_UserTokenPrefix = "ut_%s"
+const RK_UserWatchCountPrefix = "uwc_%s"
 
 const CTX_UserName = "CTX_UserName"
 const CTX_SessionToken = "CTX_SessionToken"
+
+const MaxWatchCountByDay = 200

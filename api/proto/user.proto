@@ -78,6 +78,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc GetCurrentWatchCount(GetCurrentWatchCountRequest) returns (GetCurrentWatchCountResp) {
+      option (google.api.http) = {
+        post : "/user/getCurrentWatchCount"
+        body : "*"
+      };
+    }
   }
 
 
@@ -111,4 +117,11 @@ additional_properties:
   }
 
   message LogoutUserResp{
+  }
+
+  message GetCurrentWatchCountRequest{
+
+  }
+  message GetCurrentWatchCountResp{
+    int32 watchCount = 1;
   }

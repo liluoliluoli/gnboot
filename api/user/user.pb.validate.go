@@ -764,3 +764,210 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LogoutUserRespValidationError{}
+
+// Validate checks the field values on GetCurrentWatchCountRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCurrentWatchCountRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCurrentWatchCountRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCurrentWatchCountRequestMultiError, or nil if none found.
+func (m *GetCurrentWatchCountRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCurrentWatchCountRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetCurrentWatchCountRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCurrentWatchCountRequestMultiError is an error wrapping multiple
+// validation errors returned by GetCurrentWatchCountRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetCurrentWatchCountRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCurrentWatchCountRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCurrentWatchCountRequestMultiError) AllErrors() []error { return m }
+
+// GetCurrentWatchCountRequestValidationError is the validation error returned
+// by GetCurrentWatchCountRequest.Validate if the designated constraints
+// aren't met.
+type GetCurrentWatchCountRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCurrentWatchCountRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCurrentWatchCountRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCurrentWatchCountRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCurrentWatchCountRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCurrentWatchCountRequestValidationError) ErrorName() string {
+	return "GetCurrentWatchCountRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCurrentWatchCountRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCurrentWatchCountRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCurrentWatchCountRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCurrentWatchCountRequestValidationError{}
+
+// Validate checks the field values on GetCurrentWatchCountResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCurrentWatchCountResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCurrentWatchCountResp with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCurrentWatchCountRespMultiError, or nil if none found.
+func (m *GetCurrentWatchCountResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCurrentWatchCountResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for WatchCount
+
+	if len(errors) > 0 {
+		return GetCurrentWatchCountRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCurrentWatchCountRespMultiError is an error wrapping multiple validation
+// errors returned by GetCurrentWatchCountResp.ValidateAll() if the designated
+// constraints aren't met.
+type GetCurrentWatchCountRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCurrentWatchCountRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCurrentWatchCountRespMultiError) AllErrors() []error { return m }
+
+// GetCurrentWatchCountRespValidationError is the validation error returned by
+// GetCurrentWatchCountResp.Validate if the designated constraints aren't met.
+type GetCurrentWatchCountRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCurrentWatchCountRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCurrentWatchCountRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCurrentWatchCountRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCurrentWatchCountRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCurrentWatchCountRespValidationError) ErrorName() string {
+	return "GetCurrentWatchCountRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCurrentWatchCountRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCurrentWatchCountResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCurrentWatchCountRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCurrentWatchCountRespValidationError{}

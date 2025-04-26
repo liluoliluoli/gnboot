@@ -51,7 +51,7 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	episodeRepo := repo.NewEpisodeRepo(data)
 	videoService := service.NewVideoService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, userRepo, videoUserMappingRepo, episodeRepo)
 	videoProvider := adaptor.NewVideoProvider(videoService)
-	episodeService := service.NewEpisodeService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, episodeRepo)
+	episodeService := service.NewEpisodeService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, episodeRepo, userRepo, universalClient)
 	episodeProvider := adaptor.NewEpisodeProvider(episodeService)
 	userService := service.NewUserService(c, userRepo, videoUserMappingRepo)
 	userProvider := adaptor.NewUserProvider(userService, universalClient)

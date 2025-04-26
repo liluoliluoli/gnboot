@@ -21,6 +21,9 @@ var (
 	ErrTooManyRequests = func(ctx context.Context) error {
 		return reason.ErrorTooManyRequests(i18n.FromContext(ctx).T(constant.TooManyRequests))
 	}
+	ErrExceedWatchCount = func(ctx context.Context, args ...string) error {
+		return i18n.NewError(ctx, "exceed.watch.count", reason.ErrorForbidden, args...)
+	}
 	ErrDataNotChange = func(ctx context.Context, args ...string) error {
 		return i18n.NewError(ctx, constant.DataNotChange, reason.ErrorIllegalParameter, args...)
 	}

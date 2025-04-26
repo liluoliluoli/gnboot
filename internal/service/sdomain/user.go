@@ -13,7 +13,6 @@ type User struct {
 	SessionToken        *string    `json:"sessionToken"`
 	AliToken            *string    `json:"aliToken"`
 	AliTokenExpiredTime *time.Time `json:"aliTokenExpiredTime"`
-	WatchCount          *int32     `json:"watchCount"`
 }
 
 func (d *User) MarshalBinary() ([]byte, error) {
@@ -32,7 +31,6 @@ func (d *User) ConvertFromRepo(m *model.User) *User {
 		SessionToken:        m.SessionToken,
 		AliToken:            m.AliToken,
 		AliTokenExpiredTime: m.AliTokenExpiredTime,
-		WatchCount:          m.WatchCount,
 	}
 }
 
@@ -44,6 +42,5 @@ func (d *User) ConvertToRepo() *model.User {
 		SessionToken:        d.SessionToken,
 		AliToken:            d.AliToken,
 		AliTokenExpiredTime: d.AliTokenExpiredTime,
-		WatchCount:          d.WatchCount,
 	}
 }

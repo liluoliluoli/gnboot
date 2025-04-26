@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"github.com/liluoliluoli/gnboot/api/user"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
 	jwtutil "github.com/liluoliluoli/gnboot/internal/common/utils/jwt_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/security_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"time"
 )
 
 type UserProvider struct {
@@ -72,17 +75,17 @@ func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	err = s.client.Set(ctx, fmt.Sprintf(constant.UserTokenPrefix, authorization), req.UserName, 0).Err()
+	err = s.client.Set(ctx, fmt.Sprintf(constant.RK_UserTokenPrefix, authorization), req.UserName, 0).Err()
 	if err != nil {
 		return nil, err
 	}
-	rs.SessionToken = lo.ToPtr(fmt.Sprintf(constant.UserTokenPrefix, authorization))
+	rs.SessionToken = lo.ToPtr(fmt.Sprintf(constant.RK_UserTokenPrefix, authorization))
 	err = s.user.UpdateSessionToken(ctx, rs)
 	if err != nil {
 		return nil, err
 	}
 	return &user.LoginUserResp{
-		Authorization: fmt.Sprintf(constant.UserTokenPrefix, authorization),
+		Authorization: fmt.Sprintf(constant.RK_UserTokenPrefix, authorization),
 	}, nil
 }
 
@@ -112,4 +115,19 @@ func (s *UserProvider) Logout(ctx context.Context, req *user.LogoutUserRequest) 
 		return nil, err
 	}
 	return nil, nil
+}
+
+func (s *UserProvider) GetCurrentWatchCount(ctx context.Context, req *user.GetCurrentWatchCountRequest) (*user.GetCurrentWatchCountResp, error) {
+	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	if err != nil {
+		return nil, err
+	}
+	currentWatchs, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
+	if gerror.HandleRedisNotFoundError(err) != nil {
+		return nil, err
+	}
+
+	return &user.GetCurrentWatchCountResp{
+		WatchCount: int32(currentWatchs),
+	}, nil
 }

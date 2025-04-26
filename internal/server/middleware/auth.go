@@ -31,7 +31,7 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 				return handler(ctx, req)
 			}
 
-			token := tr.RequestHeader().Get("authorization")
+			token := tr.RequestHeader().Get("Authorization")
 			if token == "" {
 				err = gerror.ErrAuthMissingToken(ctx)
 				return

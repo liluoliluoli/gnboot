@@ -21,6 +21,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationUserRemoteServiceCreate = "/gnboot.UserRemoteService/Create"
+const OperationUserRemoteServiceGetCurrentWatchCount = "/gnboot.UserRemoteService/GetCurrentWatchCount"
 const OperationUserRemoteServiceLogin = "/gnboot.UserRemoteService/Login"
 const OperationUserRemoteServiceLogout = "/gnboot.UserRemoteService/Logout"
 const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
@@ -28,6 +29,7 @@ const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/
 
 type UserRemoteServiceHTTPServer interface {
 	Create(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
+	GetCurrentWatchCount(context.Context, *GetCurrentWatchCountRequest) (*GetCurrentWatchCountResp, error)
 	Login(context.Context, *LoginUserRequest) (*LoginUserResp, error)
 	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
@@ -41,6 +43,7 @@ func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHT
 	r.POST("/user/create", _UserRemoteService_Create0_HTTP_Handler(srv))
 	r.POST("/user/login", _UserRemoteService_Login0_HTTP_Handler(srv))
 	r.POST("/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
+	r.POST("/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -153,8 +156,31 @@ func _UserRemoteService_Logout0_HTTP_Handler(srv UserRemoteServiceHTTPServer) fu
 	}
 }
 
+func _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetCurrentWatchCountRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceGetCurrentWatchCount)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCurrentWatchCount(ctx, req.(*GetCurrentWatchCountRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetCurrentWatchCountResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserRemoteServiceHTTPClient interface {
 	Create(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	GetCurrentWatchCount(ctx context.Context, req *GetCurrentWatchCountRequest, opts ...http.CallOption) (rsp *GetCurrentWatchCountResp, err error)
 	Login(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResp, err error)
 	Logout(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResp, err error)
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -174,6 +200,19 @@ func (c *UserRemoteServiceHTTPClientImpl) Create(ctx context.Context, in *Create
 	pattern := "/user/create"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) GetCurrentWatchCount(ctx context.Context, in *GetCurrentWatchCountRequest, opts ...http.CallOption) (*GetCurrentWatchCountResp, error) {
+	var out GetCurrentWatchCountResp
+	pattern := "/user/getCurrentWatchCount"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceGetCurrentWatchCount))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

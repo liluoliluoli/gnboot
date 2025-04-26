@@ -51,7 +51,7 @@ additional_properties:
   service EpisodeRemoteService {
     rpc GetEpisode(GetEpisodeRequest) returns (Episode) {
       option (google.api.http) = {
-        post : "/episode/get"
+        post : "/api/episode/get"
         body : "*"
       };
     }

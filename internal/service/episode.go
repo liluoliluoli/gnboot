@@ -57,7 +57,7 @@ func (s *EpisodeService) get(ctx context.Context, id int64) (*sdomain.Episode, e
 		return nil, err
 	}
 	currentWatchs, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
-	if err != nil {
+	if gerror.HandleRedisNotFoundError(err) != nil {
 		return nil, err
 	}
 	if currentWatchs > constant.MaxWatchCountByDay {

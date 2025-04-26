@@ -27,7 +27,7 @@ type AppVersionRemoteServiceHTTPServer interface {
 
 func RegisterAppVersionRemoteServiceHTTPServer(s *http.Server, srv AppVersionRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/version/getLastVersion", _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv))
+	r.POST("/api/version/getLastVersion", _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv))
 }
 
 func _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv AppVersionRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -66,7 +66,7 @@ func NewAppVersionRemoteServiceHTTPClient(client *http.Client) AppVersionRemoteS
 
 func (c *AppVersionRemoteServiceHTTPClientImpl) GetLastVersion(ctx context.Context, in *GetLastAppVersionRequest, opts ...http.CallOption) (*AppVersion, error) {
 	var out AppVersion
-	pattern := "/version/getLastVersion"
+	pattern := "/api/version/getLastVersion"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAppVersionRemoteServiceGetLastVersion))
 	opts = append(opts, http.PathTemplate(pattern))

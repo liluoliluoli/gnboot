@@ -153,6 +153,7 @@ func (s *VideoService) pageFavorites(ctx context.Context, userId int64, page *sd
 			Ids: lo.Map(pageResult.List, func(item *sdomain.VideoUserMapping, index int) int64 {
 				return item.ID
 			}),
+			Page: page,
 		}, userId)
 	}
 	return &sdomain.PageResult[*sdomain.Video]{

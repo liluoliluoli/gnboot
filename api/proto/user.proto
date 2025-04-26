@@ -50,37 +50,43 @@ additional_properties:
   service UserRemoteService {
     rpc UpdateFavorite(UpdateFavoriteRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/user/updateFavorite"
+        post : "/api/user/updateFavorite"
         body : "*"
       };
     }
     rpc UpdatePlayedStatus(UpdatePlayedStatusRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/user/updatePlayedStatus"
+        post : "/api/user/updatePlayedStatus"
         body : "*"
       };
     }
     rpc Create(CreateUserRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/user/create"
+        post : "/api/user/create"
         body : "*"
       };
     }
     rpc Login(LoginUserRequest) returns (LoginUserResp) {
       option (google.api.http) = {
-        post : "/user/login"
+        post : "/api/user/login"
         body : "*"
       };
     }
     rpc Logout(LogoutUserRequest) returns (LogoutUserResp) {
       option (google.api.http) = {
-        post : "/user/logout"
+        post : "/api/user/logout"
         body : "*"
       };
     }
     rpc GetCurrentWatchCount(GetCurrentWatchCountRequest) returns (GetCurrentWatchCountResp) {
       option (google.api.http) = {
-        post : "/user/getCurrentWatchCount"
+        post : "/api/user/getCurrentWatchCount"
+        body : "*"
+      };
+    }
+    rpc GetUser(GetUserRequest) returns (User) {
+      option (google.api.http) = {
+        post : "/api/user/get"
         body : "*"
       };
     }
@@ -124,4 +130,13 @@ additional_properties:
   }
   message GetCurrentWatchCountResp{
     int32 watchCount = 1;
+  }
+
+  message GetUserRequest{
+
+  }
+  message User{
+    int32 watchCount = 1;
+    string userName = 2;
+    int32 favoriteCount = 3;
   }

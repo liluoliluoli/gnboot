@@ -27,7 +27,7 @@ type EpisodeRemoteServiceHTTPServer interface {
 
 func RegisterEpisodeRemoteServiceHTTPServer(s *http.Server, srv EpisodeRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/episode/get", _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv))
+	r.POST("/api/episode/get", _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv))
 }
 
 func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -66,7 +66,7 @@ func NewEpisodeRemoteServiceHTTPClient(client *http.Client) EpisodeRemoteService
 
 func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...http.CallOption) (*Episode, error) {
 	var out Episode
-	pattern := "/episode/get"
+	pattern := "/api/episode/get"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisode))
 	opts = append(opts, http.PathTemplate(pattern))

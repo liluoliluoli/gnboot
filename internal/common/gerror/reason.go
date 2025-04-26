@@ -48,7 +48,7 @@ var (
 )
 
 func HandleRedisNotFoundError(err error) error {
-	if err != nil && err.Error() == "redis:nil" {
+	if err != nil && err.Error() == "redis: nil" {
 		return nil
 	}
 	return err

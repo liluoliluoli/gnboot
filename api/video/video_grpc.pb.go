@@ -33,7 +33,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VideoRemoteServiceClient interface {
-	// create one Movie record
 	CreateVideo(ctx context.Context, in *CreateVideoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetVideo(ctx context.Context, in *GetVideoRequest, opts ...grpc.CallOption) (*Video, error)
 	SearchVideo(ctx context.Context, in *SearchVideoRequest, opts ...grpc.CallOption) (*SearchVideoResp, error)
@@ -108,7 +107,6 @@ func (c *videoRemoteServiceClient) PageFavorites(ctx context.Context, in *PageFa
 // All implementations must embed UnimplementedVideoRemoteServiceServer
 // for forward compatibility
 type VideoRemoteServiceServer interface {
-	// create one Movie record
 	CreateVideo(context.Context, *CreateVideoRequest) (*emptypb.Empty, error)
 	GetVideo(context.Context, *GetVideoRequest) (*Video, error)
 	SearchVideo(context.Context, *SearchVideoRequest) (*SearchVideoResp, error)

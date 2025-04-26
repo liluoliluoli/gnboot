@@ -26,6 +26,7 @@ const (
 	UserRemoteService_Login_FullMethodName                = "/gnboot.UserRemoteService/Login"
 	UserRemoteService_Logout_FullMethodName               = "/gnboot.UserRemoteService/Logout"
 	UserRemoteService_GetCurrentWatchCount_FullMethodName = "/gnboot.UserRemoteService/GetCurrentWatchCount"
+	UserRemoteService_GetUser_FullMethodName              = "/gnboot.UserRemoteService/GetUser"
 )
 
 // UserRemoteServiceClient is the client API for UserRemoteService service.
@@ -38,6 +39,7 @@ type UserRemoteServiceClient interface {
 	Login(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResp, error)
 	Logout(ctx context.Context, in *LogoutUserRequest, opts ...grpc.CallOption) (*LogoutUserResp, error)
 	GetCurrentWatchCount(ctx context.Context, in *GetCurrentWatchCountRequest, opts ...grpc.CallOption) (*GetCurrentWatchCountResp, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type userRemoteServiceClient struct {
@@ -102,6 +104,15 @@ func (c *userRemoteServiceClient) GetCurrentWatchCount(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *userRemoteServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, UserRemoteService_GetUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserRemoteServiceServer is the server API for UserRemoteService service.
 // All implementations must embed UnimplementedUserRemoteServiceServer
 // for forward compatibility
@@ -112,6 +123,7 @@ type UserRemoteServiceServer interface {
 	Login(context.Context, *LoginUserRequest) (*LoginUserResp, error)
 	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	GetCurrentWatchCount(context.Context, *GetCurrentWatchCountRequest) (*GetCurrentWatchCountResp, error)
+	GetUser(context.Context, *GetUserRequest) (*User, error)
 	mustEmbedUnimplementedUserRemoteServiceServer()
 }
 
@@ -136,6 +148,9 @@ func (UnimplementedUserRemoteServiceServer) Logout(context.Context, *LogoutUserR
 }
 func (UnimplementedUserRemoteServiceServer) GetCurrentWatchCount(context.Context, *GetCurrentWatchCountRequest) (*GetCurrentWatchCountResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentWatchCount not implemented")
+}
+func (UnimplementedUserRemoteServiceServer) GetUser(context.Context, *GetUserRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUserRemoteServiceServer) mustEmbedUnimplementedUserRemoteServiceServer() {}
 
@@ -258,6 +273,24 @@ func _UserRemoteService_GetCurrentWatchCount_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserRemoteService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRemoteServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRemoteService_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRemoteServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserRemoteService_ServiceDesc is the grpc.ServiceDesc for UserRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +321,10 @@ var UserRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCurrentWatchCount",
 			Handler:    _UserRemoteService_GetCurrentWatchCount_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _UserRemoteService_GetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

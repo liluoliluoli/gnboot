@@ -51,42 +51,42 @@ additional_properties:
   ;
 
   service VideoRemoteService {
-    // create one Movie record
     rpc CreateVideo(CreateVideoRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/video/create"
+        post : "/api/video/create"
         body : "*"
       };
     }
     rpc GetVideo(GetVideoRequest) returns (Video) {
       option (google.api.http) = {
-        get : "/video/queryById"
+        post : "/api/video/get"
+        body : "*"
       };
     }
     rpc SearchVideo(SearchVideoRequest) returns (SearchVideoResp) {
       option (google.api.http) = {
-        post : "/video/search"
+        post : "/api/video/search"
         body : "*"
       };
     }
     rpc UpdateVideo(UpdateVideoRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        put : "/video/update"
+        put : "/api/video/update"
         body : "*",
         additional_bindings {
-          patch : "/video/update",
+          patch : "/api/video/update",
           body : "*",
         }
       };
     }
     rpc DeleteVideo(IdsRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        delete : "/video/delete"
+        post : "/api/video/delete"
       };
     }
     rpc PageFavorites(PageFavoritesRequest) returns (gnboot.SearchVideoResp) {
       option (google.api.http) = {
-        post : "/user/queryFavorites"
+        post : "/api/user/queryFavorites"
         body : "*"
       };
     }

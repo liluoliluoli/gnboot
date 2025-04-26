@@ -12,6 +12,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/security_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -22,12 +23,14 @@ type UserProvider struct {
 	user.UnimplementedUserRemoteServiceServer
 	user   *service.UserService
 	client redis.UniversalClient
+	video  *service.VideoService
 }
 
-func NewUserProvider(user *service.UserService, client redis.UniversalClient) *UserProvider {
+func NewUserProvider(user *service.UserService, client redis.UniversalClient, video *service.VideoService) *UserProvider {
 	return &UserProvider{
 		user:   user,
 		client: client,
+		video:  video,
 	}
 }
 
@@ -129,5 +132,25 @@ func (s *UserProvider) GetCurrentWatchCount(ctx context.Context, req *user.GetCu
 
 	return &user.GetCurrentWatchCountResp{
 		WatchCount: int32(currentWatchs),
+	}, nil
+}
+
+func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*user.User, error) {
+	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	if err != nil {
+		return nil, err
+	}
+	currentWatchs, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
+	if gerror.HandleRedisNotFoundError(err) != nil {
+		return nil, err
+	}
+	res, err := s.video.PageFavorites(ctx, 1, &sdomain.Page{
+		CurrentPage: 1,
+		PageSize:    100,
+	})
+	return &user.User{
+		WatchCount:    int32(currentWatchs),
+		UserName:      userName,
+		FavoriteCount: int32(res.Page.Count),
 	}, nil
 }

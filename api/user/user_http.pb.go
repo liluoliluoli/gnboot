@@ -22,6 +22,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationUserRemoteServiceCreate = "/gnboot.UserRemoteService/Create"
 const OperationUserRemoteServiceGetCurrentWatchCount = "/gnboot.UserRemoteService/GetCurrentWatchCount"
+const OperationUserRemoteServiceGetUser = "/gnboot.UserRemoteService/GetUser"
 const OperationUserRemoteServiceLogin = "/gnboot.UserRemoteService/Login"
 const OperationUserRemoteServiceLogout = "/gnboot.UserRemoteService/Logout"
 const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
@@ -30,6 +31,7 @@ const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/
 type UserRemoteServiceHTTPServer interface {
 	Create(context.Context, *CreateUserRequest) (*emptypb.Empty, error)
 	GetCurrentWatchCount(context.Context, *GetCurrentWatchCountRequest) (*GetCurrentWatchCountResp, error)
+	GetUser(context.Context, *GetUserRequest) (*User, error)
 	Login(context.Context, *LoginUserRequest) (*LoginUserResp, error)
 	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
@@ -38,12 +40,13 @@ type UserRemoteServiceHTTPServer interface {
 
 func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/user/updateFavorite", _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv))
-	r.POST("/user/updatePlayedStatus", _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv))
-	r.POST("/user/create", _UserRemoteService_Create0_HTTP_Handler(srv))
-	r.POST("/user/login", _UserRemoteService_Login0_HTTP_Handler(srv))
-	r.POST("/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
-	r.POST("/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
+	r.POST("/api/user/updateFavorite", _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv))
+	r.POST("/api/user/updatePlayedStatus", _UserRemoteService_UpdatePlayedStatus0_HTTP_Handler(srv))
+	r.POST("/api/user/create", _UserRemoteService_Create0_HTTP_Handler(srv))
+	r.POST("/api/user/login", _UserRemoteService_Login0_HTTP_Handler(srv))
+	r.POST("/api/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
+	r.POST("/api/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
+	r.POST("/api/user/get", _UserRemoteService_GetUser0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -178,9 +181,32 @@ func _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv UserRemoteService
 	}
 }
 
+func _UserRemoteService_GetUser0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceGetUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetUser(ctx, req.(*GetUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*User)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserRemoteServiceHTTPClient interface {
 	Create(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetCurrentWatchCount(ctx context.Context, req *GetCurrentWatchCountRequest, opts ...http.CallOption) (rsp *GetCurrentWatchCountResp, err error)
+	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *User, err error)
 	Login(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResp, err error)
 	Logout(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResp, err error)
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -197,7 +223,7 @@ func NewUserRemoteServiceHTTPClient(client *http.Client) UserRemoteServiceHTTPCl
 
 func (c *UserRemoteServiceHTTPClientImpl) Create(ctx context.Context, in *CreateUserRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/user/create"
+	pattern := "/api/user/create"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceCreate))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -210,7 +236,7 @@ func (c *UserRemoteServiceHTTPClientImpl) Create(ctx context.Context, in *Create
 
 func (c *UserRemoteServiceHTTPClientImpl) GetCurrentWatchCount(ctx context.Context, in *GetCurrentWatchCountRequest, opts ...http.CallOption) (*GetCurrentWatchCountResp, error) {
 	var out GetCurrentWatchCountResp
-	pattern := "/user/getCurrentWatchCount"
+	pattern := "/api/user/getCurrentWatchCount"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceGetCurrentWatchCount))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -221,9 +247,22 @@ func (c *UserRemoteServiceHTTPClientImpl) GetCurrentWatchCount(ctx context.Conte
 	return &out, nil
 }
 
+func (c *UserRemoteServiceHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequest, opts ...http.CallOption) (*User, error) {
+	var out User
+	pattern := "/api/user/get"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceGetUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *UserRemoteServiceHTTPClientImpl) Login(ctx context.Context, in *LoginUserRequest, opts ...http.CallOption) (*LoginUserResp, error) {
 	var out LoginUserResp
-	pattern := "/user/login"
+	pattern := "/api/user/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceLogin))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -236,7 +275,7 @@ func (c *UserRemoteServiceHTTPClientImpl) Login(ctx context.Context, in *LoginUs
 
 func (c *UserRemoteServiceHTTPClientImpl) Logout(ctx context.Context, in *LogoutUserRequest, opts ...http.CallOption) (*LogoutUserResp, error) {
 	var out LogoutUserResp
-	pattern := "/user/logout"
+	pattern := "/api/user/logout"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceLogout))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -249,7 +288,7 @@ func (c *UserRemoteServiceHTTPClientImpl) Logout(ctx context.Context, in *Logout
 
 func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in *UpdateFavoriteRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/user/updateFavorite"
+	pattern := "/api/user/updateFavorite"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateFavorite))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -262,7 +301,7 @@ func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in
 
 func (c *UserRemoteServiceHTTPClientImpl) UpdatePlayedStatus(ctx context.Context, in *UpdatePlayedStatusRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/user/updatePlayedStatus"
+	pattern := "/api/user/updatePlayedStatus"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdatePlayedStatus))
 	opts = append(opts, http.PathTemplate(pattern))

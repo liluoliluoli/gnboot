@@ -27,15 +27,12 @@ type AppVersionRemoteServiceHTTPServer interface {
 
 func RegisterAppVersionRemoteServiceHTTPServer(s *http.Server, srv AppVersionRemoteServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/api/version/getLastVersion", _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv))
+	r.GET("/api/version/getLastVersion", _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv))
 }
 
 func _AppVersionRemoteService_GetLastVersion0_HTTP_Handler(srv AppVersionRemoteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetLastAppVersionRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -67,10 +64,10 @@ func NewAppVersionRemoteServiceHTTPClient(client *http.Client) AppVersionRemoteS
 func (c *AppVersionRemoteServiceHTTPClientImpl) GetLastVersion(ctx context.Context, in *GetLastAppVersionRequest, opts ...http.CallOption) (*AppVersion, error) {
 	var out AppVersion
 	pattern := "/api/version/getLastVersion"
-	path := binding.EncodeURL(pattern, in, false)
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAppVersionRemoteServiceGetLastVersion))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

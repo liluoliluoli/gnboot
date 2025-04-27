@@ -8,10 +8,10 @@ const TableNameActor = "actor"
 
 // Actor mapped from table <actor>
 type Actor struct {
-	ID         int64   `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	Name       string  `gorm:"column:name;type:varchar(128);not null;comment:名字" json:"name"`
-	Thumbnail  *string `gorm:"column:thumbnail;type:varchar(1024);comment:演员头像URL" json:"thumbnail"`
-	IsDirector bool    `gorm:"column:is_director;type:tinyint(1);not null;comment:是否导演" json:"isDirector"`
+	ID        int64   `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	Name      string  `gorm:"column:name;type:varchar(128);not null;comment:名字" json:"name"`
+	Thumbnail *string `gorm:"column:thumbnail;type:varchar(1024);comment:演员头像URL" json:"thumbnail"`
+	Region    *string `gorm:"column:region;type:varchar(255);comment:国家" json:"region"`
 }
 
 // TableName Actor's table name

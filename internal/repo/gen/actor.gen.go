@@ -31,7 +31,7 @@ func newActor(db *gorm.DB, opts ...gen.DOOption) actor {
 	_actor.ID = field.NewInt64(tableName, "id")
 	_actor.Name = field.NewString(tableName, "name")
 	_actor.Thumbnail = field.NewString(tableName, "thumbnail")
-	_actor.IsDirector = field.NewBool(tableName, "is_director")
+	_actor.Region = field.NewString(tableName, "region")
 
 	_actor.fillFieldMap()
 
@@ -41,11 +41,11 @@ func newActor(db *gorm.DB, opts ...gen.DOOption) actor {
 type actor struct {
 	actorDo actorDo
 
-	ALL        field.Asterisk
-	ID         field.Int64  // 主键
-	Name       field.String // 名字
-	Thumbnail  field.String // 演员头像URL
-	IsDirector field.Bool   // 是否导演
+	ALL       field.Asterisk
+	ID        field.Int64  // 主键
+	Name      field.String // 名字
+	Thumbnail field.String // 演员头像URL
+	Region    field.String // 国家
 
 	fieldMap map[string]field.Expr
 }
@@ -65,7 +65,7 @@ func (a *actor) updateTableName(table string) *actor {
 	a.ID = field.NewInt64(table, "id")
 	a.Name = field.NewString(table, "name")
 	a.Thumbnail = field.NewString(table, "thumbnail")
-	a.IsDirector = field.NewBool(table, "is_director")
+	a.Region = field.NewString(table, "region")
 
 	a.fillFieldMap()
 
@@ -92,7 +92,7 @@ func (a *actor) fillFieldMap() {
 	a.fieldMap["id"] = a.ID
 	a.fieldMap["name"] = a.Name
 	a.fieldMap["thumbnail"] = a.Thumbnail
-	a.fieldMap["is_director"] = a.IsDirector
+	a.fieldMap["region"] = a.Region
 }
 
 func (a actor) clone(db *gorm.DB) actor {

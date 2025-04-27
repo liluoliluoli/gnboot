@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
@@ -100,4 +103,19 @@ func (s *UserService) Create(ctx context.Context, userName string, password stri
 		return nil
 	})
 	return err
+}
+
+func (s *UserService) GetCurrentUser(ctx context.Context) (*sdomain.User, error) {
+	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	if err != nil {
+		return nil, err
+	}
+	rs, err := s.QueryByUserName(ctx, userName)
+	if err != nil {
+		return nil, err
+	}
+	if rs == nil {
+		return nil, errors.New("用户不存在")
+	}
+	return rs, nil
 }

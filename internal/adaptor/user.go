@@ -35,7 +35,11 @@ func NewUserProvider(user *service.UserService, client redis.UniversalClient, vi
 }
 
 func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavoriteRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdateFavorite(ctx, 1, int64(req.VideoId), req.Favorite)
+	rs, err := s.user.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = s.user.UpdateFavorite(ctx, rs.ID, int64(req.VideoId), req.Favorite)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +47,11 @@ func (s *UserProvider) UpdateFavorite(ctx context.Context, req *user.UpdateFavor
 }
 
 func (s *UserProvider) UpdatePlayedStatus(ctx context.Context, req *user.UpdatePlayedStatusRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdatePlayStatus(ctx, 1, int64(req.VideoId), int64(req.EpisodeId), int64(req.Position))
+	rs, err := s.user.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = s.user.UpdatePlayStatus(ctx, rs.ID, int64(req.VideoId), int64(req.EpisodeId), int64(req.Position))
 	if err != nil {
 		return nil, err
 	}
@@ -62,12 +70,9 @@ func (s *UserProvider) Create(ctx context.Context, req *user.CreateUserRequest) 
 }
 
 func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*user.LoginUserResp, error) {
-	rs, err := s.user.QueryByUserName(ctx, req.UserName)
+	rs, err := s.user.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
-	}
-	if rs == nil {
-		return nil, errors.New("用户名或密码错误")
 	}
 	if rs.Password != security_util.SignByHMACSha256(req.Password, constant.SYS_PWD) {
 		return nil, errors.New("密码错误")
@@ -93,16 +98,9 @@ func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*
 }
 
 func (s *UserProvider) Logout(ctx context.Context, req *user.LogoutUserRequest) (*user.LogoutUserResp, error) {
-	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	rs, err := s.user.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
-	}
-	rs, err := s.user.QueryByUserName(ctx, userName)
-	if err != nil {
-		return nil, err
-	}
-	if rs == nil {
-		return nil, errors.New("用户不存在")
 	}
 	sessionToken, err := context_util.GetGenericContext[string](ctx, constant.CTX_SessionToken)
 	if err != nil {

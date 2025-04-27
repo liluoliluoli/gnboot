@@ -62,7 +62,11 @@ func (m *Actor) validate(all bool) error {
 
 	// no validation rules for Thumbnail
 
+	// no validation rules for Region
+
 	// no validation rules for IsDirector
+
+	// no validation rules for Character
 
 	if len(errors) > 0 {
 		return ActorMultiError(errors)

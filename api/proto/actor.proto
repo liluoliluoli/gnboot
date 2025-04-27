@@ -49,5 +49,7 @@ additional_properties:
     int32 id = 1;
     string name = 2;
     string thumbnail = 3;
-    bool isDirector = 4;
+    string region = 4;
+    bool isDirector = 5;
+    string character = 6;
   }

@@ -7,7 +7,7 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-import "proto/subtitle.proto";
+import "proto/episode.proto";
 import "proto/actor.proto";
 import "proto/base.proto";
 
@@ -104,8 +104,15 @@ additional_properties:
     string ext = 9;
     string publishMonth = 10;
     string thumbnail = 11;
-    string genres = 12;
-    google.protobuf.Timestamp lastPlayedTime = 13;
+    repeated string genres = 12;
+    repeated gnboot.Actor actors = 13;
+    repeated gnboot.Actor directors = 14;
+    repeated gnboot.Episode episodes = 15;
+    google.protobuf.Timestamp lastPlayedTime = 16;
+    int32 lastPlayedEpisodeId = 17;
+    int32 lastPlayedPosition = 18;
+    string ratio = 19;
+    bool isFavorite = 20;
   }
 
   message CreateVideoRequest {
@@ -120,6 +127,7 @@ additional_properties:
     optional string region = 5;
     optional string year = 6;
     optional string videoType = 7;
+    bool isHistory = 8;
   }
 
   message SearchVideoResp {

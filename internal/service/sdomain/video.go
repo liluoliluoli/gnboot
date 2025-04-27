@@ -2,10 +2,13 @@ package sdomain
 
 import (
 	"encoding/json"
+	actordto "github.com/liluoliluoli/gnboot/api/actor"
+	episodedto "github.com/liluoliluoli/gnboot/api/episode"
 	videodto "github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strings"
 	"time"
 )
 
@@ -60,12 +63,14 @@ type Video struct {
 	Description         string
 	PublishMonth        string
 	Thumbnail           string
-	Genres              string
-	Actors              []*Actor
+	Ratio               string
+	Genres              []string
+	Actors              []*VideoActorMapping
 	Episodes            []*Episode
 	LastPlayedTime      *time.Time
 	LastPlayedEpisodeId int64
 	LastPlayedPosition  int64
+	IsFavorite          bool
 	CreateTime          time.Time
 	UpdateTime          time.Time
 	IsValid             bool
@@ -93,7 +98,8 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		Ext:          lo.FromPtr(m.Ext),
 		PublishMonth: lo.FromPtr(m.PublishMonth),
 		Thumbnail:    lo.FromPtr(m.Thumbnail),
-		Genres:       lo.FromPtr(m.Genres),
+		Ratio:        lo.FromPtr(m.Ratio),
+		Genres:       strings.Split(lo.FromPtr(m.Genres), ","),
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
 		IsValid:      m.IsValid,
@@ -101,6 +107,9 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 }
 
 func (d *Video) ConvertToDto() *videodto.Video {
+	actors := lo.Map(d.Actors, func(item *VideoActorMapping, index int) *actordto.Actor {
+		return item.ConvertToDto()
+	})
 	return &videodto.Video{
 		Id:           int32(d.ID),
 		Title:        d.Title,
@@ -113,24 +122,38 @@ func (d *Video) ConvertToDto() *videodto.Video {
 		Ext:          d.Ext,
 		PublishMonth: d.PublishMonth,
 		Thumbnail:    d.Thumbnail,
+		Ratio:        d.Ratio,
 		Genres:       d.Genres,
 		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() *timestamppb.Timestamp {
 			return timestamppb.New(lo.FromPtr(d.LastPlayedTime))
 		}, func() *timestamppb.Timestamp {
 			return nil
 		}),
+		LastPlayedEpisodeId: int32(d.LastPlayedEpisodeId),
+		LastPlayedPosition:  int32(d.LastPlayedPosition),
+		IsFavorite:          d.IsFavorite,
+		Actors: lo.Filter(actors, func(item *actordto.Actor, index int) bool {
+			return !item.IsDirector
+		}),
+		Directors: lo.Filter(actors, func(item *actordto.Actor, index int) bool {
+			return item.IsDirector
+		}),
+		Episodes: lo.Map(d.Episodes, func(item *Episode, index int) *episodedto.Episode {
+			return item.ConvertToDto()
+		}),
 	}
 }
 
 type VideoSearch struct {
-	Page   *Page   `json:"page"`
-	Search string  `json:"search"`
-	Ids    []int64 `json:"ids"`
-	Type   string  `json:"type"`
-	Sort   string  `json:"sort"`
-	Genre  string  `json:"genre"`
-	Region string  `json:"region"`
-	Year   string  `json:"year"`
+	Page      *Page   `json:"page"`
+	Search    string  `json:"search"`
+	Ids       []int64 `json:"ids"`
+	Type      string  `json:"type"`
+	Sort      string  `json:"sort"`
+	Genre     string  `json:"genre"`
+	Region    string  `json:"region"`
+	Year      string  `json:"year"`
+	IsHistory bool    `json:"isHistory"`
 }
 
 type UpdateVideo struct {

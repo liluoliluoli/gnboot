@@ -32,6 +32,7 @@ func newVideoActorMapping(db *gorm.DB, opts ...gen.DOOption) videoActorMapping {
 	_videoActorMapping.VideoID = field.NewInt64(tableName, "video_id")
 	_videoActorMapping.ActorID = field.NewInt64(tableName, "actor_id")
 	_videoActorMapping.Character = field.NewString(tableName, "character")
+	_videoActorMapping.IsDirector = field.NewBool(tableName, "is_director")
 
 	_videoActorMapping.fillFieldMap()
 
@@ -41,11 +42,12 @@ func newVideoActorMapping(db *gorm.DB, opts ...gen.DOOption) videoActorMapping {
 type videoActorMapping struct {
 	videoActorMappingDo videoActorMappingDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	VideoID   field.Int64  // 影片id
-	ActorID   field.Int64  // 演职人员id
-	Character field.String // 饰演角色名称
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	VideoID    field.Int64  // 影片id
+	ActorID    field.Int64  // 演职人员id
+	Character  field.String // 饰演角色名称
+	IsDirector field.Bool   // 是否导演
 
 	fieldMap map[string]field.Expr
 }
@@ -66,6 +68,7 @@ func (v *videoActorMapping) updateTableName(table string) *videoActorMapping {
 	v.VideoID = field.NewInt64(table, "video_id")
 	v.ActorID = field.NewInt64(table, "actor_id")
 	v.Character = field.NewString(table, "character")
+	v.IsDirector = field.NewBool(table, "is_director")
 
 	v.fillFieldMap()
 
@@ -90,11 +93,12 @@ func (v *videoActorMapping) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (v *videoActorMapping) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 4)
+	v.fieldMap = make(map[string]field.Expr, 5)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["actor_id"] = v.ActorID
 	v.fieldMap["character"] = v.Character
+	v.fieldMap["is_director"] = v.IsDirector
 }
 
 func (v videoActorMapping) clone(db *gorm.DB) videoActorMapping {

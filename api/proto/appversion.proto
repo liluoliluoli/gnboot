@@ -49,8 +49,7 @@ additional_properties:
   service AppVersionRemoteService {
     rpc GetLastVersion(GetLastAppVersionRequest) returns (AppVersion) {
       option (google.api.http) = {
-        post : "/api/version/getLastVersion"
-        body : "*"
+        get : "/api/version/getLastVersion"
       };
     }
   }

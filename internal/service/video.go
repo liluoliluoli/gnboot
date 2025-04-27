@@ -86,6 +86,7 @@ func (s *VideoService) get(ctx context.Context, id int64, userId int64) (*sdomai
 			item.LastPlayedTime = videoPlayedMap[item.ID].LastPlayedTime
 			item.LastPlayedEpisodeId = videoPlayedMap[item.ID].LastPlayedEpisodeId
 			item.LastPlayedPosition = videoPlayedMap[item.ID].LastPlayedPosition
+			item.IsFavorite = videoPlayedMap[item.ID].IsFavorite
 		}
 	}
 
@@ -103,10 +104,20 @@ func (s *VideoService) Page(ctx context.Context, condition *sdomain.VideoSearch,
 }
 
 func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch, userId int64) (*sdomain.PageResult[*sdomain.Video], error) {
-	pageResult, err := s.videoRepo.Page(ctx, condition)
-	if err != nil {
-		return nil, err
+	var pageResult *sdomain.PageResult[*sdomain.Video]
+	var err error
+	if condition.IsHistory {
+		pageResult, err = s.pageUserVideo(ctx, userId, false, condition.Page)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		pageResult, err = s.videoRepo.Page(ctx, condition)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	if pageResult != nil && len(pageResult.List) != 0 {
 		actorsMap, err := s.buildVideoActorsMap(ctx, pageResult.List)
 		if err != nil {
@@ -135,7 +146,7 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 
 func (s *VideoService) PageFavorites(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
 	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(userId, page), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Video], error) {
-		return s.pageFavorites(ctx, userId, page)
+		return s.pageUserVideo(ctx, userId, true, page)
 	})
 	if err != nil {
 		return nil, err
@@ -143,8 +154,8 @@ func (s *VideoService) PageFavorites(ctx context.Context, userId int64, page *sd
 	return rp, nil
 }
 
-func (s *VideoService) pageFavorites(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
-	pageResult, err := s.videoUserMappingRepo.Page(ctx, userId, page)
+func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavorite bool, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
+	pageResult, err := s.videoUserMappingRepo.Page(ctx, userId, isFavorite, page)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +164,8 @@ func (s *VideoService) pageFavorites(ctx context.Context, userId int64, page *sd
 			Ids: lo.Map(pageResult.List, func(item *sdomain.VideoUserMapping, index int) int64 {
 				return item.ID
 			}),
-			Page: page,
+			Page:      page,
+			IsHistory: !isFavorite,
 		}, userId)
 	}
 	return &sdomain.PageResult[*sdomain.Video]{
@@ -191,8 +203,8 @@ func (s *VideoService) Delete(ctx context.Context, ids ...int64) error {
 	return err
 }
 
-// 补齐actor
-func (s *VideoService) buildVideoActorsMap(ctx context.Context, videos []*sdomain.Video) (map[int64][]*sdomain.Actor, error) {
+// 补齐每部影片的VideoActorMapping数组
+func (s *VideoService) buildVideoActorsMap(ctx context.Context, videos []*sdomain.Video) (map[int64][]*sdomain.VideoActorMapping, error) {
 	videoIds := lo.Map(videos, func(item *sdomain.Video, index int) int64 {
 		return item.ID
 	})
@@ -209,14 +221,13 @@ func (s *VideoService) buildVideoActorsMap(ctx context.Context, videos []*sdomai
 	actorsMap := lo.SliceToMap(actors, func(item *sdomain.Actor) (int64, *sdomain.Actor) {
 		return item.ID, item
 	})
-	rsMap := make(map[int64][]*sdomain.Actor)
+
 	for _, actorMapping := range actorMappings {
-		if _, ok := rsMap[actorMapping.VideoId]; !ok {
-			rsMap[actorMapping.VideoId] = make([]*sdomain.Actor, 0)
-		}
-		rsMap[actorMapping.VideoId] = append(rsMap[actorMapping.VideoId], actorsMap[actorMapping.ActorId])
+		actorMapping.Actor = actorsMap[actorMapping.ActorId]
 	}
-	return rsMap, nil
+	return lo.GroupBy(actorMappings, func(item *sdomain.VideoActorMapping) int64 {
+		return item.VideoId
+	}), nil
 }
 
 // 补齐最后播放信息

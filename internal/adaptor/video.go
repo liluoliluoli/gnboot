@@ -17,10 +17,14 @@ import (
 type VideoProvider struct {
 	video.UnimplementedVideoRemoteServiceServer
 	video *service.VideoService
+	user  *service.UserService
 }
 
-func NewVideoProvider(video *service.VideoService) *VideoProvider {
-	return &VideoProvider{video: video}
+func NewVideoProvider(video *service.VideoService, user *service.UserService) *VideoProvider {
+	return &VideoProvider{
+		video: video,
+		user:  user,
+	}
 }
 
 func (s *VideoProvider) CreateMovie(ctx context.Context, req *video.CreateVideoRequest) (*emptypb.Empty, error) {
@@ -29,7 +33,11 @@ func (s *VideoProvider) CreateMovie(ctx context.Context, req *video.CreateVideoR
 }
 
 func (s *VideoProvider) GetVideo(ctx context.Context, req *video.GetVideoRequest) (*video.Video, error) {
-	res, err := s.video.Get(ctx, int64(req.Id), 1)
+	rs, err := s.user.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res, err := s.video.Get(ctx, int64(req.Id), rs.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -38,15 +46,20 @@ func (s *VideoProvider) GetVideo(ctx context.Context, req *video.GetVideoRequest
 
 func (s *VideoProvider) SearchVideo(ctx context.Context, req *video.SearchVideoRequest) (*video.SearchVideoResp, error) {
 	condition := &sdomain.VideoSearch{
-		Page:   page_util.ToDomainPage(req.Page),
-		Type:   lo.FromPtr(req.VideoType),
-		Search: lo.FromPtr(req.Search),
-		Sort:   lo.FromPtr(req.Sort),
-		Genre:  lo.FromPtr(req.Genre),
-		Region: lo.FromPtr(req.Region),
-		Year:   lo.FromPtr(req.Year),
+		Page:      page_util.ToDomainPage(req.Page),
+		Type:      lo.FromPtr(req.VideoType),
+		Search:    lo.FromPtr(req.Search),
+		Sort:      lo.FromPtr(req.Sort),
+		Genre:     lo.FromPtr(req.Genre),
+		Region:    lo.FromPtr(req.Region),
+		Year:      lo.FromPtr(req.Year),
+		IsHistory: req.IsHistory,
 	}
-	res, err := s.video.Page(ctx, condition, 1)
+	rs, err := s.user.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res, err := s.video.Page(ctx, condition, rs.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +72,11 @@ func (s *VideoProvider) SearchVideo(ctx context.Context, req *video.SearchVideoR
 }
 
 func (s *VideoProvider) PageFavorites(ctx context.Context, req *video.PageFavoritesRequest) (*video.SearchVideoResp, error) {
-	res, err := s.video.PageFavorites(ctx, 1, page_util.ToDomainPage(req.Page))
+	rs, err := s.user.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res, err := s.video.PageFavorites(ctx, rs.ID, page_util.ToDomainPage(req.Page))
 	if err != nil {
 		return nil, err
 	}

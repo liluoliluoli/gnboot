@@ -98,8 +98,8 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 	return nil
 }
 
-func (r *VideoUserMappingRepo) Page(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.VideoUserMapping], error) {
-	do := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId))
+func (r *VideoUserMappingRepo) Page(ctx context.Context, userId int64, isFavorite bool, page *sdomain.Page) (*sdomain.PageResult[*sdomain.VideoUserMapping], error) {
+	do := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.IsFavorite.Value(isFavorite))
 	list, total, err := do.FindByPage(int((page.CurrentPage-1)*page.PageSize), int(page.PageSize))
 	if err != nil {
 		return nil, handleQueryError(ctx, err)

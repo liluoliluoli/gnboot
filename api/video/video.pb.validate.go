@@ -78,7 +78,107 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for Thumbnail
 
-	// no validation rules for Genres
+	for idx, item := range m.GetActors() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Actors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return VideoValidationError{
+					field:  fmt.Sprintf("Actors[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetDirectors() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Directors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Directors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return VideoValidationError{
+					field:  fmt.Sprintf("Directors[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetEpisodes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Episodes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, VideoValidationError{
+						field:  fmt.Sprintf("Episodes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return VideoValidationError{
+					field:  fmt.Sprintf("Episodes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if all {
 		switch v := interface{}(m.GetLastPlayedTime()).(type) {
@@ -108,6 +208,14 @@ func (m *Video) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for LastPlayedEpisodeId
+
+	// no validation rules for LastPlayedPosition
+
+	// no validation rules for Ratio
+
+	// no validation rules for IsFavorite
 
 	if len(errors) > 0 {
 		return VideoMultiError(errors)
@@ -340,6 +448,8 @@ func (m *SearchVideoRequest) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for IsHistory
 
 	if m.Search != nil {
 		// no validation rules for Search

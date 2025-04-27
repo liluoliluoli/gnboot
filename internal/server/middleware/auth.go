@@ -19,15 +19,14 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 				err = gerror.ErrIdempotentMissingToken(ctx)
 				return
 			}
-			var method, path string
+			var path string
 			switch tr.Kind() {
 			case transport.KindHTTP:
 				if ht, ok3 := tr.(kratosHttp.Transporter); ok3 {
-					method = ht.Request().Method
 					path = ht.Request().URL.Path
 				}
 			}
-			if method == "POST" && (path == "/user/create" || path == "/user/login") {
+			if path == "/api/user/create" || path == "/api/user/login" || path == "/api/version/getLastVersion" {
 				return handler(ctx, req)
 			}
 

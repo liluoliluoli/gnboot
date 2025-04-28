@@ -79,10 +79,10 @@ func (s *UserService) UpdateFavorite(ctx context.Context, userId int64, videoId 
 	return err
 }
 
-func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, episodeId int64, position int64) error {
+func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoId int64, episodeId int64, position int64, playTimestamp int64) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, tx, userId, videoId, episodeId, position)
+			return s.videoUserMappingRepo.UpdatePlayStatus(ctx, tx, userId, videoId, episodeId, position, playTimestamp)
 		})
 		if err != nil {
 			return err
@@ -95,7 +95,7 @@ func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoI
 func (s *UserService) Create(ctx context.Context, userName string, password string) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.userRepo.Create(ctx, tx, userName, password)
+			return s.userRepo.Create(ctx, tx, userName, password, constant.Trial)
 		})
 		if err != nil {
 			return err

@@ -99,9 +99,14 @@ additional_properties:
   }
 
   message UpdatePlayedStatusRequest {
+    repeated UpdatePlayedStatus updatePlayedStatusList = 1;
+  }
+
+  message UpdatePlayedStatus{
     int32 videoId = 1;
     int32 episodeId = 2;
     int32 position = 3;
+    int32 playTimestamp = 4;
   }
 
   message CreateUserRequest{
@@ -139,4 +144,5 @@ additional_properties:
     int32 watchCount = 1;
     string userName = 2;
     int32 favoriteCount = 3;
+    string packageType = 4;
   }

@@ -13,7 +13,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/server"
 	"github.com/liluoliluoli/gnboot/internal/service"
-	"github.com/liluoliluoli/gnboot/internal/task/i4k"
+	"github.com/liluoliluoli/gnboot/internal/task/user"
 )
 
 import (
@@ -53,15 +53,15 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	userService := service.NewUserService(c, userRepo, videoUserMappingRepo)
 	videoProvider := adaptor.NewVideoProvider(videoService, userService)
 	episodeService := service.NewEpisodeService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, episodeRepo, userRepo, universalClient)
-	episodeProvider := adaptor.NewEpisodeProvider(episodeService)
+	episodeProvider := adaptor.NewEpisodeProvider(episodeService, userService)
 	userProvider := adaptor.NewUserProvider(userService, universalClient, videoService)
 	appVersionRepo := repo.NewAppVersionRepo(data)
 	appVersionService := service.NewAppVersionService(c, appVersionRepo)
 	appVersionProvider := adaptor.NewAppVersionProvider(appVersionService)
 	grpcServer := server.NewGRPCServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	httpServer := server.NewHTTPServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
-	i4kSyncTask := i4k.NewI4kSyncTask(c)
-	job := server.NewJob(c, i4kSyncTask)
+	userPackageCheckTask := user.NewUserPackageCheckTask(c, userService)
+	job := server.NewJob(c, userPackageCheckTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {
 		cleanup()

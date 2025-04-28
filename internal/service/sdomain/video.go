@@ -7,7 +7,6 @@ import (
 	videodto "github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"strings"
 	"time"
 )
@@ -124,13 +123,13 @@ func (d *Video) ConvertToDto() *videodto.Video {
 		Thumbnail:    d.Thumbnail,
 		Ratio:        d.Ratio,
 		Genres:       d.Genres,
-		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() *timestamppb.Timestamp {
-			return timestamppb.New(lo.FromPtr(d.LastPlayedTime))
-		}, func() *timestamppb.Timestamp {
+		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() *int32 {
+			return lo.ToPtr(int32(d.LastPlayedTime.Unix()))
+		}, func() *int32 {
 			return nil
 		}),
-		LastPlayedEpisodeId: int32(d.LastPlayedEpisodeId),
-		LastPlayedPosition:  int32(d.LastPlayedPosition),
+		LastPlayedEpisodeId: lo.Ternary(d.LastPlayedEpisodeId == 0, nil, lo.ToPtr(int32(d.LastPlayedEpisodeId))),
+		LastPlayedPosition:  lo.Ternary(d.LastPlayedPosition == 0, nil, lo.ToPtr(int32(d.LastPlayedPosition))),
 		IsFavorite:          d.IsFavorite,
 		Actors: lo.Filter(actors, func(item *actordto.Actor, index int) bool {
 			return !item.IsDirector

@@ -20,3 +20,12 @@ const CTX_UserName = "CTX_UserName"
 const CTX_SessionToken = "CTX_SessionToken"
 
 const MaxWatchCountByDay = 200
+
+type PackageType = string
+
+const (
+	None  PackageType = "none"
+	Trial PackageType = "trial"
+	Month PackageType = "month"
+	Year  PackageType = "year"
+)

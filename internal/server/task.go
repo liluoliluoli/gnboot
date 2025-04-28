@@ -6,13 +6,13 @@ import (
 	"github.com/go-cinch/common/worker"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
-	"github.com/liluoliluoli/gnboot/internal/task/i4k"
+	"github.com/liluoliluoli/gnboot/internal/task/user"
 )
 
 type Job struct {
-	c           *conf.Bootstrap
-	i4kSyncTask *i4k.I4kSyncTask
-	worker      *worker.Worker
+	c                    *conf.Bootstrap
+	userPackageCheckTask *user.UserPackageCheckTask
+	worker               *worker.Worker
 }
 
 func (j *Job) Start(ctx context.Context) error {
@@ -24,10 +24,10 @@ func (j *Job) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewJob(c *conf.Bootstrap, i4kSyncTask *i4k.I4kSyncTask) *Job {
+func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask) *Job {
 	return &Job{
-		c:           c,
-		i4kSyncTask: i4kSyncTask,
+		c:                    c,
+		userPackageCheckTask: userPackageCheckTask,
 	}
 }
 
@@ -37,16 +37,8 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 		worker.WithGroup(c.Name),
 		worker.WithHandler(func(ctx context.Context, p worker.Payload) error {
 			switch p.UID {
-			case "task1":
-
-				//log.WithContext(ctx).Info("task1: %s", t.payload.Payload)
-				//sum := 0
-				//for sum <= 10 {
-				//	movie.TaskList(strconv.Itoa(sum))
-				//	sum += sum
-				//}
-
-				job.i4kSyncTask.ProcessTest(&sdomain.Task{
+			case "taskUserPackageCheck":
+				job.userPackageCheckTask.Process(&sdomain.Task{
 					Ctx:     ctx,
 					Payload: p,
 				})

@@ -24,6 +24,9 @@ var (
 	ErrExceedWatchCount = func(ctx context.Context, args ...string) error {
 		return i18n.NewError(ctx, "exceed.watch.count", reason.ErrorForbidden, args...)
 	}
+	ErrAccountPackageExpire = func(ctx context.Context, args ...string) error {
+		return i18n.NewError(ctx, "account.package.expire", reason.ErrorForbidden, args...)
+	}
 	ErrDataNotChange = func(ctx context.Context, args ...string) error {
 		return i18n.NewError(ctx, constant.DataNotChange, reason.ErrorIllegalParameter, args...)
 	}

@@ -10,6 +10,7 @@ type User struct {
 	ID                  int64      `json:"id"`
 	UserName            string     `json:"userName"`
 	Password            string     `json:"password"`
+	PackageType         string     `json:"packageType"`
 	SessionToken        *string    `json:"sessionToken"`
 	AliToken            *string    `json:"aliToken"`
 	AliTokenExpiredTime *time.Time `json:"aliTokenExpiredTime"`
@@ -28,6 +29,7 @@ func (d *User) ConvertFromRepo(m *model.User) *User {
 		ID:                  m.ID,
 		UserName:            m.UserName,
 		Password:            m.Password,
+		PackageType:         m.PackageType,
 		SessionToken:        m.SessionToken,
 		AliToken:            m.AliToken,
 		AliTokenExpiredTime: m.AliTokenExpiredTime,
@@ -39,6 +41,7 @@ func (d *User) ConvertToRepo() *model.User {
 		ID:                  d.ID,
 		UserName:            d.UserName,
 		Password:            d.Password,
+		PackageType:         d.PackageType,
 		SessionToken:        d.SessionToken,
 		AliToken:            d.AliToken,
 		AliTokenExpiredTime: d.AliTokenExpiredTime,

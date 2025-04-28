@@ -42,10 +42,11 @@ func (r *UserRepo) GetByUserName(ctx context.Context, userName string) (*sdomain
 	return (&sdomain.User{}).ConvertFromRepo(find), nil
 }
 
-func (r *UserRepo) Create(ctx context.Context, tx *gen.Query, userName string, password string) error {
+func (r *UserRepo) Create(ctx context.Context, tx *gen.Query, userName string, password string, packageType string) error {
 	return r.do(ctx, tx).Create(&model.User{
-		UserName: userName,
-		Password: password,
+		UserName:    userName,
+		Password:    password,
+		PackageType: packageType,
 	})
 }
 

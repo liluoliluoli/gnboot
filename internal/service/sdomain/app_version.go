@@ -4,7 +4,6 @@ import (
 	appversiondto "github.com/liluoliluoli/gnboot/api/appversion"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
@@ -37,7 +36,7 @@ func (d *AppVersion) ConvertToDto() *appversiondto.AppVersion {
 		VersionName:   d.VersionName,
 		ForceUpdate:   d.ForceUpdate,
 		ApkUrl:        d.ApkUrl,
-		PublishedTime: timestamppb.New(d.PublishTime),
+		PublishedTime: int32(d.PublishTime.Unix()),
 		Remark:        d.Remark,
 	}
 }

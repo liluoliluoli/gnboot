@@ -180,42 +180,21 @@ func (m *Video) validate(all bool) error {
 
 	}
 
-	if all {
-		switch v := interface{}(m.GetLastPlayedTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, VideoValidationError{
-					field:  "LastPlayedTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, VideoValidationError{
-					field:  "LastPlayedTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetLastPlayedTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return VideoValidationError{
-				field:  "LastPlayedTime",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	// no validation rules for LastPlayedEpisodeId
-
-	// no validation rules for LastPlayedPosition
-
 	// no validation rules for Ratio
 
 	// no validation rules for IsFavorite
+
+	if m.LastPlayedTime != nil {
+		// no validation rules for LastPlayedTime
+	}
+
+	if m.LastPlayedEpisodeId != nil {
+		// no validation rules for LastPlayedEpisodeId
+	}
+
+	if m.LastPlayedPosition != nil {
+		// no validation rules for LastPlayedPosition
+	}
 
 	if len(errors) > 0 {
 		return VideoMultiError(errors)

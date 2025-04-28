@@ -108,9 +108,9 @@ additional_properties:
     repeated gnboot.Actor actors = 13;
     repeated gnboot.Actor directors = 14;
     repeated gnboot.Episode episodes = 15;
-    google.protobuf.Timestamp lastPlayedTime = 16;
-    int32 lastPlayedEpisodeId = 17;
-    int32 lastPlayedPosition = 18;
+    optional int32 lastPlayedTime = 16;
+    optional int32 lastPlayedEpisodeId = 17;
+    optional int32 lastPlayedPosition = 18;
     string ratio = 19;
     bool isFavorite = 20;
   }

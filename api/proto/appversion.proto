@@ -58,7 +58,7 @@ additional_properties:
     int32 id = 1;
     string versionCode = 2;
     string versionName = 3;
-    google.protobuf.Timestamp publishedTime = 4;
+    int32 publishedTime = 4;
     bool forceUpdate = 5;
     string apkUrl = 6;
     string remark = 7;

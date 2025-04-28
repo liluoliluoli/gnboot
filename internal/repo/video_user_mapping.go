@@ -69,14 +69,14 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 	return nil
 }
 
-func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, episodeId int64, position int64) error {
+func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Query, userId int64, videoId int64, episodeId int64, position int64, playTimestamp int64) error {
 	first, err := r.do(ctx, tx).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.VideoID.Eq(videoId)).First()
 	if handleQueryError(ctx, err) != nil {
 		return err
 	}
 	if first != nil {
 		first.LastPlayedPosition = lo.ToPtr(position)
-		first.LastPlayedTime = lo.ToPtr(time.Now())
+		first.LastPlayedTime = lo.ToPtr(time.Unix(playTimestamp, 0))
 		first.LastPlayedEpisodeID = lo.ToPtr(episodeId)
 		_, err := r.do(ctx, tx).Updates(first)
 		if err != nil {
@@ -89,7 +89,7 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 			IsFavorite:          false,
 			LastPlayedEpisodeID: lo.ToPtr(episodeId),
 			LastPlayedPosition:  lo.ToPtr(position),
-			LastPlayedTime:      lo.ToPtr(time.Now()),
+			LastPlayedTime:      lo.ToPtr(time.Unix(playTimestamp, 0)),
 		})
 		if err != nil {
 			return err

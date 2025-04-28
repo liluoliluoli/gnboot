@@ -1,6 +1,6 @@
 task:
-  task1:
-    name: '每分钟执行'
+  taskUserPackageCheck:
+    name: '每10小时执行'
     expr: '* */10 * * * '
 
 #    *　　*　　*　　*　　*　　

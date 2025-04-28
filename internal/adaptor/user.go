@@ -51,9 +51,11 @@ func (s *UserProvider) UpdatePlayedStatus(ctx context.Context, req *user.UpdateP
 	if err != nil {
 		return nil, err
 	}
-	err = s.user.UpdatePlayStatus(ctx, rs.ID, int64(req.VideoId), int64(req.EpisodeId), int64(req.Position))
-	if err != nil {
-		return nil, err
+	for _, updatePlayedStatus := range req.UpdatePlayedStatusList {
+		err = s.user.UpdatePlayStatus(ctx, rs.ID, int64(updatePlayedStatus.VideoId), int64(updatePlayedStatus.EpisodeId), int64(updatePlayedStatus.Position), int64(updatePlayedStatus.PlayTimestamp))
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -70,9 +72,12 @@ func (s *UserProvider) Create(ctx context.Context, req *user.CreateUserRequest) 
 }
 
 func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*user.LoginUserResp, error) {
-	rs, err := s.user.GetCurrentUser(ctx)
+	rs, err := s.user.QueryByUserName(ctx, req.UserName)
 	if err != nil {
 		return nil, err
+	}
+	if rs == nil {
+		return nil, errors.New("用户不存在")
 	}
 	if rs.Password != security_util.SignByHMACSha256(req.Password, constant.SYS_PWD) {
 		return nil, errors.New("密码错误")

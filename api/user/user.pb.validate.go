@@ -1233,11 +1233,17 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for WatchCount
 
+	// no validation rules for RestWatchCount
+
 	// no validation rules for UserName
 
 	// no validation rules for FavoriteCount
 
 	// no validation rules for PackageType
+
+	if m.PackageExpiredTime != nil {
+		// no validation rules for PackageExpiredTime
+	}
 
 	if len(errors) > 0 {
 		return UserMultiError(errors)

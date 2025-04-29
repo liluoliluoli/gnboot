@@ -18,6 +18,12 @@ var (
 	ErrAuthInvalidToken = func(ctx context.Context) error {
 		return reason.ErrorIllegalParameter(i18n.FromContext(ctx).T(constant.JwtTokenInvalid))
 	}
+	ErrMissingSignature = func(ctx context.Context) error {
+		return i18n.NewError(ctx, "sign:signature:missing", reason.ErrorForbidden)
+	}
+	ErrSignature = func(ctx context.Context) error {
+		return i18n.NewError(ctx, "sign:signature:error", reason.ErrorForbidden)
+	}
 	ErrTooManyRequests = func(ctx context.Context) error {
 		return reason.ErrorTooManyRequests(i18n.FromContext(ctx).T(constant.TooManyRequests))
 	}

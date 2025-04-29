@@ -19,6 +19,7 @@ type User struct {
 	AliTokenExpiredTime *time.Time `gorm:"column:ali_token_expired_time;type:datetime;comment:阿里云盘token过期时间" json:"aliTokenExpiredTime"`
 	SessionToken        *string    `gorm:"column:session_token;type:varchar(1024);comment:session token，登录使用" json:"sessionToken"`
 	PackageType         string     `gorm:"column:package_type;type:varchar(255);not null;comment:套餐类型：none,month,year,trial" json:"packageType"`
+	PackageExpiredTime  *time.Time `gorm:"column:package_expired_time;type:datetime;comment:套餐到期时间" json:"packageExpiredTime"`
 }
 
 // TableName User's table name

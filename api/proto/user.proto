@@ -142,7 +142,10 @@ additional_properties:
   }
   message User{
     int32 watchCount = 1;
-    string userName = 2;
-    int32 favoriteCount = 3;
-    string packageType = 4;
+    int32 restWatchCount = 2;
+    string userName = 3;
+    int32 favoriteCount = 4;
+    string packageType = 5;
+    optional int32 packageExpiredTime = 6;
+
   }

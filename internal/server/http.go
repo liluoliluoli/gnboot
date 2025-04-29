@@ -19,6 +19,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/user"
 	"github.com/liluoliluoli/gnboot/api/video"
 	"github.com/liluoliluoli/gnboot/internal/adaptor"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	localMiddleware "github.com/liluoliluoli/gnboot/internal/server/middleware"
 	"github.com/redis/go-redis/v9"
@@ -41,6 +42,7 @@ func NewHTTPServer(
 		ratelimit.Server(),
 		localMiddleware.Header(),
 	}
+
 	if c.Tracer.Enable {
 		middlewares = append(middlewares, tracing.Server(), traceMiddleware.Id())
 	}
@@ -50,6 +52,7 @@ func NewHTTPServer(
 		i18nMiddleware.Translator(i18n.WithLanguage(language.Make(c.Server.Language)), i18n.WithFs(locales)),
 		metadata.Server(),
 	)
+
 	if c.Server.Idempotent {
 		middlewares = append(middlewares, localMiddleware.Idempotent())
 	}
@@ -58,6 +61,7 @@ func NewHTTPServer(
 	}
 	middlewares = append(middlewares, localMiddleware.HttpDisableTimeoutPropagation())
 	middlewares = append(middlewares, localMiddleware.Auth(client))
+	middlewares = append(middlewares, localMiddleware.Sign(constant.SYS_PWD))
 	var opts = []http.ServerOption{http.Middleware(middlewares...)}
 	if c.Server.Http.Network != "" {
 		opts = append(opts, http.Network(c.Server.Http.Network))

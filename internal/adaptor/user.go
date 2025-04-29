@@ -139,11 +139,11 @@ func (s *UserProvider) GetCurrentWatchCount(ctx context.Context, req *user.GetCu
 }
 
 func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*user.User, error) {
-	userName, err := context_util.GetGenericContext[string](ctx, constant.CTX_UserName)
+	currentUser, err := s.user.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
-	currentWatchs, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
+	currentWatches, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, currentUser.UserName), time_util.FormatYYYYMMDD(time.Now())).Int()
 	if gerror.HandleRedisNotFoundError(err) != nil {
 		return nil, err
 	}
@@ -152,8 +152,15 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 		PageSize:    100,
 	})
 	return &user.User{
-		WatchCount:    int32(currentWatchs),
-		UserName:      userName,
-		FavoriteCount: int32(res.Page.Count),
+		WatchCount:     int32(currentWatches),
+		RestWatchCount: int32(constant.MaxWatchCountByDay - currentWatches),
+		UserName:       currentUser.UserName,
+		FavoriteCount:  int32(res.Page.Count),
+		PackageType:    currentUser.PackageType,
+		PackageExpiredTime: lo.TernaryF(currentUser.PackageExpiredTime != nil, func() *int32 {
+			return lo.ToPtr(int32(currentUser.PackageExpiredTime.Unix()))
+		}, func() *int32 {
+			return nil
+		}),
 	}, nil
 }

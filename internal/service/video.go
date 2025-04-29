@@ -162,7 +162,7 @@ func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavori
 	if pageResult != nil && len(pageResult.List) != 0 {
 		return s.Page(ctx, &sdomain.VideoSearch{
 			Ids: lo.Map(pageResult.List, func(item *sdomain.VideoUserMapping, index int) int64 {
-				return item.ID
+				return item.VideoId
 			}),
 			Page:      page,
 			IsHistory: !isFavorite,

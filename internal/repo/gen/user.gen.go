@@ -35,6 +35,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.AliTokenExpiredTime = field.NewTime(tableName, "ali_token_expired_time")
 	_user.SessionToken = field.NewString(tableName, "session_token")
 	_user.PackageType = field.NewString(tableName, "package_type")
+	_user.PackageExpiredTime = field.NewTime(tableName, "package_expired_time")
 
 	_user.fillFieldMap()
 
@@ -52,6 +53,7 @@ type user struct {
 	AliTokenExpiredTime field.Time   // 阿里云盘token过期时间
 	SessionToken        field.String // session token，登录使用
 	PackageType         field.String // 套餐类型：none,month,year,trial
+	PackageExpiredTime  field.Time   // 套餐到期时间
 
 	fieldMap map[string]field.Expr
 }
@@ -75,6 +77,7 @@ func (u *user) updateTableName(table string) *user {
 	u.AliTokenExpiredTime = field.NewTime(table, "ali_token_expired_time")
 	u.SessionToken = field.NewString(table, "session_token")
 	u.PackageType = field.NewString(table, "package_type")
+	u.PackageExpiredTime = field.NewTime(table, "package_expired_time")
 
 	u.fillFieldMap()
 
@@ -97,7 +100,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 7)
+	u.fieldMap = make(map[string]field.Expr, 8)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["user_name"] = u.UserName
 	u.fieldMap["password"] = u.Password
@@ -105,6 +108,7 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["ali_token_expired_time"] = u.AliTokenExpiredTime
 	u.fieldMap["session_token"] = u.SessionToken
 	u.fieldMap["package_type"] = u.PackageType
+	u.fieldMap["package_expired_time"] = u.PackageExpiredTime
 }
 
 func (u user) clone(db *gorm.DB) user {

@@ -12,7 +12,7 @@ type Episode struct {
 	VideoID      int64   `gorm:"column:video_id;type:bigint;not null;comment:影片id" json:"videoId"`
 	Episode      int32   `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
 	EpisodeTitle string  `gorm:"column:episode_title;type:varchar(1024);not null;comment:集标题" json:"episodeTitle"`
-	URL          *string `gorm:"column:url;type:varchar(1024);comment:影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址" json:"url"`
+	URL          *string `gorm:"column:url;type:varchar(4096);comment:影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址" json:"url"`
 	Platform     *string `gorm:"column:platform;type:varchar(45);comment:internal, xiaoya, aliyun" json:"platform"`
 	Ext          *string `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
 	Duration     *int64  `gorm:"column:duration;type:bigint;comment:影片时长，秒" json:"duration"`

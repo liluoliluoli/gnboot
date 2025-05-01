@@ -14,6 +14,7 @@ message Bootstrap {
   map<string, Task> task = 6;
   Client client = 7;
   Log log = 8;
+  Dynamic dynamic = 9;
 }
 
 message Server {
@@ -86,4 +87,8 @@ message Task {
   string expr = 2;
   int64 timeout = 3;
   int64 retry = 4;
+}
+
+message Dynamic{
+  repeated string boxServerIps = 1;
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/go-cinch/common/plugins/kratos/config/env"
 	_ "github.com/go-cinch/common/plugins/kratos/encoding/yml"
 	"github.com/go-cinch/common/utils"
+	knacos "github.com/go-kratos/kratos/contrib/config/nacos/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -20,6 +21,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -71,8 +75,35 @@ func main() {
 		),
 	}
 	log.DefaultWrapper = log.NewWrapper(logOps...)
+
+	sc := []constant.ServerConfig{
+		*constant.NewServerConfig("localhost", 8848),
+	}
+
+	cc := &constant.ClientConfig{
+		NamespaceId:         "8e3d53a1-e2b4-45fa-ab89-8c9c7cc0d7cc",
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              "./config/log",
+		CacheDir:            "./config/cache",
+		LogLevel:            "debug",
+	}
+
+	client, err := clients.NewConfigClient(
+		vo.NacosClientParam{
+			ClientConfig:  cc,
+			ServerConfigs: sc,
+		},
+	)
+	if err != nil {
+		log.Error(err)
+	}
 	c := config.New(
-		config.WithSource(file.NewSource(flagConf)),
+		config.WithSource(file.NewSource(flagConf), knacos.NewConfigSource(
+			client,
+			knacos.WithGroup("DEFAULT_GROUP"),
+			knacos.WithDataID("dynamic.yml"),
+		)),
 		config.WithResolver(
 			env.NewRevolver(
 				env.WithPrefix(EnvPrefix),

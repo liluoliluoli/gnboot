@@ -41,6 +41,7 @@ func NewHTTPServer(
 		tenantMiddleware.Tenant(),
 		ratelimit.Server(),
 		localMiddleware.Header(),
+		localMiddleware.Cors(),
 	}
 
 	if c.Tracer.Enable {

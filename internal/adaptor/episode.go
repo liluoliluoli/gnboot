@@ -33,5 +33,11 @@ func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisod
 	if err != nil {
 		return nil, err
 	}
+	////从盒子获取播放地址
+	//url, err := httpclient_util.DoPost[string, string](ctx, "", nil)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//res.Url = lo.FromPtr(url)
 	return res.ConvertToDto(), nil
 }

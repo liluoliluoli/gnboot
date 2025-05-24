@@ -23,6 +23,7 @@ services:
     ports:
       - 6379:6379
     command: ["redis-server","/etc/redis/redis.conf"]
+    restart: always
 
   nacos:
     image: nacos/nacos-server:v2.0.3
@@ -36,3 +37,35 @@ services:
     volumes:
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     restart: always
+
+  xiaoya:
+    image: xiaoyaliu/alist:latest
+    container_name: xiaoya
+    restart: unless-stopped
+    ports:
+      - "8765:80"
+    volumes:
+      - /Users/wing/Documents/alist/data:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - xiaoya-net
+
+  emby:
+    image: emby/embyserver_arm64v8:latest
+    container_name: emby-server-compose
+    ports:
+      - "8096:8096"
+    volumes:
+      - /Users/wing/Documents/xiaoya_emby/config:/config
+      - /Users/wing/Documents/alist/config/nsswitch.conf:/etc/nsswitch.conf
+      - /Users/wing/Documents/xiaoya_emby/xiaoya:/media
+    restart: always
+    privileged: true
+    security_opt:
+      - seccomp:unconfined
+
+networks:
+  xiaoya-net:
+    driver: bridge

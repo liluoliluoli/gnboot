@@ -27,15 +27,10 @@ func (j *Job) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask) *Job {
+func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask, videoXiaoyaVideoTask *video.XiaoyaVideoTask) *Job {
 	return &Job{
 		c:                    c,
 		userPackageCheckTask: userPackageCheckTask,
-	}
-}
-func NewXiaoyaVideo(c *conf.Bootstrap, videoXiaoyaVideoTask *video.XiaoyaVideoTask) *Job {
-	return &Job{
-		c:                    c,
 		videoXiaoyaVideoTask: videoXiaoyaVideoTask,
 	}
 }

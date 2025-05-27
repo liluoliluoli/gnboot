@@ -44,7 +44,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagConf, "c", "./configs/config.yml", "config path, eg: -c config.yml")
+	wd, _ := os.Getwd()
+	flag.StringVar(&flagConf, "c", wd+"/configs", "config path, eg: -c config.yml")
 }
 
 func newApp(gs *grpc.Server, hs *http.Server, jb *server.Job) *kratos.App {
@@ -66,7 +67,7 @@ func main() {
 	flag.Parse()
 	// set default log before read config
 	logOps := []func(*log.Options){
-		log.WithJSON(true),
+		log.WithJSON(false),
 		log.WithLevel(beforeReadConfigLogLevel),
 		log.WithValuer("traceId", tracing.TraceID()),
 		log.WithCallerOptions(

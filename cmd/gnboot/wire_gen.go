@@ -14,6 +14,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/server"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/liluoliluoli/gnboot/internal/task/user"
+	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
 )
 
 import (
@@ -61,7 +62,8 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	httpServer := server.NewHTTPServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	userPackageCheckTask := user.NewUserPackageCheckTask(c, userService)
-	job := server.NewJob(c, userPackageCheckTask)
+	xiaoyaVideoTask := video.NewXiaoyaVideoTask(episodeRepo)
+	job := server.NewJob(c, userPackageCheckTask, xiaoyaVideoTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {
 		cleanup()

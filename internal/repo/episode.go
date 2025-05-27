@@ -53,3 +53,11 @@ func (r *EpisodeRepo) QueryByIds(ctx context.Context, ids []int64) ([]*sdomain.E
 		return (&sdomain.Episode{}).ConvertFromRepo(item)
 	}), nil
 }
+
+func (r *EpisodeRepo) Create(ctx context.Context, tx *gen.Query, episode *model.Episode) error {
+	err := r.do(ctx, tx).Save(episode)
+	if err != nil {
+		return err
+	}
+	return nil
+}

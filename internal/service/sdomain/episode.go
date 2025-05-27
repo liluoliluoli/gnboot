@@ -47,3 +47,12 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 		}),
 	}
 }
+
+func (d *Episode) ConvertToRepo() *model.Episode {
+	return &model.Episode{
+		ID:           d.ID,
+		VideoID:      d.VideoId,
+		Episode:      d.Episode,
+		EpisodeTitle: d.EpisodeTitle,
+	}
+}

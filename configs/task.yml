@@ -1,7 +1,11 @@
 task:
   taskUserPackageCheck:
-    name: '每10小时执行'
-    expr: '* */10 * * * '
+    name: '每10分钟执行'
+    expr: '*/10 * * * * '
+    
+  xiaoya_get_video:
+    name: 'xiaoya_get_video'
+    expr: '*/10 * * * *'  # 每10分钟执行
 
 #    *　　*　　*　　*　　*　　
 #    分　 时　 日　 月　 周

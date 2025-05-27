@@ -1,3 +1,4 @@
+xiaoya_url: "http://127.0.0.1:5678"
 server:
   prod: false
   machineId: ''
@@ -12,6 +13,7 @@ server:
   validate: true
   # disable service.Cache or not
   nocache: true
+  # disable service.Trace or not
 data:
   database:
     driver: mysql
@@ -28,4 +30,4 @@ data:
 #      gnboot3.go-cinch.top: 'root:root@tcp(127.0.0.1:3306)/gnboot3?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 #      gnboot4.go-cinch.top: 'root:root@tcp(127.0.0.1:3306)/gnboot4?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
   redis:
-    dsn: 'redis://localhost:6379/0'
+    dsn: 'redis://127.0.0.1:6379/0'

@@ -37,3 +37,4 @@ bin/
 
 docs/*/*
 !docs/gnboot-proto/gnboot.openapi.yaml
+.trae/.ignore

@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/liluoliluoli/gnboot/internal/server"
 	"os"
 	"strconv"
+
+	"github.com/liluoliluoli/gnboot/internal/server"
 
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/log/caller"
@@ -43,7 +44,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagConf, "c", "/Users/wing/Documents/go-workspace/gnboot/configs", "config path, eg: -c config.yml")
+	flag.StringVar(&flagConf, "c", "./configs/config.yml", "config path, eg: -c config.yml")
 }
 
 func newApp(gs *grpc.Server, hs *http.Server, jb *server.Job) *kratos.App {

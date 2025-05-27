@@ -10,7 +10,7 @@ const TableNameEpisodeSubtitleMapping = "episode_subtitle_mapping"
 type EpisodeSubtitleMapping struct {
 	ID        int64  `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
 	EpisodeID int64  `gorm:"column:episode_id;type:bigint;not null;comment:集id" json:"episodeId"`
-	URL       string `gorm:"column:url;type:varchar(1024);not null;comment:字幕地址" json:"url"`
+	URL       string `gorm:"column:url;type:varchar(4096);not null;comment:字幕地址" json:"url"`
 	Title     string `gorm:"column:title;type:varchar(1024);not null;comment:字幕标题" json:"title"`
 	Language  string `gorm:"column:language;type:varchar(32);not null;comment:字幕语言" json:"language"`
 	MimeType  string `gorm:"column:mime_type;type:varchar(256);not null;comment:字幕格式" json:"mimeType"`

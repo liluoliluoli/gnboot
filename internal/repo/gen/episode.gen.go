@@ -30,12 +30,14 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.ALL = field.NewAsterisk(tableName)
 	_episode.ID = field.NewInt64(tableName, "id")
 	_episode.VideoID = field.NewInt64(tableName, "video_id")
+	_episode.XiaoyaPath = field.NewString(tableName, "xiaoya_path")
 	_episode.Episode = field.NewInt32(tableName, "episode")
 	_episode.EpisodeTitle = field.NewString(tableName, "episode_title")
 	_episode.URL = field.NewString(tableName, "url")
 	_episode.Platform = field.NewString(tableName, "platform")
 	_episode.Ext = field.NewString(tableName, "ext")
 	_episode.Duration = field.NewInt64(tableName, "duration")
+	_episode.Size = field.NewString(tableName, "size")
 	_episode.IsValid = field.NewBool(tableName, "is_valid")
 
 	_episode.fillFieldMap()
@@ -47,14 +49,16 @@ type episode struct {
 	episodeDo episodeDo
 
 	ALL          field.Asterisk
-	ID           field.Int64  // 主键
-	VideoID      field.Int64  // 影片id
+	ID           field.Int64 // 主键
+	VideoID      field.Int64 // 影片id
+	XiaoyaPath   field.String
 	Episode      field.Int32  // 第几集
 	EpisodeTitle field.String // 集标题
 	URL          field.String // 影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址
 	Platform     field.String // internal, xiaoya, aliyun
 	Ext          field.String // 扩展参数
 	Duration     field.Int64  // 影片时长，秒
+	Size         field.String // 影片大小
 	IsValid      field.Bool   // 是否有效
 
 	fieldMap map[string]field.Expr
@@ -74,12 +78,14 @@ func (e *episode) updateTableName(table string) *episode {
 	e.ALL = field.NewAsterisk(table)
 	e.ID = field.NewInt64(table, "id")
 	e.VideoID = field.NewInt64(table, "video_id")
+	e.XiaoyaPath = field.NewString(table, "xiaoya_path")
 	e.Episode = field.NewInt32(table, "episode")
 	e.EpisodeTitle = field.NewString(table, "episode_title")
 	e.URL = field.NewString(table, "url")
 	e.Platform = field.NewString(table, "platform")
 	e.Ext = field.NewString(table, "ext")
 	e.Duration = field.NewInt64(table, "duration")
+	e.Size = field.NewString(table, "size")
 	e.IsValid = field.NewBool(table, "is_valid")
 
 	e.fillFieldMap()
@@ -103,15 +109,17 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 9)
+	e.fieldMap = make(map[string]field.Expr, 11)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["video_id"] = e.VideoID
+	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
 	e.fieldMap["episode"] = e.Episode
 	e.fieldMap["episode_title"] = e.EpisodeTitle
 	e.fieldMap["url"] = e.URL
 	e.fieldMap["platform"] = e.Platform
 	e.fieldMap["ext"] = e.Ext
 	e.fieldMap["duration"] = e.Duration
+	e.fieldMap["size"] = e.Size
 	e.fieldMap["is_valid"] = e.IsValid
 }
 

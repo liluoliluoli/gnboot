@@ -2,16 +2,19 @@ package server
 
 import (
 	"context"
+
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/liluoliluoli/gnboot/internal/task/user"
+	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
 )
 
 type Job struct {
 	c                    *conf.Bootstrap
 	userPackageCheckTask *user.UserPackageCheckTask
+	videoXiaoyaVideoTask *video.XiaoyaVideoTask
 	worker               *worker.Worker
 }
 
@@ -30,6 +33,12 @@ func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask) 
 		userPackageCheckTask: userPackageCheckTask,
 	}
 }
+func NewXiaoyaVideo(c *conf.Bootstrap, videoXiaoyaVideoTask *video.XiaoyaVideoTask) *Job {
+	return &Job{
+		c:                    c,
+		videoXiaoyaVideoTask: videoXiaoyaVideoTask,
+	}
+}
 
 func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 	w := worker.New(
@@ -39,6 +48,11 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 			switch p.UID {
 			case "taskUserPackageCheck":
 				job.userPackageCheckTask.Process(&sdomain.Task{
+					Ctx:     ctx,
+					Payload: p,
+				})
+			case "xiaoya_get_video":
+				job.videoXiaoyaVideoTask.Process(&sdomain.Task{
 					Ctx:     ctx,
 					Payload: p,
 				})

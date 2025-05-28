@@ -7,5 +7,3 @@ task:
     name: 'xiaoya_get_video'
     expr: '*/1 * * * * '  # 每1分钟执行
 
-#    *　　*　　*　　*　　*　　
-#    分　 时　 日　 月　 周

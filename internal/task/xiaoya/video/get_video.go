@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/liluoliluoli/gnboot/internal/repo"
-	"github.com/liluoliluoli/gnboot/internal/repo/model"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/repo/model"
 
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain" // 新增sdomain导入
 	"github.com/spf13/viper"
@@ -32,10 +34,16 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 	// 从任务上下文中获取原始ctx（根据项目规范可能需要调整）
 	ctx := task.Ctx
 
-	baseURL := viper.GetString("xiaoya_url") + "/api/fs/list"
+	// 尝试获取 xiaoya_url 配置项，如果获取失败则使用默认值
+	defaultXiaoyaURL := "http://127.0.0.1:5678"
+	xiaoyaURL := viper.GetString("xiaoya_url")
+	if xiaoyaURL == "" {
+		xiaoyaURL = defaultXiaoyaURL
+	}
+	baseURL := xiaoyaURL + "/api/fs/list"
 	initialPath := "/电影"
 	password := ""
-	perPage := 100
+	perPage := 40
 
 	// 首次请求获取总页数
 	log.Infof("开始同步xiaoya视频: baseURL=%s, initialPath=%s", baseURL, initialPath)
@@ -58,7 +66,7 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 }
 
 // fetchTotalPages 获取总页数
-func (t *XiaoyaVideoTask) fetchTotalPages(ctx context.Context, baseURL, path, password string, perPage int) (int, error) {
+func (t *XiaoyaVideoTask) fetchTotalPages(ctx context.Context, baseURL, path string, password string, perPage int) (int, error) {
 	resp, err := t.requestAPI(ctx, baseURL, path, password, 1, perPage)
 	if err != nil {
 		return 0, err
@@ -69,15 +77,15 @@ func (t *XiaoyaVideoTask) fetchTotalPages(ctx context.Context, baseURL, path, pa
 }
 
 // processPage 处理单页数据
-func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path, password string, page, perPage int) error {
+func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path string, password string, page, perPage int) error {
 	resp, err := t.requestAPI(ctx, baseURL, path, password, page, perPage)
 	if err != nil {
 		return err
 	}
 
 	for _, item := range resp.Data.Content {
-		if item.IsDir {
-			// 目录：递归请求
+		//如果是目录就递归请求，否则就写入到数据库中
+		if !item.IsDir {
 			newPath := fmt.Sprintf("%s/%s", path, item.Name)
 			log.Infof("递归处理目录: %s", newPath)
 			err := t.processPage(ctx, baseURL, newPath, password, 1, perPage)
@@ -86,7 +94,7 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path, passwo
 			}
 		} else {
 			// 查询是否已存在记录（需补充正确的查询条件）
-			existingEpisode, err := t.episodeRepo.Get(ctx, 1) // todo：这里在episodeRepo实现你的查询方法
+			existingEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, path, item.Name)
 			if err != nil {
 				log.Errorf("查询episode失败: %v", err)
 				continue // 跳过本次循环避免重复插入
@@ -96,7 +104,7 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path, passwo
 				episode := &model.Episode{
 					XiaoyaPath:   &path,
 					EpisodeTitle: item.Name,
-					Size:         item.Size,
+					Size:         strconv.Itoa(item.Size),
 					IsValid:      true,
 				}
 				if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
@@ -114,28 +122,60 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path, passwo
 
 // requestAPI 调用xiaoya接口
 func (t *XiaoyaVideoTask) requestAPI(ctx context.Context, baseURL, path, password string, page, perPage int) (*APIResponse, error) {
-	params := map[string]string{
+	// 修改：使用 map[string]interface{} 允许混合类型
+	params := map[string]interface{}{
 		"path":     path,
 		"password": password,
-		"page":     strconv.Itoa(page),
-		"per_page": strconv.Itoa(perPage),
-		"refresh":  "false",
+		"page":     page,    // 直接传递 int 类型，无需转换为字符串
+		"per_page": perPage, // 直接传递 int 类型
+		"refresh":  false,
 	}
 
-	paramJSON, _ := json.Marshal(params)
-	resp, err := http.Post(baseURL, "application/json", strings.NewReader(string(paramJSON)))
+	log.Infof("请求参数: baseURL=%s, path=%s, password=%s, page=%d, perPage=%d", baseURL, path, password, page, perPage)
+
+	paramJSON, err := json.Marshal(params)
 	if err != nil {
+		log.Errorf("参数JSON序列化失败: %v", err)
+		return nil, err
+	}
+
+	// 新增：设置HTTP请求超时（使用ctx的超时控制）
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, baseURL, strings.NewReader(string(paramJSON)))
+	if err != nil {
+		log.Errorf("创建请求失败: %v", err)
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8") // 明确设置Header
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Errorf("请求API失败: %v", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var apiResp APIResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
+	// 读取完整响应体用于调试
+	respBody, err := io.ReadAll(resp.Body) // 新增：读取完整响应内容
+	if err != nil {
+		log.Errorf("读取响应体失败: %v", err)
 		return nil, err
 	}
-	if apiResp.Code != 200 {
-		return nil, fmt.Errorf("接口返回错误: %s", apiResp.Msg)
+	log.Infof("API原始响应: %s", string(respBody)) // 记录完整响应
+
+	var apiResp APIResponse
+	if err := json.Unmarshal(respBody, &apiResp); err != nil {
+		log.Errorf("响应反序列化失败: 原始响应=%s, 错误=%v", string(respBody), err) // 记录原始响应+错误
+		return nil, err
 	}
+
+	if apiResp.Code != 200 {
+		// 记录完整错误信息（包括响应体）
+		log.Errorf("接口返回错误: 状态码=%d, 消息=%s, 原始响应=%s", apiResp.Code, apiResp.Msg, string(respBody))
+		return nil, fmt.Errorf("接口返回错误: %s（状态码=%d）", apiResp.Msg, apiResp.Code)
+	}
+
+	log.Infof("API成功响应: total=%d, 内容数量=%d", apiResp.Data.Total, len(apiResp.Data.Content))
 	return &apiResp, nil
 }
 
@@ -148,7 +188,7 @@ type APIResponse struct {
 		Content []struct {
 			Name  string `json:"name"`
 			IsDir bool   `json:"is_dir"`
-			Size  string `json:"size"`
+			Size  int    `json:"size"`
 		} `json:"content"`
 	} `json:"data"`
 }

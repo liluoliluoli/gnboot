@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
@@ -60,4 +61,26 @@ func (r *EpisodeRepo) Create(ctx context.Context, tx *gen.Query, episode *model.
 		return err
 	}
 	return nil
+}
+
+// QueryByPathAndName 实现查询 episode 表，判断传入参数 path 是否在 xiaoya_Path 中存在，
+// 传入参数 name 是否在 episode_title 中存在，如果两个条件都不存在则返回空
+func (r *EpisodeRepo) QueryByPathAndName(ctx context.Context, path, name string) ([]*sdomain.Episode, error) {
+	query := r.do(ctx, nil)
+	if path != "" {
+		query = query.Where(gen.Episode.XiaoyaPath.Eq(path))
+	}
+	if name != "" {
+		query = query.Where(gen.Episode.EpisodeTitle.Eq(name))
+	}
+	if path == "" && name == "" {
+		return []*sdomain.Episode{}, nil
+	}
+	finds, err := query.Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	return lo.Map(finds, func(item *model.Episode, index int) *sdomain.Episode {
+		return (&sdomain.Episode{}).ConvertFromRepo(item)
+	}), nil
 }

@@ -43,26 +43,27 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 	baseURL := xiaoyaURL + "/api/fs/list"
 	initialPath := "/电影"
 	password := ""
-	perPage := 40
+    // 调整 per_page 为 100（原50）
+    perPage := 100 
 
-	// 首次请求获取总页数
-	log.Infof("开始同步xiaoya视频: baseURL=%s, initialPath=%s", baseURL, initialPath)
-	total, err := t.fetchTotalPages(ctx, baseURL, initialPath, password, perPage)
-	if err != nil {
-		log.Errorf("获取总页数失败: %v", err)
-		return err
-	}
+    // 首次请求获取总页数
+    log.Infof("开始同步xiaoya视频: baseURL=%s, initialPath=%s", baseURL, initialPath)
+    total, err := t.fetchTotalPages(ctx, baseURL, initialPath, password, perPage)
+    if err != nil {
+        log.Errorf("获取总页数失败: %v", err)
+        return err
+    }
 
-	// 分页循环请求
-	for page := 1; page <= total; page++ {
-		log.Infof("开始处理第%d页", page)
-		err := t.processPage(ctx, baseURL, initialPath, password, page, perPage)
-		if err != nil {
-			log.Errorf("处理第%d页失败: %v", page, err)
-			continue
-		}
-	}
-	return nil
+    // 分页循环请求（直到 page 等于总页数）
+    for page := 1; page <= total; page++ {
+        log.Infof("开始处理第%d页", page)
+        err := t.processPage(ctx, baseURL, initialPath, password, page, perPage)
+        if err != nil {
+            log.Errorf("处理第%d页失败: %v", page, err)
+            continue
+        }
+    }
+    return nil
 }
 
 // fetchTotalPages 获取总页数
@@ -84,8 +85,8 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path string,
 	}
 
 	for _, item := range resp.Data.Content {
-		//如果是目录就递归请求，否则就写入到数据库中
-		if !item.IsDir {
+		// 修正条件：当 is_dir 为 true 时递归请求（原逻辑为 !item.IsDir 需取反）
+		if item.IsDir { 
 			newPath := fmt.Sprintf("%s/%s", path, item.Name)
 			log.Infof("递归处理目录: %s", newPath)
 			err := t.processPage(ctx, baseURL, newPath, password, 1, perPage)
@@ -93,13 +94,13 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path string,
 				log.Errorf("递归处理目录%s失败: %v", newPath, err)
 			}
 		} else {
-			// 查询是否已存在记录（需补充正确的查询条件）
+			// 查询是否已存在记录
 			existingEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, path, item.Name)
 			if err != nil {
 				log.Errorf("查询episode失败: %v", err)
-				continue // 跳过本次循环避免重复插入
+				continue 
 			}
-			if existingEpisode == nil {
+			if len(existingEpisode) == 0 { // QueryByPathAndName 返回切片，需判断长度
 				log.Infof("执行写入episode: path=%s, title=%s", path, item.Name)
 				episode := &model.Episode{
 					XiaoyaPath:   &path,
@@ -110,10 +111,10 @@ func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path string,
 				if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
 					log.Errorf("写入episode失败: %v", err)
 				} else {
-					log.Infof("成功写入episode: path=%s, title=%s", path, item.Name) // 新增成功日志
+					log.Infof("成功写入episode: path=%s, title=%s", path, item.Name)
 				}
 			} else {
-				log.Infof("episode已存在: path=%s, title=%s", path, item.Name) // 新增存在日志
+				log.Infof("episode已存在: path=%s, title=%s", path, item.Name)
 			}
 		}
 	}

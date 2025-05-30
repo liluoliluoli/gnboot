@@ -6,14 +6,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 
-	"github.com/liluoliluoli/gnboot/internal/service/sdomain" // 新增sdomain导入
+	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/spf13/viper"
 )
 
@@ -29,151 +31,133 @@ func NewXiaoyaVideoTask(episodeRepo *repo.EpisodeRepo) *XiaoyaVideoTask {
 	}
 }
 
-// Process 执行同步任务主逻辑（原Execute方法重命名，并调整参数为*sdomain.Task）
+// Process 执行同步任务主逻辑（优化配置检查）
 func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
-	// 从任务上下文中获取原始ctx（根据项目规范可能需要调整）
 	ctx := task.Ctx
 
-	// 尝试获取 xiaoya_url 配置项，如果获取失败则使用默认值
-	defaultXiaoyaURL := "http://127.0.0.1:5678"
+	// 优化：明确提示配置缺失，可根据需求调整为使用默认值
 	xiaoyaURL := viper.GetString("xiaoya_url")
 	if xiaoyaURL == "" {
-		xiaoyaURL = defaultXiaoyaURL
+		return fmt.Errorf("未配置 xiaoya_url，请检查配置文件")
 	}
+
 	baseURL := xiaoyaURL + "/api/fs/list"
 	initialPath := "/电影"
 	password := ""
-    // 调整 per_page 为 100（原50）
-    perPage := 100 
+	perPage := 40 // 根据业务需求调整分页大小
 
-    // 首次请求获取总页数
-    log.Infof("开始同步xiaoya视频: baseURL=%s, initialPath=%s", baseURL, initialPath)
-    total, err := t.fetchTotalPages(ctx, baseURL, initialPath, password, perPage)
-    if err != nil {
-        log.Errorf("获取总页数失败: %v", err)
-        return err
-    }
-
-    // 分页循环请求（直到 page 等于总页数）
-    for page := 1; page <= total; page++ {
-        log.Infof("开始处理第%d页", page)
-        err := t.processPage(ctx, baseURL, initialPath, password, page, perPage)
-        if err != nil {
-            log.Errorf("处理第%d页失败: %v", page, err)
-            continue
-        }
-    }
-    return nil
-}
-
-// fetchTotalPages 获取总页数
-func (t *XiaoyaVideoTask) fetchTotalPages(ctx context.Context, baseURL, path string, password string, perPage int) (int, error) {
-	resp, err := t.requestAPI(ctx, baseURL, path, password, 1, perPage)
+	log.Infof("开始同步xiaoya视频: baseURL=%s, initialPath=%s", baseURL, initialPath)
+	total, err := t.fetchTotalPages(ctx, baseURL, initialPath, password, perPage)
 	if err != nil {
-		return 0, err
+		return fmt.Errorf("获取总页数失败: %w", err)
 	}
-	log.Infof("获取总页数: total=%d, perPage=%d", resp.Data.Total, perPage)
-	totalPages := (resp.Data.Total + perPage - 1) / perPage // 向上取整计算总页数
-	return totalPages, nil
+
+	// 分页循环（添加分页范围校验）
+	if total < 1 {
+		log.Info("总页数为0，无需同步")
+		return nil
+	}
+	for page := 1; page <= total; page++ {
+		log.Infof("开始处理第%d页", page)
+		if err := t.processPage(ctx, baseURL, initialPath, password, page, perPage, 0); err != nil {
+			log.Errorf("处理第%d页失败: %v", page, err)
+		}
+	}
+	return nil
 }
 
-// processPage 处理单页数据
-func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, path string, password string, page, perPage int) error {
-	resp, err := t.requestAPI(ctx, baseURL, path, password, page, perPage)
+// processPage 处理单页数据（优化递归逻辑和参数）
+func (t *XiaoyaVideoTask) processPage(ctx context.Context, baseURL, currentPath string, password string, page, perPage int, depth int) error { // 关键修改：重命名参数为currentPath
+	const maxDepth = 10
+	if depth > maxDepth {
+		log.Warnf("目录递归超过最大深度%d，终止: %s", maxDepth, currentPath) // 同步修改为currentPath
+		return nil
+	}
+
+	resp, err := t.requestAPI(ctx, baseURL, currentPath, password, page, perPage) // 传递currentPath给requestAPI
 	if err != nil {
-		return err
+		return fmt.Errorf("请求API失败: %w", err)
 	}
 
 	for _, item := range resp.Data.Content {
-		// 修正条件：当 is_dir 为 true 时递归请求（原逻辑为 !item.IsDir 需取反）
-		if item.IsDir { 
-			newPath := fmt.Sprintf("%s/%s", path, item.Name)
-			log.Infof("递归处理目录: %s", newPath)
-			err := t.processPage(ctx, baseURL, newPath, password, 1, perPage)
-			if err != nil {
+		if item.IsDir {
+			newPath := path.Join(currentPath, item.Name) // 使用包名path调用Join，currentPath为当前路径变量
+			log.Infof("递归处理目录（深度%d）: %s", depth+1, newPath)
+			if err := t.processPage(ctx, baseURL, newPath, password, 1, perPage, depth+1); err != nil { // 传递newPath作为新的currentPath
 				log.Errorf("递归处理目录%s失败: %v", newPath, err)
 			}
 		} else {
-			// 查询是否已存在记录
-			existingEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, path, item.Name)
+			// 查询是否已存在记录（优化判断条件）
+			existingEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, currentPath, item.Name) // 查询时使用currentPath
 			if err != nil {
-				log.Errorf("查询episode失败: %v", err)
-				continue 
+				log.Errorf("查询episode失败: %v，跳过当前文件", err)
+				continue
 			}
-			if len(existingEpisode) == 0 { // QueryByPathAndName 返回切片，需判断长度
-				log.Infof("执行写入episode: path=%s, title=%s", path, item.Name)
+			if len(existingEpisode) == 0 {
+				// 注意：此处currentPath是函数参数重命名后的变量，与包名无冲突
 				episode := &model.Episode{
-					XiaoyaPath:   &path,
+					XiaoyaPath:   &currentPath, // 指向修改后的变量名
 					EpisodeTitle: item.Name,
 					Size:         strconv.Itoa(item.Size),
 					IsValid:      true,
 				}
 				if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
-					log.Errorf("写入episode失败: %v", err)
+					log.Errorf("写入episode失败（path=%s, title=%s）: %v", currentPath, item.Name, err) // 使用currentPath
 				} else {
-					log.Infof("成功写入episode: path=%s, title=%s", path, item.Name)
+					log.Infof("成功写入episode: path=%s, title=%s", currentPath, item.Name) // 使用currentPath
 				}
 			} else {
-				log.Infof("episode已存在: path=%s, title=%s", path, item.Name)
+				log.Infof("episode已存在（跳过）: path=%s, title=%s", currentPath, item.Name) // 使用currentPath
 			}
 		}
 	}
 	return nil
 }
 
-// requestAPI 调用xiaoya接口
+// requestAPI 调用xiaoya接口（优化HTTP客户端配置）
 func (t *XiaoyaVideoTask) requestAPI(ctx context.Context, baseURL, path, password string, page, perPage int) (*APIResponse, error) {
-	// 修改：使用 map[string]interface{} 允许混合类型
 	params := map[string]interface{}{
 		"path":     path,
 		"password": password,
-		"page":     page,    // 直接传递 int 类型，无需转换为字符串
-		"per_page": perPage, // 直接传递 int 类型
+		"page":     page,
+		"per_page": perPage,
 		"refresh":  false,
 	}
 
-	log.Infof("请求参数: baseURL=%s, path=%s, password=%s, page=%d, perPage=%d", baseURL, path, password, page, perPage)
-
 	paramJSON, err := json.Marshal(params)
 	if err != nil {
-		log.Errorf("参数JSON序列化失败: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("参数序列化失败: %w", err)
 	}
 
-	// 新增：设置HTTP请求超时（使用ctx的超时控制）
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, baseURL, strings.NewReader(string(paramJSON)))
 	if err != nil {
-		log.Errorf("创建请求失败: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("创建请求失败: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8") // 明确设置Header
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
-	client := &http.Client{}
+	// 优化：显式设置HTTP客户端超时（防止长时间挂起）
+	client := &http.Client{
+		Timeout: 10 * time.Second, // 10秒超时
+	}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Errorf("请求API失败: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("发送请求失败: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// 读取完整响应体用于调试
-	respBody, err := io.ReadAll(resp.Body) // 新增：读取完整响应内容
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Errorf("读取响应体失败: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("读取响应失败: %w", err)
 	}
-	log.Infof("API原始响应: %s", string(respBody)) // 记录完整响应
+	log.Infof("API原始响应: %s", string(respBody))
 
 	var apiResp APIResponse
 	if err := json.Unmarshal(respBody, &apiResp); err != nil {
-		log.Errorf("响应反序列化失败: 原始响应=%s, 错误=%v", string(respBody), err) // 记录原始响应+错误
-		return nil, err
+		return nil, fmt.Errorf("反序列化失败（原始响应=%s）: %w", string(respBody), err)
 	}
 
 	if apiResp.Code != 200 {
-		// 记录完整错误信息（包括响应体）
-		log.Errorf("接口返回错误: 状态码=%d, 消息=%s, 原始响应=%s", apiResp.Code, apiResp.Msg, string(respBody))
-		return nil, fmt.Errorf("接口返回错误: %s（状态码=%d）", apiResp.Msg, apiResp.Code)
+		return nil, fmt.Errorf("接口错误（状态码=%d）: %s（原始响应=%s）", apiResp.Code, apiResp.Msg, string(respBody))
 	}
 
 	log.Infof("API成功响应: total=%d, 内容数量=%d", apiResp.Data.Total, len(apiResp.Data.Content))
@@ -192,4 +176,20 @@ type APIResponse struct {
 			Size  int    `json:"size"`
 		} `json:"content"`
 	} `json:"data"`
+}
+
+// fetchTotalPages 计算总页数（通过第一页数据获取总记录数）
+func (t *XiaoyaVideoTask) fetchTotalPages(ctx context.Context, baseURL, path, password string, perPage int) (int, error) {
+	// 调用第一页获取总记录数
+	resp, err := t.requestAPI(ctx, baseURL, path, password, 1, perPage)
+	if err != nil {
+		return 0, fmt.Errorf("获取总记录数失败: %w", err)
+	}
+
+	// 计算总页数（总记录数 / 每页数量，向上取整）
+	if resp.Data.Total <= 0 {
+		return 0, nil
+	}
+	totalPages := (resp.Data.Total + perPage - 1) / perPage // 避免整除时少一页
+	return totalPages, nil
 }

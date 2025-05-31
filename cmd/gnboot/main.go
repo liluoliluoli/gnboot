@@ -179,4 +179,5 @@ func main() {
 			WithFields(fields).
 			Fatal("run app failed")
 	}
+
 }

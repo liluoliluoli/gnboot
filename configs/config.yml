@@ -20,6 +20,7 @@ data:
     # dsn: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
     dsn: ''
     endpoint: 'mysql.sqlpub.com:3306'
+#    endpoint: 'mysql-gntv:3306'
     username: 'gnvideo'
     password: '7H5rdOAIMA815pXz'
     schema: 'gnvideo'
@@ -30,6 +31,6 @@ data:
 #      gnboot3.go-cinch.top: 'root:root@tcp(127.0.0.1:3306)/gnboot3?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 #      gnboot4.go-cinch.top: 'root:root@tcp(127.0.0.1:3306)/gnboot4?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
   redis:
-    dsn: 'redis://172.18.0.4:6379/0'
+    dsn: 'redis://cache-redis:6379/0'
 
 

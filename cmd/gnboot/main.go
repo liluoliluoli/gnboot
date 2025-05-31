@@ -83,7 +83,7 @@ func main() {
 	log.DefaultWrapper = log.NewWrapper(logOps...)
 
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("172.18.0.2", 8848),
+		*constant.NewServerConfig("nacos", 8848),
 	}
 
 	cc := &constant.ClientConfig{
@@ -179,5 +179,4 @@ func main() {
 			WithFields(fields).
 			Fatal("run app failed")
 	}
-
 }

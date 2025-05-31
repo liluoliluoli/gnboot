@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  gntv-db:
+  mysql-gntv:
     image: mysql
     hostname: gndb
     container_name: gndb
@@ -14,6 +14,9 @@ services:
     volumes:
       - ./data/mysql/user:/var/lib/mysql
       - ./conf/mysql/conf.d:/etc/mysql/conf.d
+    networks:
+      - shared_net
+
   cache-redis:
     image: redis
     hostname: cache-redis
@@ -24,6 +27,8 @@ services:
       - 6379:6379
     command: ["redis-server","/etc/redis/redis.conf"]
     restart: always
+    networks:
+      - shared_net
 
   nacos:
     image: nacos/nacos-server:v2.0.3
@@ -37,6 +42,8 @@ services:
     volumes:
       - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
     restart: always
+    networks:
+      - shared_net
 
   xiaoya:
     image: xiaoyaliu/alist:latest
@@ -50,7 +57,7 @@ services:
       - PUID=1000
       - PGID=1000
     networks:
-      - xiaoya-net
+      - shared_net
 
   emby:
     image: emby/embyserver_arm64v8:latest
@@ -65,6 +72,8 @@ services:
     privileged: true
     security_opt:
       - seccomp:unconfined
+    networks:
+      - shared_net
 
   gnboot:
     image: dabache/gnboot:latest
@@ -73,7 +82,9 @@ services:
       - 8180:8180
       - 8080:8080
     restart: always
+    networks:
+      - shared_net
 
 networks:
-  xiaoya-net:
+  shared_net:
     driver: bridge

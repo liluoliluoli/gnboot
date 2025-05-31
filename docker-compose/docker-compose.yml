@@ -66,6 +66,14 @@ services:
     security_opt:
       - seccomp:unconfined
 
+  gnboot:
+    image: dabache/gnboot:latest
+    container_name: gnboot
+    ports:
+      - 8180:8180
+      - 8080:8080
+    restart: always
+
 networks:
   xiaoya-net:
     driver: bridge

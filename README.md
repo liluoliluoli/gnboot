@@ -1,4 +1,4 @@
-<h1 align="center">Gnboot Service111</h1>
+<h1 align="center">Gnboot Service</h1>
 
 ├── api                  // 各个微服务的proto/go文件
 │   ├── reason           //错误码pb
@@ -66,3 +66,15 @@
 ├─ LICENSE
 ├─ Makefile
 └─ README.md
+
+
+先启动docker-compose文件夹下的：redis、nacos、mysql镜像，然后：
+1、查看redis ip：docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' docker-compose-cache-redis-1
+2、查看nacos ip：docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nacos-server
+3、查看mysql ip：docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' xiaoya
+4、分别把这redis和mysql的ip替换到config.yml，把nacos的ip替换到main.go里*constant.NewServerConfig("localhost", 8848)的localhost
+5、docker镜像打包：docker build -t gnboot .
+6、给镜像打标签：docker tag gnboot:latest dabache/gnboot:latest
+7、上传镜像到公服：docker push dabache/gnboot:latest
+8、运行镜像：执行docker-compose.yml里的gnboot
+

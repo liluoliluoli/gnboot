@@ -69,7 +69,11 @@ func main() {
 	logOps := []func(*log.Options){
 		log.WithJSON(false),
 		log.WithLevel(beforeReadConfigLogLevel),
-		log.WithValuer("traceId", tracing.TraceID()),
+		log.WithValuer("service.id", id),
+		log.WithValuer("service.name", Name),
+		log.WithValuer("service.version", Version),
+		log.WithValuer("trace.id", tracing.TraceID()),
+		log.WithValuer("span.id", tracing.SpanID()),
 		log.WithCallerOptions(
 			caller.WithSource(false),
 			caller.WithLevel(2),
@@ -79,15 +83,15 @@ func main() {
 	log.DefaultWrapper = log.NewWrapper(logOps...)
 
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("localhost", 8848),
+		*constant.NewServerConfig("172.18.0.2", 8848),
 	}
 
 	cc := &constant.ClientConfig{
 		NamespaceId:         "8e3d53a1-e2b4-45fa-ab89-8c9c7cc0d7cc",
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		LogDir:              "./config/log",
-		CacheDir:            "./config/cache",
+		LogDir:              "./docker-compose/log",
+		CacheDir:            "./docker-compose/cache",
 		LogLevel:            "debug",
 	}
 

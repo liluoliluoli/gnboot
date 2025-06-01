@@ -8,13 +8,13 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_HOST=%
+      - MYSQL_HOST=%
       - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_USER=video_user
       - MYSQL_PASSWORD=SecurePass123!
       - MYSQL_DATABASE=gnvideo
     volumes:
-      - ./data/mysql/user:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
       - ./conf/mysql/conf.d:/etc/mysql/conf.d
     networks:
       - shared_net

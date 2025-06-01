@@ -47,8 +47,8 @@ var (
 func init() {
 	wd, _ := os.Getwd()
 	env := os.Getenv("APP_ENV")
-	configPath := lo.Ternary(env == "", "/configs/dev", "/configs/prod")
-	flag.StringVar(&flagConf, "c", wd+configPath, "config path, eg: -c config-dev.yml")
+	configPath := lo.Ternary(env == "", "/configs/dev", "/configs/"+env)
+	flag.StringVar(&flagConf, "c", wd+configPath, "")
 }
 
 func newApp(gs *grpc.Server, hs *http.Server, jb *server.Job) *kratos.App {

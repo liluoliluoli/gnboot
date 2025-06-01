@@ -137,7 +137,7 @@ type Server struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Prod       bool         `protobuf:"varint,1,opt,name=prod,proto3" json:"prod,omitempty"`
+	Prod       bool         `protobuf:"varint,1,opt,name=prod-wing,proto3" json:"prod-wing,omitempty"`
 	MachineId  string       `protobuf:"bytes,2,opt,name=machineId,proto3" json:"machineId,omitempty"`
 	Http       *Server_HTTP `protobuf:"bytes,3,opt,name=http,proto3" json:"http,omitempty"`
 	Grpc       *Server_GRPC `protobuf:"bytes,4,opt,name=grpc,proto3" json:"grpc,omitempty"`

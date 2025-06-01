@@ -82,6 +82,7 @@
 
 桥接模式：
 0、先启动docker-compose文件夹下的：redis、nacos、mysql镜像，mysql记得改config的配置
+    mysql用户创建：mysql -uroot -p123456，然后：
 1、docker镜像打包：docker build -t gnboot .
 2、给镜像打标签：docker tag gnboot:latest dabache/gnboot:latest
 3、上传镜像到公服：docker push dabache/gnboot:latest

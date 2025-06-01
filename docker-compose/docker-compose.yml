@@ -1,15 +1,17 @@
 version: '3'
 
 services:
-  mysql-gntv:
+  Mysql:
     image: mysql
-    hostname: gndb
-    container_name: gndb
+    hostname: Mysql
+    container_name: Mysql
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_USER=video_user
+      - MYSQL_PASSWORD=SecurePass123!
       - MYSQL_DATABASE=gnvideo
     volumes:
       - ./data/mysql/user:/var/lib/mysql
@@ -17,22 +19,24 @@ services:
     networks:
       - shared_net
 
-  cache-redis:
+  Redis:
     image: redis
-    hostname: cache-redis
+    hostname: Redis
+    container_name: Redis
     volumes:
       - ./data/redis/cache/:/data
       - ./conf/redis/cache/redis.conf:/etc/redis/redis.conf
     ports:
       - 6379:6379
-    command: ["redis-server","/etc/redis/redis.conf"]
+    command: ["redis-server", "/etc/redis/redis.conf"]
     restart: always
     networks:
       - shared_net
 
-  nacos:
-    image: nacos/nacos-server:v2.0.3
-    container_name: nacos-server
+  Nacos:
+    image: nacos/nacos-server:v2.3.1-slim
+    hostname: Nacos
+    container_name: Nacos
     environment:
       - PREFER_HOST_MODE=hostname
       - MODE=standalone
@@ -45,9 +49,9 @@ services:
     networks:
       - shared_net
 
-  xiaoya:
+  Xiaoya:
     image: xiaoyaliu/alist:latest
-    container_name: xiaoya
+    container_name: Xiaoya
     restart: unless-stopped
     ports:
       - "8765:80"
@@ -59,9 +63,9 @@ services:
     networks:
       - shared_net
 
-  emby:
+  Emby:
     image: emby/embyserver_arm64v8:latest
-    container_name: emby-server-compose
+    container_name: Emby
     ports:
       - "8096:8096"
     volumes:
@@ -75,12 +79,15 @@ services:
     networks:
       - shared_net
 
-  gnboot:
+  Gnboot:
     image: dabache/gnboot:latest
-    container_name: gnboot
+    container_name: Gnboot
+    hostname: Gnboot
+    environment:
+      - APP_ENV=prod
     ports:
-      - 8180:8180
-      - 8080:8080
+      - 8888:8888
+      - 9999:9999
     restart: always
     networks:
       - shared_net

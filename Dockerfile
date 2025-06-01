@@ -24,6 +24,6 @@ COPY --from=builder /src/bin /app
 
 WORKDIR /app
 
-COPY configs /data/conf
+COPY configs/prod /data/conf
 
 CMD ["sh", "-c", "./gnboot -c /data/conf"]

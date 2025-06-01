@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/samber/lo"
 	"os"
 	"strconv"
 
@@ -45,7 +46,9 @@ var (
 
 func init() {
 	wd, _ := os.Getwd()
-	flag.StringVar(&flagConf, "c", wd+"/configs", "config path, eg: -c config.yml")
+	env := os.Getenv("APP_ENV")
+	configPath := lo.Ternary(env == "", "/configs/dev", "/configs/prod")
+	flag.StringVar(&flagConf, "c", wd+configPath, "config path, eg: -c config-dev.yml")
 }
 
 func newApp(gs *grpc.Server, hs *http.Server, jb *server.Job) *kratos.App {
@@ -83,7 +86,7 @@ func main() {
 	log.DefaultWrapper = log.NewWrapper(logOps...)
 
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("nacos", 8848),
+		*constant.NewServerConfig("Nacos", 8848),
 	}
 
 	cc := &constant.ClientConfig{

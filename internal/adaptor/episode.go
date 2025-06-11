@@ -5,7 +5,6 @@ import (
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
-	"github.com/liluoliluoli/gnboot/internal/common/utils/httpclient_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 )
 
@@ -34,11 +33,5 @@ func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisod
 	if err != nil {
 		return nil, err
 	}
-	////从盒子获取播放地址
-	url, err := httpclient_util.DoPost[string, string](ctx, "", nil)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//res.Url = lo.FromPtr(url)
 	return res.ConvertToDto(), nil
 }

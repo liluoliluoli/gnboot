@@ -5,6 +5,7 @@ import (
 	subtitledto "github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/samber/lo"
+	"time"
 )
 
 type Episode struct {
@@ -15,8 +16,11 @@ type Episode struct {
 	Url          string                    `json:"url"`
 	Platform     string                    `json:"platform"`
 	Duration     int64                     `json:"duration"`
+	Size         string                    `json:"size"`
 	Ext          string                    `json:"ext"`
 	Subtitles    []*EpisodeSubtitleMapping `json:"subtitles"`
+	XiaoYaPath   string                    `json:"xiaoYaPath"`
+	ExpiredTime  *time.Time                `json:"expiredTime"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -29,6 +33,9 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		Platform:     lo.FromPtr(m.Platform),
 		Duration:     lo.FromPtr(m.Duration),
 		Ext:          lo.FromPtr(m.Ext),
+		XiaoYaPath:   lo.FromPtr(m.XiaoyaPath),
+		ExpiredTime:  m.ExpiredTime,
+		Size:         m.Size,
 	}
 }
 
@@ -54,5 +61,12 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		VideoID:      d.VideoId,
 		Episode:      d.Episode,
 		EpisodeTitle: d.EpisodeTitle,
+		URL:          lo.ToPtr(d.Url),
+		Platform:     lo.ToPtr(d.Platform),
+		Ext:          lo.ToPtr(d.Ext),
+		Duration:     lo.ToPtr(d.Duration),
+		Size:         d.Size,
+		ExpiredTime:  d.ExpiredTime,
+		XiaoyaPath:   lo.ToPtr(d.XiaoYaPath),
 	}
 }

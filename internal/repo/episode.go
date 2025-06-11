@@ -2,11 +2,11 @@ package repo
 
 import (
 	"context"
-
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
+	"gorm.io/gorm"
 )
 
 type EpisodeRepo struct {
@@ -59,6 +59,17 @@ func (r *EpisodeRepo) Create(ctx context.Context, tx *gen.Query, episode *model.
 	err := r.do(ctx, tx).Save(episode)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (r *EpisodeRepo) Updates(ctx context.Context, tx *gen.Query, episode *sdomain.Episode) error {
+	updates, err := r.do(ctx, tx).Updates(episode.ConvertToRepo())
+	if err != nil {
+		return err
+	}
+	if updates.RowsAffected != 1 {
+		return gorm.ErrDuplicatedKey
 	}
 	return nil
 }

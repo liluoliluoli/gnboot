@@ -29,3 +29,17 @@ const (
 	Month PackageType = "month"
 	Year  PackageType = "year"
 )
+
+var (
+	XiaoYaToken string = ""
+)
+
+const (
+	XiaoYaLoginPath              = "/api/auth/login/hash"
+	XiaoYaTransferStorePath      = "/api/fs/get"
+	XiaoYaM3u8Path               = "/api/fs/other"
+	AliyunM3u8EarlyExpireMinutes = 2 * 60 //提前失效分钟
+	AliyunM3u8RealyExpireMinutes = 4 * 60 //实际失效分钟
+	XiaoYaLoginName              = "admin"
+	XiaoYaLoginPassword          = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f"
+)

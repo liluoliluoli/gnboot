@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
+	errors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
@@ -31,10 +31,11 @@ func GetHttpClient() *httpclient.Client {
 	return instance
 }
 
-func DoPost[R, T any](ctx context.Context, url string, body *R) (*T, error) {
+func DoPost[R, T any](ctx context.Context, url string, token string, body *R) (*T, error) {
 	httpClient := GetHttpClient()
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
+	headers.Add("Authorization", token)
 	marshalString, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -48,8 +49,11 @@ func DoPost[R, T any](ctx context.Context, url string, body *R) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
+	if response.StatusCode >= 401 && response.StatusCode <= 403 {
+		return nil, errors.New(response.StatusCode, "token expired", "")
+	}
 	if response.StatusCode != 200 {
-		return nil, errors.New(string(response.StatusCode))
+		return nil, errors.New(response.StatusCode, "request failed", "")
 	}
 	unmarshal, err := json_util.Unmarshal[*T](rBody)
 	if err != nil {
@@ -71,8 +75,11 @@ func DoGet[T any](ctx context.Context, url string) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
+	if response.StatusCode >= 401 && response.StatusCode <= 403 {
+		return nil, errors.New(response.StatusCode, "token expired", "")
+	}
 	if response.StatusCode != 200 {
-		return nil, errors.New(string(response.StatusCode))
+		return nil, errors.New(response.StatusCode, "request failed", "")
 	}
 	unmarshal, err := json_util.Unmarshal[*T](rBody)
 	if err != nil {

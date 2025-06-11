@@ -89,7 +89,7 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 			}
 			episode.Url = url
 			episode.Duration = duration
-			episode.ExpiredTime = lo.ToPtr(time.Now().Add(constant.AliyunM3u8RealyExpireMinutes * time.Minute))
+			episode.ExpiredTime = lo.ToPtr(time.Now().Add(constant.AliyunM3u8ReallyExpireMinutes * time.Minute))
 			err = s.episodeRepo.Updates(ctx, nil, episode)
 			if err != nil {
 				return nil, err

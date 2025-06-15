@@ -21,7 +21,7 @@ data:
     dsn: ''
     endpoint: 'Mysql:3306'
     username: 'video_user'
-    password: 'SecurePass123!'
+    password: '1JdO9ac3VXvWGOLp'
     schema: 'gnvideo'
     query: 'charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 

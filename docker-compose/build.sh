@@ -16,6 +16,19 @@ REPO_NAME="sily1/gnboot"
 VERSION=$(date '+%Y.%m.%d.%H')
 FULL_IMAGE_NAME="$REPO_NAME:$VERSION"
 
+# 执行流程
+echo "========== 开始执行部署脚本 =========="
+validate
+build_image
+tag_image
+push_image
+#start_service
+
+echo -e "\n========== 部署指定镜像 =========="
+echo "镜像版本: $FULL_IMAGE_NAME"
+#echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+echo -e "\n========== 部署成功完成 =========="
+
 # 验证前置条件
 function validate() {
     echo "验证环境配置..."
@@ -87,15 +100,3 @@ function start_service() {
     fi
 }
 
-# 主执行流程
-echo "========== 开始执行部署脚本 =========="
-validate
-build_image
-tag_image
-push_image
-#start_service
-
-echo -e "\n========== 部署指定镜像 =========="
-echo "镜像版本: $FULL_IMAGE_NAME"
-#echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
-echo -e "\n========== 部署成功完成 =========="

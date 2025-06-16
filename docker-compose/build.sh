@@ -3,7 +3,7 @@
 # ================================================
 # Docker 镜像自动构建部署脚本
 # 功能：构建镜像 → 打标签 → 推送至仓库 → 启动服务 (未启用)
-# 版本号格式：年.月.日.小时 (如 2025.06.16.14)
+# 版本号格式：年.月.日.小时 (如 2025.06.14.00)
 # ================================================
 
 PROJECT_ROOT="../"
@@ -44,7 +44,7 @@ function validate() {
     fi
 }
 
-# 构建 Docker 镜像
+# 开始构建 Docker 镜像
 function build_image() {
     echo "Step 1: 构建 Docker 镜像 ($IMAGE_NAME)..."
     docker build -t "$IMAGE_NAME" -f "$DOCKERFILE_PATH" "$PROJECT_ROOT"
@@ -55,7 +55,7 @@ function build_image() {
     fi
 }
 
-# 为镜像打标签
+# 给已构建的镜像打标签
 function tag_image() {
     echo "Step 2: 为镜像打标签 ($FULL_IMAGE_NAME)..."
     docker tag "$IMAGE_NAME:latest" "$FULL_IMAGE_NAME"
@@ -95,6 +95,7 @@ tag_image
 push_image
 #start_service
 
-echo -e "\n========== 部署成功完成 =========="
+echo -e "\n========== 部署指定镜像 =========="
 echo "镜像版本: $FULL_IMAGE_NAME"
 #echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+echo -e "\n========== 部署成功完成 =========="

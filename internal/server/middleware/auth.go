@@ -26,7 +26,7 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 					path = ht.Request().URL.Path
 				}
 			}
-			if path == "/api/user/create" || path == "/api/user/login" || path == "/api/version/getLastVersion" {
+			if path == "/api/user/create" || path == "/api/user/login" || path == "/api/version/getLastVersion" || path == "/api/notice/update" {
 				return handler(ctx, req)
 			}
 

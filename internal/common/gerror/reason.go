@@ -2,6 +2,7 @@ package gerror
 
 import (
 	"context"
+	"strings"
 
 	"github.com/go-cinch/common/constant"
 	"github.com/go-cinch/common/middleware/i18n"
@@ -61,4 +62,11 @@ func HandleRedisNotFoundError(err error) error {
 		return nil
 	}
 	return err
+}
+
+func HandleRedisStringNotFound(str string) string {
+	if strings.Contains(str, "redis: nil") {
+		return ""
+	}
+	return str
 }

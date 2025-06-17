@@ -15,6 +15,8 @@ type User struct {
 	SessionToken        *string    `json:"sessionToken"`
 	AliToken            *string    `json:"aliToken"`
 	AliTokenExpiredTime *time.Time `json:"aliTokenExpiredTime"`
+	NoticeTitle         string     `json:"noticeTitle"`
+	NoticeContent       string     `json:"noticeContent"`
 }
 
 func (d *User) MarshalBinary() ([]byte, error) {

@@ -90,6 +90,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc UpdateNotice(UpdateNoticeRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/notice/update"
+        body : "*"
+      };
+    }
   }
 
 
@@ -147,5 +153,11 @@ additional_properties:
     int32 favoriteCount = 4;
     string packageType = 5;
     optional int32 packageExpiredTime = 6;
+    string noticeTitle = 7;
+    string noticeContent = 8;
+  }
 
+  message UpdateNoticeRequest {
+    string title = 1;
+    string content = 2;
   }

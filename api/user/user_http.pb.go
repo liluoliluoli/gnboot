@@ -26,6 +26,7 @@ const OperationUserRemoteServiceGetUser = "/gnboot.UserRemoteService/GetUser"
 const OperationUserRemoteServiceLogin = "/gnboot.UserRemoteService/Login"
 const OperationUserRemoteServiceLogout = "/gnboot.UserRemoteService/Logout"
 const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
+const OperationUserRemoteServiceUpdateNotice = "/gnboot.UserRemoteService/UpdateNotice"
 const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/UpdatePlayedStatus"
 
 type UserRemoteServiceHTTPServer interface {
@@ -35,6 +36,7 @@ type UserRemoteServiceHTTPServer interface {
 	Login(context.Context, *LoginUserRequest) (*LoginUserResp, error)
 	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
+	UpdateNotice(context.Context, *UpdateNoticeRequest) (*emptypb.Empty, error)
 	UpdatePlayedStatus(context.Context, *UpdatePlayedStatusRequest) (*emptypb.Empty, error)
 }
 
@@ -47,6 +49,7 @@ func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHT
 	r.POST("/api/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
 	r.POST("/api/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
 	r.POST("/api/user/get", _UserRemoteService_GetUser0_HTTP_Handler(srv))
+	r.POST("/api/notice/update", _UserRemoteService_UpdateNotice0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -203,6 +206,28 @@ func _UserRemoteService_GetUser0_HTTP_Handler(srv UserRemoteServiceHTTPServer) f
 	}
 }
 
+func _UserRemoteService_UpdateNotice0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateNoticeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceUpdateNotice)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateNotice(ctx, req.(*UpdateNoticeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserRemoteServiceHTTPClient interface {
 	Create(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetCurrentWatchCount(ctx context.Context, req *GetCurrentWatchCountRequest, opts ...http.CallOption) (rsp *GetCurrentWatchCountResp, err error)
@@ -210,6 +235,7 @@ type UserRemoteServiceHTTPClient interface {
 	Login(ctx context.Context, req *LoginUserRequest, opts ...http.CallOption) (rsp *LoginUserResp, err error)
 	Logout(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResp, err error)
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	UpdateNotice(ctx context.Context, req *UpdateNoticeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePlayedStatus(ctx context.Context, req *UpdatePlayedStatusRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -291,6 +317,19 @@ func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in
 	pattern := "/api/user/updateFavorite"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateFavorite))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) UpdateNotice(ctx context.Context, in *UpdateNoticeRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/api/notice/update"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateNotice))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

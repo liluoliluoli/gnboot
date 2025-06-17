@@ -26,7 +26,7 @@ func Sign(encryptKey string) middleware.Middleware {
 					path = ht.Request().URL.Path
 				}
 			}
-			if path == "/api/version/getLastVersion" {
+			if path == "/api/version/getLastVersion" || path == "/api/notice/update" {
 				return handler(ctx, req)
 			}
 

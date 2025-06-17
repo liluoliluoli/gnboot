@@ -151,6 +151,8 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 		CurrentPage: 1,
 		PageSize:    100,
 	})
+	noticeTitle := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeTitle).Val()
+	noticeContent := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeContent).Val()
 	return &user.User{
 		WatchCount:     int32(currentWatches),
 		RestWatchCount: int32(constant.MaxWatchCountByDay - currentWatches),
@@ -162,5 +164,15 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 		}, func() *int32 {
 			return nil
 		}),
+		NoticeTitle:   gerror.HandleRedisStringNotFound(noticeTitle),
+		NoticeContent: gerror.HandleRedisStringNotFound(noticeContent),
 	}, nil
+}
+
+func (s *UserProvider) UpdateNotice(ctx context.Context, req *user.UpdateNoticeRequest) (*emptypb.Empty, error) {
+	err := s.user.UpdateNotice(ctx, req.Title, req.Content)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }

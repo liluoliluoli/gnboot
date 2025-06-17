@@ -16,6 +16,7 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
       - ./conf/mysql/conf.d:/etc/mysql/conf.d
+    restart: always
     networks:
       - shared_net
 
@@ -52,7 +53,6 @@ services:
   Xiaoya:
     image: xiaoyaliu/alist:latest
     container_name: Xiaoya
-    restart: unless-stopped
     ports:
       - "8765:80"
     volumes:

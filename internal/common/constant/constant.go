@@ -15,6 +15,9 @@ const (
 
 const RK_UserTokenPrefix = "ut_%s"
 const RK_UserWatchCountPrefix = "uwc_%s"
+const RK_Notice = "notice"
+const HK_NoticeTitle = "title"
+const HK_NoticeContent = "content"
 
 const CTX_UserName = "CTX_UserName"
 const CTX_SessionToken = "CTX_SessionToken"

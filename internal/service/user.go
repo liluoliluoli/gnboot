@@ -10,6 +10,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
+	"github.com/redis/go-redis/v9"
 )
 
 type UserService struct {
@@ -17,17 +18,20 @@ type UserService struct {
 	userRepo             *repo.UserRepo
 	videoUserMappingRepo *repo.VideoUserMappingRepo
 	cache                sdomain.Cache[*sdomain.User]
+	client               redis.UniversalClient
 }
 
 func NewUserService(c *conf.Bootstrap,
 	userRepo *repo.UserRepo,
 	videoUserMappingRepo *repo.VideoUserMappingRepo,
+	client redis.UniversalClient,
 ) *UserService {
 	return &UserService{
 		c:                    c,
 		userRepo:             userRepo,
 		videoUserMappingRepo: videoUserMappingRepo,
 		cache:                repo.NewCache[*sdomain.User](c, userRepo.Data.Cache()),
+		client:               client,
 	}
 }
 
@@ -118,4 +122,10 @@ func (s *UserService) GetCurrentUser(ctx context.Context) (*sdomain.User, error)
 		return nil, errors.New("用户不存在")
 	}
 	return rs, nil
+}
+
+func (s *UserService) UpdateNotice(ctx context.Context, title string, content string) error {
+	s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeTitle, title)
+	s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeContent, content)
+	return nil
 }

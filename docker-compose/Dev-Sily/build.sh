@@ -6,28 +6,15 @@
 # 版本号格式：年.月.日.小时 (如 2025.06.14.00)
 # ================================================
 
-PROJECT_ROOT="../"
+PROJECT_ROOT="../../"
 DOCKERFILE_PATH="$PROJECT_ROOT/Dockerfile"
-COMPOSE_FILE="$PROJECT_ROOT/docker-compose/docker-compose.yml"
+COMPOSE_FILE="$PROJECT_ROOT/docker-compose/Dev-Sily/docker-compose.yml"
 IMAGE_NAME="gnboot"
 REPO_NAME="sily1/gnboot"
 
 # 获取当前版本号
 VERSION=$(date '+%Y.%m.%d.%H')
 FULL_IMAGE_NAME="$REPO_NAME:$VERSION"
-
-# 执行流程
-echo "========== 开始执行部署脚本 =========="
-validate
-build_image
-tag_image
-push_image
-#start_service
-
-echo -e "\n========== 部署指定镜像 =========="
-echo "镜像版本: $FULL_IMAGE_NAME"
-#echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
-echo -e "\n========== 部署成功完成 =========="
 
 # 验证前置条件
 function validate() {
@@ -99,4 +86,17 @@ function start_service() {
         echo "跳过服务启动步骤（未找到 docker-compose.yml）"
     fi
 }
+
+# 执行流程
+echo "========== 开始执行部署脚本 =========="
+validate
+build_image
+tag_image
+push_image
+#start_service
+
+echo -e "\n========== 部署指定镜像 =========="
+echo "镜像版本: $FULL_IMAGE_NAME"
+#echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+echo -e "\n========== 部署成功完成 =========="
 

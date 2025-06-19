@@ -49,7 +49,7 @@ func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHT
 	r.POST("/api/user/logout", _UserRemoteService_Logout0_HTTP_Handler(srv))
 	r.POST("/api/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
 	r.POST("/api/user/get", _UserRemoteService_GetUser0_HTTP_Handler(srv))
-	r.POST("/api/notice/update", _UserRemoteService_UpdateNotice0_HTTP_Handler(srv))
+	r.POST("/api/test/notice/update", _UserRemoteService_UpdateNotice0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -327,7 +327,7 @@ func (c *UserRemoteServiceHTTPClientImpl) UpdateFavorite(ctx context.Context, in
 
 func (c *UserRemoteServiceHTTPClientImpl) UpdateNotice(ctx context.Context, in *UpdateNoticeRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/api/notice/update"
+	pattern := "/api/test/notice/update"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateNotice))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -9,6 +9,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/security_util"
+	"strings"
 )
 
 func Sign(encryptKey string) middleware.Middleware {
@@ -26,7 +27,7 @@ func Sign(encryptKey string) middleware.Middleware {
 					path = ht.Request().URL.Path
 				}
 			}
-			if path == "/api/version/getLastVersion" || path == "/api/notice/update" {
+			if path == "/api/version/getLastVersion" || strings.HasPrefix(path, "/api/test/") {
 				return handler(ctx, req)
 			}
 

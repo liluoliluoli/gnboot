@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,7 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EpisodeRemoteService_GetEpisode_FullMethodName = "/gnboot.EpisodeRemoteService/GetEpisode"
+	EpisodeRemoteService_GetEpisode_FullMethodName   = "/gnboot.EpisodeRemoteService/GetEpisode"
+	EpisodeRemoteService_UpdateBoxIps_FullMethodName = "/gnboot.EpisodeRemoteService/UpdateBoxIps"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
@@ -27,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EpisodeRemoteServiceClient interface {
 	GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error)
+	UpdateBoxIps(ctx context.Context, in *UpdateBoxIpsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -46,11 +49,21 @@ func (c *episodeRemoteServiceClient) GetEpisode(ctx context.Context, in *GetEpis
 	return out, nil
 }
 
+func (c *episodeRemoteServiceClient) UpdateBoxIps(ctx context.Context, in *UpdateBoxIpsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_UpdateBoxIps_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EpisodeRemoteServiceServer is the server API for EpisodeRemoteService service.
 // All implementations must embed UnimplementedEpisodeRemoteServiceServer
 // for forward compatibility
 type EpisodeRemoteServiceServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
+	UpdateBoxIps(context.Context, *UpdateBoxIpsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -60,6 +73,9 @@ type UnimplementedEpisodeRemoteServiceServer struct {
 
 func (UnimplementedEpisodeRemoteServiceServer) GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEpisode not implemented")
+}
+func (UnimplementedEpisodeRemoteServiceServer) UpdateBoxIps(context.Context, *UpdateBoxIpsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxIps not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -92,6 +108,24 @@ func _EpisodeRemoteService_GetEpisode_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EpisodeRemoteService_UpdateBoxIps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBoxIpsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EpisodeRemoteServiceServer).UpdateBoxIps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EpisodeRemoteService_UpdateBoxIps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EpisodeRemoteServiceServer).UpdateBoxIps(ctx, req.(*UpdateBoxIpsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EpisodeRemoteService_ServiceDesc is the grpc.ServiceDesc for EpisodeRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +136,10 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEpisode",
 			Handler:    _EpisodeRemoteService_GetEpisode_Handler,
+		},
+		{
+			MethodName: "UpdateBoxIps",
+			Handler:    _EpisodeRemoteService_UpdateBoxIps_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

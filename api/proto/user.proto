@@ -92,7 +92,7 @@ additional_properties:
     }
     rpc UpdateNotice(UpdateNoticeRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/api/notice/update"
+        post : "/api/test/notice/update"
         body : "*"
       };
     }

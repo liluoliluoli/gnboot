@@ -6,6 +6,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/service"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type EpisodeProvider struct {
@@ -34,4 +35,12 @@ func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisod
 		return nil, err
 	}
 	return res.ConvertToDto(), nil
+}
+
+func (s *EpisodeProvider) UpdateBoxIps(ctx context.Context, req *episode.UpdateBoxIpsRequest) (*emptypb.Empty, error) {
+	err := s.episode.UpdateBoxIps(ctx, req.BoxIps)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }

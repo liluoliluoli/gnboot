@@ -55,6 +55,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc UpdateBoxIps(UpdateBoxIpsRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/test/boxips/update"
+        body : "*"
+      };
+    }
   }
 
   message Episode {
@@ -72,3 +78,7 @@ additional_properties:
   message GetEpisodeRequest {
     int32 id = 1;
   }
+
+message UpdateBoxIpsRequest {
+  repeated string boxIps = 1;
+}

@@ -21,7 +21,7 @@ var (
 
 func GetHttpClient() *httpclient.Client {
 	once.Do(func() {
-		timeout := 1000 * time.Millisecond
+		timeout := 10000 * time.Millisecond
 		instance = httpclient.NewClient(
 			httpclient.WithHTTPTimeout(timeout),
 			httpclient.WithRetryCount(2),

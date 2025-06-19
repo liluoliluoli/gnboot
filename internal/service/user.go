@@ -125,7 +125,13 @@ func (s *UserService) GetCurrentUser(ctx context.Context) (*sdomain.User, error)
 }
 
 func (s *UserService) UpdateNotice(ctx context.Context, title string, content string) error {
-	s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeTitle, title)
-	s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeContent, content)
+	cmd := s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeTitle, title)
+	if cmd.Err() != nil {
+		return cmd.Err()
+	}
+	cmd = s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeContent, content)
+	if cmd.Err() != nil {
+		return cmd.Err()
+	}
 	return nil
 }

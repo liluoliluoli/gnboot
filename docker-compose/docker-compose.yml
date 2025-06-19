@@ -11,7 +11,7 @@ services:
       - MYSQL_HOST=%
       - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_USER=video_user
-      - MYSQL_PASSWORD=SecurePass123!
+      - MYSQL_PASSWORD=1JdO9ac3VXvWGOLp
       - MYSQL_DATABASE=gnvideo
     volumes:
       - ./data/mysql:/var/lib/mysql

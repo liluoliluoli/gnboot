@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,14 +21,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationEpisodeRemoteServiceGetEpisode = "/gnboot.EpisodeRemoteService/GetEpisode"
+const OperationEpisodeRemoteServiceUpdateBoxIps = "/gnboot.EpisodeRemoteService/UpdateBoxIps"
 
 type EpisodeRemoteServiceHTTPServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
+	UpdateBoxIps(context.Context, *UpdateBoxIpsRequest) (*emptypb.Empty, error)
 }
 
 func RegisterEpisodeRemoteServiceHTTPServer(s *http.Server, srv EpisodeRemoteServiceHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/episode/get", _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv))
+	r.POST("/api/test/boxips/update", _EpisodeRemoteService_UpdateBoxIps0_HTTP_Handler(srv))
 }
 
 func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -52,8 +56,31 @@ func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTP
 	}
 }
 
+func _EpisodeRemoteService_UpdateBoxIps0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateBoxIpsRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEpisodeRemoteServiceUpdateBoxIps)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateBoxIps(ctx, req.(*UpdateBoxIpsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type EpisodeRemoteServiceHTTPClient interface {
 	GetEpisode(ctx context.Context, req *GetEpisodeRequest, opts ...http.CallOption) (rsp *Episode, err error)
+	UpdateBoxIps(ctx context.Context, req *UpdateBoxIpsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type EpisodeRemoteServiceHTTPClientImpl struct {
@@ -69,6 +96,19 @@ func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisode(ctx context.Context, in 
 	pattern := "/api/episode/get"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisode))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *EpisodeRemoteServiceHTTPClientImpl) UpdateBoxIps(ctx context.Context, in *UpdateBoxIpsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/api/test/boxips/update"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceUpdateBoxIps))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

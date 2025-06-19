@@ -9,6 +9,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
 	"github.com/redis/go-redis/v9"
+	"strings"
 )
 
 func Auth(client redis.UniversalClient) middleware.Middleware {
@@ -26,7 +27,7 @@ func Auth(client redis.UniversalClient) middleware.Middleware {
 					path = ht.Request().URL.Path
 				}
 			}
-			if path == "/api/user/create" || path == "/api/user/login" || path == "/api/version/getLastVersion" || path == "/api/notice/update" {
+			if path == "/api/user/create" || path == "/api/user/login" || path == "/api/version/getLastVersion" || strings.HasPrefix(path, "/api/test/") {
 				return handler(ctx, req)
 			}
 

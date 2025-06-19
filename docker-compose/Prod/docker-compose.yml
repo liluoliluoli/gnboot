@@ -88,32 +88,32 @@ services:
 
   # XiaoYa服务
   xiaoya:
-    image: xiaoyaliu/alist:latest
     container_name: XiaoYa
+    image: xiaoyaliu/alist:latest
     hostname: XiaoYa
-    command:
-      - /opt/alist/alist
-      - server
-      - --no-prefix
-    restart: unless-stopped
+    command: ["/opt/alist/alist", "server", "--no-prefix"]
+    privileged: true
+    restart: always
+    cpu_shares: 90
+    environment:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    labels:
+      - "icon=https://s2.loli.net/2023/04/24/Z9bMjB3TutzKDGY.png"
+      - "secondary_icon=https://zhengxin-pub.cdn.bcebos.com/mark/c4585165b3e372fc480f4217e3e5b138_fullsize.jpeg"
     network_mode: media_network
     ports:
       - "2345:2345/tcp"
       - "2346:2346/tcp"
+      - "2347:2347/tcp"
       - "5678:80/tcp"
-    environment:
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - XIAOYA_THUMBNAIL=https://zhengxin-pub.cdn.bcebos.com/mark/c4585165b3e372fc480f4217e3e5b138_fullsize.jpeg
     volumes:
       - "${DOCKER_DATA_DIR}/XiaoYa/data:/data"
-      - "${DOCKER_DATA_DIR}/XiaoYa/www_data:/www/data"
-      - "${DOCKER_DATA_DIR}/XiaoYa/alist_data:/opt/alist/data"
+      - "${DOCKER_DATA_DIR}/XiaoYa/www/data:/www/data"
+      - "${DOCKER_DATA_DIR}/XiaoYa/opt/alist/data:/opt/alist/data"
     deploy:
       resources:
         limits:
           memory: 512M
-    labels:
-      icon: https://zhengxin-pub.cdn.bcebos.com/mark/c4585165b3e372fc480f4217e3e5b138_fullsize.jpeg
 
   # Alist服务
   alist:

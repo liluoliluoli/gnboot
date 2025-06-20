@@ -41,12 +41,12 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 		worker.WithGroup(c.Name),
 		worker.WithHandler(func(ctx context.Context, p worker.Payload) error {
 			switch p.UID {
-			case "taskUserPackageCheck":
+			case "checkUserPackage":
 				job.userPackageCheckTask.Process(&sdomain.Task{
 					Ctx:     ctx,
 					Payload: p,
 				})
-			case "xiaoya_get_video":
+			case "syncXiaoyaVideo":
 				job.videoXiaoyaVideoTask.Process(&sdomain.Task{
 					Ctx:     ctx,
 					Payload: p,

@@ -1,4 +1,4 @@
-xiaoya_url: "http://127.0.0.1:5678"
+xiaoyaVideoSyncCategory: '/纪录片/TED演讲合集' #多个目录逗号分隔
 server:
   prod: false
   machineId: ''
@@ -19,9 +19,13 @@ data:
     driver: mysql
     # dsn: 'root:root@tcp(127.0.0.1:3306)/gnboot?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
     dsn: ''
-    endpoint: 'mysql.sqlpub.com:3306'
-    username: 'gnvideo'
-    password: '7H5rdOAIMA815pXz'
+#    endpoint: 'mysql.sqlpub.com:3306'
+#    username: 'gnvideo'
+#    password: '7H5rdOAIMA815pXz'
+#    schema: 'gnvideo'
+    endpoint: 'localhost:3306'
+    username: 'video_user'
+    password: '1JdO9ac3VXvWGOLp'
     schema: 'gnvideo'
     query: 'charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms'
 

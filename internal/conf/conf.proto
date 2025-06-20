@@ -15,6 +15,7 @@ message Bootstrap {
   Client client = 7;
   Log log = 8;
   Dynamic dynamic = 9;
+  string xiaoyaVideoSyncCategory = 10;
 }
 
 message Server {

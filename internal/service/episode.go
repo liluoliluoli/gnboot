@@ -10,6 +10,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/httpclient_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/integration/dto"
@@ -17,7 +18,6 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
-	"strings"
 	"time"
 )
 
@@ -84,7 +84,11 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 
 	if containPlayUrl {
 		if episode.Url == "" || episode.ExpiredTime == nil || episode.Duration == 0 || episode.ExpiredTime.Sub(time.Now()) < constant.AliyunM3u8EarlyExpireMinutes*time.Minute {
-			url, duration, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+			clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
+			if err != nil {
+				clientIp = "127.0.0.1"
+			}
+			url, duration, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, clientIp)
 			if err != nil {
 				return nil, err
 			}
@@ -100,12 +104,15 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	return episode, nil
 }
 
-func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (string, int64, error) {
+func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clientIp string) (string, int64, error) {
 	//if len(s.c.Dynamic.BoxServerIps) == 0 {
 	//	return "", 0, nil
 	//}
-	boxIps := strings.Split(gerror.HandleRedisStringNotFound(s.client.Get(ctx, constant.RK_BoxIps).Val()), ",")
-	boxIp := array_util.GetRandomElement(boxIps)
+	boxIps, err := json_util.Unmarshal[[]map[string]string](gerror.HandleRedisStringNotFound(s.client.Get(ctx, constant.RK_BoxIps).Val()))
+	if err != nil {
+		return "", 0, err
+	}
+	boxIp, _ := array_util.GetHashElement(boxIps, clientIp)
 
 	transferStoreResult, err := httpclient_util.DoPost[dto.TransferStoreReq, dto.XiaoyaResult[dto.TransferStoreResp]](ctx, boxIp+constant.XiaoYaTransferStorePath, constant.XiaoYaToken, &dto.TransferStoreReq{
 		Path:     xiaoyaPath,
@@ -124,7 +131,7 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (str
 		}
 		if loginResult != nil && loginResult.Code == 200 && loginResult.Data.Token != "" {
 			constant.XiaoYaToken = loginResult.Data.Token
-			return s.getPlayUrl(ctx, xiaoyaPath)
+			return s.getPlayUrl(ctx, xiaoyaPath, clientIp)
 		}
 	}
 	if err != nil {
@@ -134,7 +141,7 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (str
 		return "", 0, gerror.ErrInternal(ctx, "获取播放地址转存失败")
 	}
 
-	m3u8Result, err := httpclient_util.DoPost[dto.M3u8Req, dto.XiaoyaResult[dto.M3u8Resp]](ctx, boxIp+constant.XiaoYaTransferStorePath, constant.XiaoYaToken, &dto.M3u8Req{
+	m3u8Result, err := httpclient_util.DoPost[dto.M3u8Req, dto.XiaoyaResult[dto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, constant.XiaoYaToken, &dto.M3u8Req{
 		Path:     xiaoyaPath,
 		Password: "",
 		Method:   "video_preview",
@@ -164,8 +171,8 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (str
 	return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), nil
 }
 
-func (s *EpisodeService) UpdateBoxIps(ctx context.Context, boxIps []string) error {
-	cmd := s.client.Set(ctx, constant.RK_BoxIps, strings.Join(boxIps, ","), 0)
+func (s *EpisodeService) UpdateBoxIps(ctx context.Context, boxIps string) error {
+	cmd := s.client.Set(ctx, constant.RK_BoxIps, boxIps, 0)
 	if cmd.Err() != nil {
 		return cmd.Err()
 	}

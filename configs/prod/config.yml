@@ -1,4 +1,3 @@
-xiaoya_url: "http://127.0.0.1:5678"
 server:
   prod: false
   machineId: ''

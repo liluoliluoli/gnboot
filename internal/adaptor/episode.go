@@ -5,6 +5,7 @@ import (
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -38,7 +39,11 @@ func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisod
 }
 
 func (s *EpisodeProvider) UpdateBoxIps(ctx context.Context, req *episode.UpdateBoxIpsRequest) (*emptypb.Empty, error) {
-	err := s.episode.UpdateBoxIps(ctx, req.BoxIps)
+	marshalString, err := json_util.MarshalString(req.BoxIps)
+	if err != nil {
+		return nil, err
+	}
+	err = s.episode.UpdateBoxIps(ctx, marshalString)
 	if err != nil {
 		return nil, err
 	}

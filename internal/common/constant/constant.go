@@ -19,9 +19,12 @@ const RK_Notice = "notice"
 const HK_NoticeTitle = "title"
 const HK_NoticeContent = "content"
 const RK_BoxIps = "boxips"
+const Key_XiaoYaBoxIp = "xiaoYaBoxIp"
+const Key_JellyfinBoxIp = "jellyfinBoxIp"
 
 const CTX_UserName = "CTX_UserName"
 const CTX_SessionToken = "CTX_SessionToken"
+const CTX_ClientIp = "CTX_ClientIp"
 
 const MaxWatchCountByDay = 200
 
@@ -42,8 +45,10 @@ const (
 	XiaoYaLoginPath               = "/api/auth/login/hash"
 	XiaoYaTransferStorePath       = "/api/fs/get"
 	XiaoYaM3u8Path                = "/api/fs/other"
+	XiaoYaVideoList               = "/api/fs/list"
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
 	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟
 	XiaoYaLoginName               = "admin"                                                            //xiaoya登录账号
 	XiaoYaLoginPassword           = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f" //xiaoya登录密码
+	Platform                      = "aliyun"
 )

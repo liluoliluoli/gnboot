@@ -74,3 +74,29 @@ type LoginReq struct {
 type LoginResp struct {
 	Token string `json:"token"`
 }
+
+type VideoListReq struct {
+	Path     string `json:"path"`
+	Password string `json:"password"`
+	Page     int32  `json:"page"`
+	PerPage  int32  `json:"per_page"`
+	Refresh  bool   `json:"refresh"`
+}
+
+type VideoListResp struct {
+	Content  []*VideoContent `json:"content"`
+	Total    int64           `json:"total"`
+	Readme   string          `json:"readme"`
+	Write    bool            `json:"write"`
+	Provider string          `json:"provider"`
+}
+
+type VideoContent struct {
+	Name     string     `json:"name"`
+	Size     int64      `json:"size"`
+	IsDir    bool       `json:"is_dir"`
+	Modified *time.Time `json:"modified"`
+	Sign     string     `json:"sign"`
+	Thumb    string     `json:"thumb"`
+	Type     int32      `json:"type"`
+}

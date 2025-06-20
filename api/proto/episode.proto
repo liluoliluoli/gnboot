@@ -80,5 +80,10 @@ additional_properties:
   }
 
 message UpdateBoxIpsRequest {
-  repeated string boxIps = 1;
+  repeated BoxIps boxIps = 1;
+}
+
+message BoxIps {
+    string xiaoYaBoxIp = 1;
+    string jellyfinBoxIp = 2;
 }

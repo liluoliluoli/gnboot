@@ -21,7 +21,7 @@ type Episode struct {
 	Platform     *string    `gorm:"column:platform;type:varchar(45);comment: aliyun" json:"platform"`
 	Ext          *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
 	Duration     *int64     `gorm:"column:duration;type:bigint;comment:影片时长，秒" json:"duration"`
-	Size         string     `gorm:"column:size;type:varchar(45);not null;comment:影片大小" json:"size"`
+	Size         string     `gorm:"column:size;type:varchar(256);not null;comment:影片大小" json:"size"`
 	IsValid      bool       `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
 	ExpiredTime  *time.Time `gorm:"column:expired_time;type:datetime;comment:阿里云盘过期时间" json:"expiredTime"`
 }

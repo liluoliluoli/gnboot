@@ -13,7 +13,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
-	"github.com/liluoliluoli/gnboot/internal/integration/xiaoyadto"
+	"github.com/liluoliluoli/gnboot/internal/integration/dto/xiaoyadto"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/redis/go-redis/v9"

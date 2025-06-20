@@ -34,6 +34,7 @@ type Video struct {
 	UpdateTime          time.Time
 	IsValid             bool
 	Ext                 string
+	JellyfinId          string
 }
 
 func (d *Video) MarshalBinary() ([]byte, error) {
@@ -62,6 +63,7 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
 		IsValid:      m.IsValid,
+		JellyfinId:   m.JellyfinID,
 	}
 }
 
@@ -81,7 +83,12 @@ func (d *Video) ConvertToRepo() *model.Video {
 		CreateTime:   d.CreateTime,
 		UpdateTime:   d.CreateTime,
 		IsValid:      d.IsValid,
+		JellyfinID:   d.JellyfinId,
 	}
+}
+
+func (d *Video) ConvertFromDto(req *videodto.CreateVideoRequest) *Video {
+	return &Video{}
 }
 
 func (d *Video) ConvertToDto() *videodto.Video {

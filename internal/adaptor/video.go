@@ -28,7 +28,7 @@ func NewVideoProvider(video *service.VideoService, user *service.UserService) *V
 }
 
 func (s *VideoProvider) CreateMovie(ctx context.Context, req *video.CreateVideoRequest) (*emptypb.Empty, error) {
-	err := s.video.Create(ctx, (&sdomain.CreateVideo{}).ConvertFromDto(req))
+	err := s.video.Create(ctx, (&sdomain.Video{}).ConvertFromDto(req))
 	return &emptypb.Empty{}, err
 }
 

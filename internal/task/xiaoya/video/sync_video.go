@@ -13,6 +13,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/integration/dto/jellyfindto"
 	"github.com/liluoliluoli/gnboot/internal/integration/dto/xiaoyadto"
 	"github.com/liluoliluoli/gnboot/internal/repo"
+	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
@@ -52,6 +53,7 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 		log.Infof("开始同步xiaoya视频: syncURL=%s, initialPath=%s", constant.XiaoYaVideoList, mappingPath[0])
 		err := t.deepLoopXiaoYaPath(ctx, boxIps[0][constant.Key_XiaoYaBoxIp], mappingPath[0], "", pageSize)
 		if err != nil {
+			log.Errorf("同步xiaoya视频失败: %v", err)
 			return err
 		}
 		log.Infof("结束同步xiaoya视频: syncURL=%s, initialPath=%s", constant.XiaoYaVideoList, mappingPath[0])
@@ -59,6 +61,7 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 		log.Infof("开始同步jellyfin刮削: syncURL=%s, pathid=%s, type=%s", boxIps[0][constant.Key_JellyfinBoxIp], mappingPath[1], mappingPath[2])
 		err = t.deepLoopJellyfinPath(ctx, boxIps[0][constant.Key_JellyfinBoxIp], mappingPath[1], mappingPath[2], pageSize)
 		if err != nil {
+			log.Errorf("同步jellyfin刮削失败: %v", err)
 			return err
 		}
 		log.Infof("结束同步jellyfin刮削: syncURL=%s, pathid=%s, type=%s", boxIps[0][constant.Key_JellyfinBoxIp], mappingPath[1], mappingPath[2])
@@ -90,8 +93,9 @@ func (t *XiaoyaVideoTask) deepLoopXiaoYaPath(ctx context.Context, domain, curren
 			log.Infof("xiaoya处理内容: 路径=%s, 父级=%s, 名称=%s, 是目录=%v", currentPath, parentPath, content.Name, content.IsDir)
 			if content.IsDir {
 				newPath := path.Join(currentPath, content.Name)
-				err := t.deepLoopXiaoYaPath(ctx, domain+constant.XiaoYaVideoList, newPath, content.Name, pageSize)
+				err := t.deepLoopXiaoYaPath(ctx, domain, newPath, content.Name, pageSize)
 				if err != nil {
+					log.Errorf("递归查询小雅失败: %v", err)
 					return err
 				}
 			} else {
@@ -158,27 +162,45 @@ func (t *XiaoyaVideoTask) deepLoopJellyfinPath(ctx context.Context, domain, pare
 				continue
 			}
 			if existEpisode[0].VideoId == 0 {
-				video := &sdomain.Video{
-					Title:        videoDetailResp.Name,
-					VideoType:    mediaType,
-					VoteRate:     float32(videoDetailResp.GoodRating),
-					Region:       strings.Join(videoDetailResp.Regions, ","),
-					Description:  videoDetailResp.Overview,
-					PublishMonth: time_util.FormatYYYYMM(videoDetailResp.PremiereDate),
-					Thumbnail:    fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id),
-					Genres:       videoDetailResp.Genres,
-				}
-				err := t.videoRepo.Create(ctx, nil, video)
+				video, err := t.videoRepo.GetByJellyfinId(ctx, videoDetailResp.Id)
 				if err != nil {
-					log.Errorf("创建video失败: %v", err)
+					log.Errorf("查询video失败: %v", err)
 					return err
 				}
-				existEpisode[0].VideoId = video.ID
-				err = t.episodeRepo.Updates(ctx, nil, existEpisode[0])
+				err = gen.Use(t.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
+					if video == nil {
+						video = &sdomain.Video{
+							Title:        videoDetailResp.Name,
+							VideoType:    mediaType,
+							VoteRate:     float32(videoDetailResp.GoodRating),
+							Region:       strings.Join(videoDetailResp.Regions, ","),
+							Description:  videoDetailResp.Overview,
+							PublishMonth: time_util.FormatYYYYMM(videoDetailResp.PremiereDate),
+							Thumbnail:    fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id),
+							Genres:       videoDetailResp.Genres,
+							JellyfinId:   videoDetailResp.Id,
+						}
+						err := t.videoRepo.Create(ctx, nil, video)
+						if err != nil {
+							log.Errorf("创建video失败: %v", err)
+							return err
+						}
+					}
+					existEpisode[0].VideoId = video.ID
+					err = t.episodeRepo.Updates(ctx, nil, existEpisode[0])
+					if err != nil {
+						log.Errorf("更新episode失败: %v", err)
+						return err
+					}
+					if err != nil {
+						return err
+					}
+					return nil
+				})
 				if err != nil {
-					log.Errorf("更新episode失败: %v", err)
 					return err
 				}
+
 			}
 		}
 		if int64(startIndex+pageSize) >= videoListResp.TotalRecordCount {

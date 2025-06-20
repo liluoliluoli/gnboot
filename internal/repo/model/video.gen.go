@@ -28,6 +28,7 @@ type Video struct {
 	UpdateTime   time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 	IsValid      bool      `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
 	Ratio        *string   `gorm:"column:ratio;type:varchar(32);comment:分辨率：1080P，4k，原画" json:"ratio"`
+	JellyfinID   string    `gorm:"column:jellyfin_id;type:varchar(255);not null;comment:jellyfin的id" json:"jellyfinId"`
 }
 
 // TableName Video's table name

@@ -25,7 +25,7 @@ func init() {
 
 func main() {
 	// 加载配置
-	dsn := "gnvideo:7H5rdOAIMA815pXz@tcp(mysql.sqlpub.com:3306)/gnvideo?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms"
+	dsn := "video_user:1JdO9ac3VXvWGOLp@tcp(localhost:3306)/gnvideo?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=10000ms"
 
 	// 初始化DB连接
 	db, err := gorm.Open(mysql.Open(dsn))

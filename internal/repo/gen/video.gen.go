@@ -44,6 +44,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.UpdateTime = field.NewTime(tableName, "update_time")
 	_video.IsValid = field.NewBool(tableName, "is_valid")
 	_video.Ratio = field.NewString(tableName, "ratio")
+	_video.JellyfinID = field.NewString(tableName, "jellyfin_id")
 
 	_video.fillFieldMap()
 
@@ -70,6 +71,7 @@ type video struct {
 	UpdateTime   field.Time    // 更新时间
 	IsValid      field.Bool    // 是否有效
 	Ratio        field.String  // 分辨率：1080P，4k，原画
+	JellyfinID   field.String  // jellyfin的id
 
 	fieldMap map[string]field.Expr
 }
@@ -102,6 +104,7 @@ func (v *video) updateTableName(table string) *video {
 	v.UpdateTime = field.NewTime(table, "update_time")
 	v.IsValid = field.NewBool(table, "is_valid")
 	v.Ratio = field.NewString(table, "ratio")
+	v.JellyfinID = field.NewString(table, "jellyfin_id")
 
 	v.fillFieldMap()
 
@@ -124,7 +127,7 @@ func (v *video) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *video) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 16)
+	v.fieldMap = make(map[string]field.Expr, 17)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["video_type"] = v.VideoType
@@ -141,6 +144,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["update_time"] = v.UpdateTime
 	v.fieldMap["is_valid"] = v.IsValid
 	v.fieldMap["ratio"] = v.Ratio
+	v.fieldMap["jellyfin_id"] = v.JellyfinID
 }
 
 func (v video) clone(db *gorm.DB) video {

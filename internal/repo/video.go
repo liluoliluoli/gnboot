@@ -62,14 +62,14 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 		do = do.Where(gen.Video.Region.Eq(condition.Region))
 	}
 	if condition.Year != "" {
-		do = do.Where(gen.Video.PublishMonth.Between(condition.Year+"01", condition.Year+"12"))
+		do = do.Where(gen.Video.PublishDay.Between(condition.Year+"0101", condition.Year+"1231"))
 	}
 	if condition.Sort == constant.SortByHot {
 		do = do.Order(gen.Video.VoteCount.Desc())
 	} else if condition.Sort == constant.SortByRate {
 		do = do.Order(gen.Video.VoteRate.Desc())
 	} else if condition.Sort == constant.SortByPublish {
-		do = do.Order(gen.Video.PublishMonth.Desc())
+		do = do.Order(gen.Video.PublishDay.Desc())
 	} else {
 		do = do.Order(gen.Video.UpdateTime.Desc())
 	}

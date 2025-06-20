@@ -102,7 +102,7 @@ additional_properties:
     int32 totalEpisode = 7;
     string description = 8;
     string ext = 9;
-    string publishMonth = 10;
+    string publishDay = 10;
     string thumbnail = 11;
     repeated string genres = 12;
     repeated gnboot.Actor actors = 13;

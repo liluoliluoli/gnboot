@@ -20,7 +20,7 @@ type Video struct {
 	Region              string
 	TotalEpisode        int32
 	Description         string
-	PublishMonth        string
+	PublishDay          string
 	Thumbnail           string
 	Ratio               string
 	Genres              []string
@@ -35,6 +35,7 @@ type Video struct {
 	IsValid             bool
 	Ext                 string
 	JellyfinId          string
+	JellyfinCreateTime  time.Time
 }
 
 func (d *Video) MarshalBinary() ([]byte, error) {
@@ -47,43 +48,45 @@ func (d *Video) UnmarshalBinary(data []byte) error {
 
 func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 	return &Video{
-		ID:           m.ID,
-		Title:        m.Title,
-		VideoType:    m.VideoType,
-		VoteRate:     lo.FromPtr(m.VoteRate),
-		VoteCount:    lo.FromPtr(m.VoteCount),
-		Region:       lo.FromPtr(m.Region),
-		TotalEpisode: lo.FromPtr(m.TotalEpisode),
-		Description:  lo.FromPtr(m.Description),
-		Ext:          lo.FromPtr(m.Ext),
-		PublishMonth: lo.FromPtr(m.PublishMonth),
-		Thumbnail:    lo.FromPtr(m.Thumbnail),
-		Ratio:        lo.FromPtr(m.Ratio),
-		Genres:       strings.Split(lo.FromPtr(m.Genres), ","),
-		CreateTime:   m.CreateTime,
-		UpdateTime:   m.UpdateTime,
-		IsValid:      m.IsValid,
-		JellyfinId:   m.JellyfinID,
+		ID:                 m.ID,
+		Title:              m.Title,
+		VideoType:          m.VideoType,
+		VoteRate:           lo.FromPtr(m.VoteRate),
+		VoteCount:          lo.FromPtr(m.VoteCount),
+		Region:             lo.FromPtr(m.Region),
+		TotalEpisode:       lo.FromPtr(m.TotalEpisode),
+		Description:        lo.FromPtr(m.Description),
+		Ext:                lo.FromPtr(m.Ext),
+		PublishDay:         lo.FromPtr(m.PublishDay),
+		Thumbnail:          lo.FromPtr(m.Thumbnail),
+		Ratio:              lo.FromPtr(m.Ratio),
+		Genres:             strings.Split(lo.FromPtr(m.Genres), ","),
+		CreateTime:         m.CreateTime,
+		UpdateTime:         m.UpdateTime,
+		IsValid:            m.IsValid,
+		JellyfinId:         m.JellyfinID,
+		JellyfinCreateTime: m.JellyfinCreateTime,
 	}
 }
 
 func (d *Video) ConvertToRepo() *model.Video {
 	return &model.Video{
-		Title:        d.Title,
-		VideoType:    d.VideoType,
-		VoteRate:     lo.ToPtr(d.VoteRate),
-		VoteCount:    lo.ToPtr(d.VoteCount),
-		Region:       lo.ToPtr(d.Region),
-		TotalEpisode: lo.ToPtr(d.TotalEpisode),
-		Description:  lo.ToPtr(d.Description),
-		Ext:          lo.ToPtr(d.Ext),
-		PublishMonth: lo.ToPtr(d.PublishMonth),
-		Thumbnail:    lo.ToPtr(d.Thumbnail),
-		Genres:       lo.ToPtr(strings.Join(d.Genres, ",")),
-		CreateTime:   d.CreateTime,
-		UpdateTime:   d.CreateTime,
-		IsValid:      d.IsValid,
-		JellyfinID:   d.JellyfinId,
+		Title:              d.Title,
+		VideoType:          d.VideoType,
+		VoteRate:           lo.ToPtr(d.VoteRate),
+		VoteCount:          lo.ToPtr(d.VoteCount),
+		Region:             lo.ToPtr(d.Region),
+		TotalEpisode:       lo.ToPtr(d.TotalEpisode),
+		Description:        lo.ToPtr(d.Description),
+		Ext:                lo.ToPtr(d.Ext),
+		PublishDay:         lo.ToPtr(d.PublishDay),
+		Thumbnail:          lo.ToPtr(d.Thumbnail),
+		Genres:             lo.ToPtr(strings.Join(d.Genres, ",")),
+		CreateTime:         d.CreateTime,
+		UpdateTime:         d.CreateTime,
+		IsValid:            d.IsValid,
+		JellyfinID:         d.JellyfinId,
+		JellyfinCreateTime: d.JellyfinCreateTime,
 	}
 }
 
@@ -105,7 +108,7 @@ func (d *Video) ConvertToDto() *videodto.Video {
 		TotalEpisode: d.TotalEpisode,
 		Description:  d.Description,
 		Ext:          d.Ext,
-		PublishMonth: d.PublishMonth,
+		PublishDay:   d.PublishDay,
 		Thumbnail:    d.Thumbnail,
 		Ratio:        d.Ratio,
 		Genres:       d.Genres,

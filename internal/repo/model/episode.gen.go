@@ -24,6 +24,8 @@ type Episode struct {
 	Size         string     `gorm:"column:size;type:varchar(256);not null;comment:影片大小" json:"size"`
 	IsValid      bool       `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
 	ExpiredTime  *time.Time `gorm:"column:expired_time;type:datetime;comment:阿里云盘过期时间" json:"expiredTime"`
+	CreateTime   time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime   time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 }
 
 // TableName Episode's table name

@@ -35,6 +35,7 @@ type VideoDetailResp struct {
 	Type           string         `json:"Type"` //Movie
 	Characters     []*People      `json:"People"`
 	MediaType      string         `json:"MediaType"` //Video
+	DateCreated    string         `json:"DateCreated"`
 }
 
 type MediaSource struct {

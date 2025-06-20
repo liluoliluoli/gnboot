@@ -20,6 +20,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 )
@@ -111,6 +112,8 @@ func (t *XiaoyaVideoTask) deepLoopXiaoYaPath(ctx context.Context, domain, curren
 						Size:         fmt.Sprintf("%d", content.Size),
 						Platform:     lo.ToPtr(constant.Platform),
 						IsValid:      true,
+						CreateTime:   time.Now(),
+						UpdateTime:   time.Now(),
 					}
 					if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
 						log.Errorf("写入episode失败（path=%s, title=%s）: %v", currentPath, content.Name, err)
@@ -170,15 +173,16 @@ func (t *XiaoyaVideoTask) deepLoopJellyfinPath(ctx context.Context, domain, pare
 				err = gen.Use(t.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 					if video == nil {
 						video = &sdomain.Video{
-							Title:        videoDetailResp.Name,
-							VideoType:    mediaType,
-							VoteRate:     float32(videoDetailResp.GoodRating),
-							Region:       strings.Join(videoDetailResp.Regions, ","),
-							Description:  videoDetailResp.Overview,
-							PublishMonth: time_util.FormatYYYYMM(videoDetailResp.PremiereDate),
-							Thumbnail:    fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id),
-							Genres:       videoDetailResp.Genres,
-							JellyfinId:   videoDetailResp.Id,
+							Title:              videoDetailResp.Name,
+							VideoType:          mediaType,
+							VoteRate:           float32(videoDetailResp.GoodRating),
+							Region:             strings.Join(videoDetailResp.Regions, ","),
+							Description:        videoDetailResp.Overview,
+							PublishDay:         time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate),
+							Thumbnail:          fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id),
+							Genres:             videoDetailResp.Genres,
+							JellyfinId:         videoDetailResp.Id,
+							JellyfinCreateTime: time_util.ParseUtcTime(videoDetailResp.DateCreated),
 						}
 						err := t.videoRepo.Create(ctx, nil, video)
 						if err != nil {

@@ -37,7 +37,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.TotalEpisode = field.NewInt32(tableName, "total_episode")
 	_video.Description = field.NewString(tableName, "description")
 	_video.Ext = field.NewString(tableName, "ext")
-	_video.PublishMonth = field.NewString(tableName, "publish_month")
+	_video.PublishDay = field.NewString(tableName, "publish_day")
 	_video.Thumbnail = field.NewString(tableName, "thumbnail")
 	_video.Genres = field.NewString(tableName, "genres")
 	_video.CreateTime = field.NewTime(tableName, "create_time")
@@ -45,6 +45,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.IsValid = field.NewBool(tableName, "is_valid")
 	_video.Ratio = field.NewString(tableName, "ratio")
 	_video.JellyfinID = field.NewString(tableName, "jellyfin_id")
+	_video.JellyfinCreateTime = field.NewTime(tableName, "jellyfin_create_time")
 
 	_video.fillFieldMap()
 
@@ -54,24 +55,25 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 type video struct {
 	videoDo videoDo
 
-	ALL          field.Asterisk
-	ID           field.Int64   // 主键
-	Title        field.String  // 标题
-	VideoType    field.String  // 影片类型，movie,tvSeries,tvShows,cartoon,record
-	VoteRate     field.Float32 // 评分
-	VoteCount    field.Int64   // 评分数
-	Region       field.String  // 国家
-	TotalEpisode field.Int32   // 总集数，减去episode的集数判断是否完结
-	Description  field.String  // 简介
-	Ext          field.String  // 扩展参数
-	PublishMonth field.String  // 出版月份，yyyymm
-	Thumbnail    field.String  // 缩略图
-	Genres       field.String  // 流派，固定枚举，多个时用,分隔
-	CreateTime   field.Time    // 创建时间
-	UpdateTime   field.Time    // 更新时间
-	IsValid      field.Bool    // 是否有效
-	Ratio        field.String  // 分辨率：1080P，4k，原画
-	JellyfinID   field.String  // jellyfin的id
+	ALL                field.Asterisk
+	ID                 field.Int64   // 主键
+	Title              field.String  // 标题
+	VideoType          field.String  // 影片类型，movie,tvSeries,tvShows,cartoon,record
+	VoteRate           field.Float32 // 评分
+	VoteCount          field.Int64   // 评分数
+	Region             field.String  // 国家
+	TotalEpisode       field.Int32   // 总集数，减去episode的集数判断是否完结
+	Description        field.String  // 简介
+	Ext                field.String  // 扩展参数
+	PublishDay         field.String  // 出版月份，yyyymmdd
+	Thumbnail          field.String  // 缩略图
+	Genres             field.String  // 流派，固定枚举，多个时用,分隔
+	CreateTime         field.Time    // 创建时间
+	UpdateTime         field.Time    // 更新时间
+	IsValid            field.Bool    // 是否有效
+	Ratio              field.String  // 分辨率：1080P，4k，原画
+	JellyfinID         field.String  // jellyfin的id
+	JellyfinCreateTime field.Time    // jellyfin创建时间
 
 	fieldMap map[string]field.Expr
 }
@@ -97,7 +99,7 @@ func (v *video) updateTableName(table string) *video {
 	v.TotalEpisode = field.NewInt32(table, "total_episode")
 	v.Description = field.NewString(table, "description")
 	v.Ext = field.NewString(table, "ext")
-	v.PublishMonth = field.NewString(table, "publish_month")
+	v.PublishDay = field.NewString(table, "publish_day")
 	v.Thumbnail = field.NewString(table, "thumbnail")
 	v.Genres = field.NewString(table, "genres")
 	v.CreateTime = field.NewTime(table, "create_time")
@@ -105,6 +107,7 @@ func (v *video) updateTableName(table string) *video {
 	v.IsValid = field.NewBool(table, "is_valid")
 	v.Ratio = field.NewString(table, "ratio")
 	v.JellyfinID = field.NewString(table, "jellyfin_id")
+	v.JellyfinCreateTime = field.NewTime(table, "jellyfin_create_time")
 
 	v.fillFieldMap()
 
@@ -127,7 +130,7 @@ func (v *video) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *video) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 17)
+	v.fieldMap = make(map[string]field.Expr, 18)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["video_type"] = v.VideoType
@@ -137,7 +140,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["total_episode"] = v.TotalEpisode
 	v.fieldMap["description"] = v.Description
 	v.fieldMap["ext"] = v.Ext
-	v.fieldMap["publish_month"] = v.PublishMonth
+	v.fieldMap["publish_day"] = v.PublishDay
 	v.fieldMap["thumbnail"] = v.Thumbnail
 	v.fieldMap["genres"] = v.Genres
 	v.fieldMap["create_time"] = v.CreateTime
@@ -145,6 +148,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["is_valid"] = v.IsValid
 	v.fieldMap["ratio"] = v.Ratio
 	v.fieldMap["jellyfin_id"] = v.JellyfinID
+	v.fieldMap["jellyfin_create_time"] = v.JellyfinCreateTime
 }
 
 func (v video) clone(db *gorm.DB) video {

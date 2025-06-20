@@ -40,6 +40,8 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.Size = field.NewString(tableName, "size")
 	_episode.IsValid = field.NewBool(tableName, "is_valid")
 	_episode.ExpiredTime = field.NewTime(tableName, "expired_time")
+	_episode.CreateTime = field.NewTime(tableName, "create_time")
+	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 
 	_episode.fillFieldMap()
 
@@ -62,6 +64,8 @@ type episode struct {
 	Size         field.String // 影片大小
 	IsValid      field.Bool   // 是否有效
 	ExpiredTime  field.Time   // 阿里云盘过期时间
+	CreateTime   field.Time   // 创建时间
+	UpdateTime   field.Time   // 更新时间
 
 	fieldMap map[string]field.Expr
 }
@@ -90,6 +94,8 @@ func (e *episode) updateTableName(table string) *episode {
 	e.Size = field.NewString(table, "size")
 	e.IsValid = field.NewBool(table, "is_valid")
 	e.ExpiredTime = field.NewTime(table, "expired_time")
+	e.CreateTime = field.NewTime(table, "create_time")
+	e.UpdateTime = field.NewTime(table, "update_time")
 
 	e.fillFieldMap()
 
@@ -112,7 +118,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 12)
+	e.fieldMap = make(map[string]field.Expr, 14)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["video_id"] = e.VideoID
 	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
@@ -125,6 +131,8 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["size"] = e.Size
 	e.fieldMap["is_valid"] = e.IsValid
 	e.fieldMap["expired_time"] = e.ExpiredTime
+	e.fieldMap["create_time"] = e.CreateTime
+	e.fieldMap["update_time"] = e.UpdateTime
 }
 
 func (e episode) clone(db *gorm.DB) episode {

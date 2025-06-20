@@ -21,6 +21,8 @@ type Episode struct {
 	Subtitles    []*EpisodeSubtitleMapping `json:"subtitles"`
 	XiaoYaPath   string                    `json:"xiaoYaPath"`
 	ExpiredTime  *time.Time                `json:"expiredTime"`
+	CreateTime   time.Time                 `json:"createTime"`
+	UpdateTime   time.Time                 `json:"updateTime"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -36,6 +38,8 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		XiaoYaPath:   lo.FromPtr(m.XiaoyaPath),
 		ExpiredTime:  m.ExpiredTime,
 		Size:         m.Size,
+		CreateTime:   m.CreateTime,
+		UpdateTime:   m.UpdateTime,
 	}
 }
 
@@ -68,5 +72,7 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		Size:         d.Size,
 		ExpiredTime:  d.ExpiredTime,
 		XiaoyaPath:   lo.ToPtr(d.XiaoYaPath),
+		CreateTime:   d.CreateTime,
+		UpdateTime:   time.Now(),
 	}
 }

@@ -74,7 +74,7 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for Ext
 
-	// no validation rules for PublishMonth
+	// no validation rules for PublishDay
 
 	// no validation rules for Thumbnail
 

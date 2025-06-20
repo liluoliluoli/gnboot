@@ -11,46 +11,6 @@ import (
 	"time"
 )
 
-type CreateVideo struct {
-	Title        string
-	VideoType    string
-	VoteRate     float32
-	VoteCount    int64
-	Region       string
-	TotalEpisode int32
-	Description  string
-	PublishMonth string
-	Thumbnail    string
-	Genres       string
-	CreateTime   time.Time
-	UpdateTime   time.Time
-	IsValid      bool
-	Ext          string
-}
-
-func (d *CreateVideo) ConvertToRepo() *model.Video {
-	return &model.Video{
-		Title:        d.Title,
-		VideoType:    d.VideoType,
-		VoteRate:     lo.ToPtr(d.VoteRate),
-		VoteCount:    lo.ToPtr(d.VoteCount),
-		Region:       lo.ToPtr(d.Region),
-		TotalEpisode: lo.ToPtr(d.TotalEpisode),
-		Description:  lo.ToPtr(d.Description),
-		Ext:          lo.ToPtr(d.Ext),
-		PublishMonth: lo.ToPtr(d.PublishMonth),
-		Thumbnail:    lo.ToPtr(d.Thumbnail),
-		Genres:       lo.ToPtr(d.Genres),
-		CreateTime:   d.CreateTime,
-		UpdateTime:   d.CreateTime,
-		IsValid:      d.IsValid,
-	}
-}
-
-func (d *CreateVideo) ConvertFromDto(req *videodto.CreateVideoRequest) *CreateVideo {
-	return &CreateVideo{}
-}
-
 type Video struct {
 	ID                  int64
 	Title               string
@@ -102,6 +62,25 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
 		IsValid:      m.IsValid,
+	}
+}
+
+func (d *Video) ConvertToRepo() *model.Video {
+	return &model.Video{
+		Title:        d.Title,
+		VideoType:    d.VideoType,
+		VoteRate:     lo.ToPtr(d.VoteRate),
+		VoteCount:    lo.ToPtr(d.VoteCount),
+		Region:       lo.ToPtr(d.Region),
+		TotalEpisode: lo.ToPtr(d.TotalEpisode),
+		Description:  lo.ToPtr(d.Description),
+		Ext:          lo.ToPtr(d.Ext),
+		PublishMonth: lo.ToPtr(d.PublishMonth),
+		Thumbnail:    lo.ToPtr(d.Thumbnail),
+		Genres:       lo.ToPtr(strings.Join(d.Genres, ",")),
+		CreateTime:   d.CreateTime,
+		UpdateTime:   d.CreateTime,
+		IsValid:      d.IsValid,
 	}
 }
 

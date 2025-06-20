@@ -46,6 +46,9 @@ const (
 	XiaoYaTransferStorePath       = "/api/fs/get"
 	XiaoYaM3u8Path                = "/api/fs/other"
 	XiaoYaVideoList               = "/api/fs/list"
+	JellyfinVideoList             = "/Users/%s/Items?IncludeItemTypes=%s&Recursive=true&StartIndex=%d&ParentId=%s&Limit=%d"
+	JellyfinVideoDetail           = "/Users/%s/Items/%s"
+	PrimaryThumbnail              = "/Items/%s/Images/Primary"
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
 	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟
 	XiaoYaLoginName               = "admin"                                                            //xiaoya登录账号

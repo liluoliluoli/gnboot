@@ -13,7 +13,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
-	"github.com/liluoliluoli/gnboot/internal/integration/dto"
+	"github.com/liluoliluoli/gnboot/internal/integration/xiaoyadto"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/redis/go-redis/v9"
@@ -114,14 +114,14 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clie
 	}
 	boxIp, _ := array_util.GetHashElement(boxIps, clientIp)
 
-	transferStoreResult, err := httpclient_util.DoPost[dto.TransferStoreReq, dto.XiaoyaResult[dto.TransferStoreResp]](ctx, boxIp+constant.XiaoYaTransferStorePath, constant.XiaoYaToken, &dto.TransferStoreReq{
+	transferStoreResult, err := httpclient_util.DoPost[xiaoyadto.TransferStoreReq, xiaoyadto.XiaoyaResult[xiaoyadto.TransferStoreResp]](ctx, boxIp+constant.XiaoYaTransferStorePath, constant.XiaoYaToken, &xiaoyadto.TransferStoreReq{
 		Path:     xiaoyaPath,
 		Password: "",
 	})
 	_, ok := err.(*errors.Error)
 	if ok {
 		//请求登录接口获取token
-		loginResult, err := httpclient_util.DoPost[dto.LoginReq, dto.XiaoyaResult[dto.LoginResp]](ctx, boxIp+constant.XiaoYaLoginPath, constant.XiaoYaToken, &dto.LoginReq{
+		loginResult, err := httpclient_util.DoPost[xiaoyadto.LoginReq, xiaoyadto.XiaoyaResult[xiaoyadto.LoginResp]](ctx, boxIp+constant.XiaoYaLoginPath, constant.XiaoYaToken, &xiaoyadto.LoginReq{
 			Username: constant.XiaoYaLoginName,
 			Password: constant.XiaoYaLoginPassword,
 			OtpCode:  "",
@@ -141,7 +141,7 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clie
 		return "", 0, gerror.ErrInternal(ctx, "获取播放地址转存失败")
 	}
 
-	m3u8Result, err := httpclient_util.DoPost[dto.M3u8Req, dto.XiaoyaResult[dto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, constant.XiaoYaToken, &dto.M3u8Req{
+	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, constant.XiaoYaToken, &xiaoyadto.M3u8Req{
 		Path:     xiaoyaPath,
 		Password: "",
 		Method:   "video_preview",

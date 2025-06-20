@@ -62,10 +62,13 @@ func DoPost[R, T any](ctx context.Context, url string, token string, body *R) (*
 	return unmarshal, nil
 }
 
-func DoGet[T any](ctx context.Context, url string) (*T, error) {
+func DoGet[T any](ctx context.Context, url string, headerMap map[string]string) (*T, error) {
 	httpClient := GetHttpClient()
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
+	for key, value := range headerMap {
+		headers.Set(key, value)
+	}
 	response, err := httpClient.Get(url, headers)
 	if err != nil {
 		return nil, err

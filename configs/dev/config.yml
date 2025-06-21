@@ -1,6 +1,3 @@
-xiaoyaVideoSyncCategory: '/电影/4K系列::3227ce1e069754c594af25ea66d69fc7::Movie' #多个目录逗号分隔，::前面是小雅的path，中间是jellyfin的path id，后面是影片类型
-jellyfinDefaultUserId: '197cdadc079246009b22c76fe14f609e'
-jellyfinDefaultToken: 'MediaBrowser Client="Jellyfin Web", Device="Chrome", DeviceId="TW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTVfNykgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNy4wLjAuMCBTYWZhcmkvNTM3LjM2fDE3NTAzOTQ0NzgwMjA1", Version="10.8.10", Token="a0484d5eeef244cdbedd6a04abb7d654"'
 server:
   prod: false
   machineId: ''

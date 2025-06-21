@@ -18,9 +18,26 @@ const RK_UserWatchCountPrefix = "uwc_%s"
 const RK_Notice = "notice"
 const HK_NoticeTitle = "title"
 const HK_NoticeContent = "content"
-const RK_BoxIps = "boxips"
-const Key_XiaoYaBoxIp = "xiaoYaBoxIp"
-const Key_JellyfinBoxIp = "jellyfinBoxIp"
+const RK_Configs = "configs"
+
+type Key = string
+
+const (
+	Key_BoxIpMapping     SubKey = "boxIpMapping"
+	Key_GenreMapping     SubKey = "genreMapping"
+	Key_RegionMapping    SubKey = "regionMapping"
+	Key_VideoSyncMapping SubKey = "videoSyncMapping"
+)
+
+type SubKey = string
+
+const (
+	SubKey_XiaoYaBoxIp             SubKey = "xiaoYaBoxIp"
+	SubKey_JellyfinBoxIp           SubKey = "jellyfinBoxIp"
+	SubKey_XiaoyaVideoSyncCategory SubKey = "xiaoyaVideoSyncCategory"
+	SubKey_JellyfinDefaultUserId   SubKey = "jellyfinDefaultUserId"
+	SubKey_JellyfinDefaultToken    SubKey = "jellyfinDefaultToken"
+)
 
 const CTX_UserName = "CTX_UserName"
 const CTX_SessionToken = "CTX_SessionToken"

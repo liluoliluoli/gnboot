@@ -55,9 +55,9 @@ additional_properties:
         body : "*"
       };
     }
-    rpc UpdateBoxIps(UpdateBoxIpsRequest) returns (google.protobuf.Empty) {
+    rpc UpdateConfigs(UpdateConfigRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/api/test/boxips/update"
+        post : "/api/test/config/update"
         body : "*"
       };
     }
@@ -79,11 +79,9 @@ additional_properties:
     int32 id = 1;
   }
 
-message UpdateBoxIpsRequest {
-  repeated BoxIps boxIps = 1;
-}
-
-message BoxIps {
-    string xiaoYaBoxIp = 1;
-    string jellyfinBoxIp = 2;
+message UpdateConfigRequest {
+  map<string, string> boxIpMapping = 1;
+  map<string, string> genreMapping = 2;
+  map<string, string> regionMapping = 3;
+  map<string, string> videoSyncMapping = 4;
 }

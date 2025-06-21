@@ -38,12 +38,12 @@ func (s *EpisodeProvider) GetEpisode(ctx context.Context, req *episode.GetEpisod
 	return res.ConvertToDto(), nil
 }
 
-func (s *EpisodeProvider) UpdateBoxIps(ctx context.Context, req *episode.UpdateBoxIpsRequest) (*emptypb.Empty, error) {
-	marshalString, err := json_util.MarshalString(req.BoxIps)
+func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.UpdateConfigRequest) (*emptypb.Empty, error) {
+	marshalString, err := json_util.MarshalString(req)
 	if err != nil {
 		return nil, err
 	}
-	err = s.episode.UpdateBoxIps(ctx, marshalString)
+	err = s.episode.UpdateConfigs(ctx, marshalString)
 	if err != nil {
 		return nil, err
 	}

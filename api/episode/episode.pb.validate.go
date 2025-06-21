@@ -287,76 +287,50 @@ var _ interface {
 	ErrorName() string
 } = GetEpisodeRequestValidationError{}
 
-// Validate checks the field values on UpdateBoxIpsRequest with the rules
+// Validate checks the field values on UpdateConfigRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateBoxIpsRequest) Validate() error {
+func (m *UpdateConfigRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateBoxIpsRequest with the rules
+// ValidateAll checks the field values on UpdateConfigRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateBoxIpsRequestMultiError, or nil if none found.
-func (m *UpdateBoxIpsRequest) ValidateAll() error {
+// UpdateConfigRequestMultiError, or nil if none found.
+func (m *UpdateConfigRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateBoxIpsRequest) validate(all bool) error {
+func (m *UpdateConfigRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	for idx, item := range m.GetBoxIps() {
-		_, _ = idx, item
+	// no validation rules for BoxIpMapping
 
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateBoxIpsRequestValidationError{
-						field:  fmt.Sprintf("BoxIps[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateBoxIpsRequestValidationError{
-						field:  fmt.Sprintf("BoxIps[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateBoxIpsRequestValidationError{
-					field:  fmt.Sprintf("BoxIps[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
+	// no validation rules for GenreMapping
 
-	}
+	// no validation rules for RegionMapping
+
+	// no validation rules for VideoSyncMapping
 
 	if len(errors) > 0 {
-		return UpdateBoxIpsRequestMultiError(errors)
+		return UpdateConfigRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateBoxIpsRequestMultiError is an error wrapping multiple validation
-// errors returned by UpdateBoxIpsRequest.ValidateAll() if the designated
+// UpdateConfigRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateConfigRequest.ValidateAll() if the designated
 // constraints aren't met.
-type UpdateBoxIpsRequestMultiError []error
+type UpdateConfigRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateBoxIpsRequestMultiError) Error() string {
+func (m UpdateConfigRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -365,11 +339,11 @@ func (m UpdateBoxIpsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateBoxIpsRequestMultiError) AllErrors() []error { return m }
+func (m UpdateConfigRequestMultiError) AllErrors() []error { return m }
 
-// UpdateBoxIpsRequestValidationError is the validation error returned by
-// UpdateBoxIpsRequest.Validate if the designated constraints aren't met.
-type UpdateBoxIpsRequestValidationError struct {
+// UpdateConfigRequestValidationError is the validation error returned by
+// UpdateConfigRequest.Validate if the designated constraints aren't met.
+type UpdateConfigRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -377,24 +351,24 @@ type UpdateBoxIpsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateBoxIpsRequestValidationError) Field() string { return e.field }
+func (e UpdateConfigRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateBoxIpsRequestValidationError) Reason() string { return e.reason }
+func (e UpdateConfigRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateBoxIpsRequestValidationError) Cause() error { return e.cause }
+func (e UpdateConfigRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateBoxIpsRequestValidationError) Key() bool { return e.key }
+func (e UpdateConfigRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateBoxIpsRequestValidationError) ErrorName() string {
-	return "UpdateBoxIpsRequestValidationError"
+func (e UpdateConfigRequestValidationError) ErrorName() string {
+	return "UpdateConfigRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateBoxIpsRequestValidationError) Error() string {
+func (e UpdateConfigRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -406,14 +380,14 @@ func (e UpdateBoxIpsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateBoxIpsRequest.%s: %s%s",
+		"invalid %sUpdateConfigRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateBoxIpsRequestValidationError{}
+var _ error = UpdateConfigRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -421,106 +395,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateBoxIpsRequestValidationError{}
-
-// Validate checks the field values on BoxIps with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BoxIps) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BoxIps with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in BoxIpsMultiError, or nil if none found.
-func (m *BoxIps) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BoxIps) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for XiaoYaBoxIp
-
-	// no validation rules for JellyfinBoxIp
-
-	if len(errors) > 0 {
-		return BoxIpsMultiError(errors)
-	}
-
-	return nil
-}
-
-// BoxIpsMultiError is an error wrapping multiple validation errors returned by
-// BoxIps.ValidateAll() if the designated constraints aren't met.
-type BoxIpsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BoxIpsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BoxIpsMultiError) AllErrors() []error { return m }
-
-// BoxIpsValidationError is the validation error returned by BoxIps.Validate if
-// the designated constraints aren't met.
-type BoxIpsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BoxIpsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BoxIpsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BoxIpsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BoxIpsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BoxIpsValidationError) ErrorName() string { return "BoxIpsValidationError" }
-
-// Error satisfies the builtin error interface
-func (e BoxIpsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBoxIps.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BoxIpsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BoxIpsValidationError{}
+} = UpdateConfigRequestValidationError{}

@@ -20,8 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EpisodeRemoteService_GetEpisode_FullMethodName   = "/gnboot.EpisodeRemoteService/GetEpisode"
-	EpisodeRemoteService_UpdateBoxIps_FullMethodName = "/gnboot.EpisodeRemoteService/UpdateBoxIps"
+	EpisodeRemoteService_GetEpisode_FullMethodName    = "/gnboot.EpisodeRemoteService/GetEpisode"
+	EpisodeRemoteService_UpdateConfigs_FullMethodName = "/gnboot.EpisodeRemoteService/UpdateConfigs"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
@@ -29,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EpisodeRemoteServiceClient interface {
 	GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error)
-	UpdateBoxIps(ctx context.Context, in *UpdateBoxIpsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateConfigs(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -49,9 +49,9 @@ func (c *episodeRemoteServiceClient) GetEpisode(ctx context.Context, in *GetEpis
 	return out, nil
 }
 
-func (c *episodeRemoteServiceClient) UpdateBoxIps(ctx context.Context, in *UpdateBoxIpsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *episodeRemoteServiceClient) UpdateConfigs(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, EpisodeRemoteService_UpdateBoxIps_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_UpdateConfigs_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *episodeRemoteServiceClient) UpdateBoxIps(ctx context.Context, in *Updat
 // for forward compatibility
 type EpisodeRemoteServiceServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
-	UpdateBoxIps(context.Context, *UpdateBoxIpsRequest) (*emptypb.Empty, error)
+	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -74,8 +74,8 @@ type UnimplementedEpisodeRemoteServiceServer struct {
 func (UnimplementedEpisodeRemoteServiceServer) GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEpisode not implemented")
 }
-func (UnimplementedEpisodeRemoteServiceServer) UpdateBoxIps(context.Context, *UpdateBoxIpsRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateBoxIps not implemented")
+func (UnimplementedEpisodeRemoteServiceServer) UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfigs not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -108,20 +108,20 @@ func _EpisodeRemoteService_GetEpisode_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EpisodeRemoteService_UpdateBoxIps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateBoxIpsRequest)
+func _EpisodeRemoteService_UpdateConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EpisodeRemoteServiceServer).UpdateBoxIps(ctx, in)
+		return srv.(EpisodeRemoteServiceServer).UpdateConfigs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EpisodeRemoteService_UpdateBoxIps_FullMethodName,
+		FullMethod: EpisodeRemoteService_UpdateConfigs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EpisodeRemoteServiceServer).UpdateBoxIps(ctx, req.(*UpdateBoxIpsRequest))
+		return srv.(EpisodeRemoteServiceServer).UpdateConfigs(ctx, req.(*UpdateConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -138,8 +138,8 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EpisodeRemoteService_GetEpisode_Handler,
 		},
 		{
-			MethodName: "UpdateBoxIps",
-			Handler:    _EpisodeRemoteService_UpdateBoxIps_Handler,
+			MethodName: "UpdateConfigs",
+			Handler:    _EpisodeRemoteService_UpdateConfigs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

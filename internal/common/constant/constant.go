@@ -55,7 +55,8 @@ const (
 )
 
 var (
-	XiaoYaToken string = ""
+	XiaoYaToken string                       = ""
+	ConfigMap   map[string]map[string]string = make(map[string]map[string]string)
 )
 
 const (

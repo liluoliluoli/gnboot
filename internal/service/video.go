@@ -44,7 +44,7 @@ func NewVideoService(c *conf.Bootstrap,
 func (s *VideoService) Create(ctx context.Context, item *sdomain.Video) error {
 	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoRepo.Create(ctx, tx, item)
+			return s.videoRepo.Create(ctx, tx, item.ConvertToRepo())
 		})
 		if err != nil {
 			return err

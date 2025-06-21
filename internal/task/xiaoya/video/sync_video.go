@@ -15,6 +15,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
+	"math"
 	"path"
 	"path/filepath"
 	"strings"
@@ -177,8 +178,12 @@ func (t *XiaoyaVideoTask) deepLoopJellyfinPath(ctx context.Context, domain, pare
 			}
 			filePath, fileName := splitJellyfinPath(videoDetailResp.MediaSources[0].Path)
 			existEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, filePath, fileName)
-			if err != nil || len(existEpisode) == 0 {
+			if err != nil {
 				log.Errorf("查询episode失败: %v，跳过当前文件", err)
+				continue
+			}
+			if len(existEpisode) == 0 {
+				log.Errorf("查询episode为空: filePath %s fileName %s", filePath, fileName)
 				continue
 			}
 			if existEpisode[0].VideoId == 0 {
@@ -189,16 +194,16 @@ func (t *XiaoyaVideoTask) deepLoopJellyfinPath(ctx context.Context, domain, pare
 				}
 				err = gen.Use(t.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 					if video == nil {
-						video = &sdomain.Video{
+						video = &model.Video{
 							Title:              videoDetailResp.Name,
 							VideoType:          mediaType,
-							VoteRate:           float32(videoDetailResp.GoodRating),
-							Region:             strings.Join(videoDetailResp.Regions, ","),
-							Description:        videoDetailResp.Overview,
-							PublishDay:         time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate),
-							Thumbnail:          fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id),
-							Genres:             videoDetailResp.Genres,
-							JellyfinId:         videoDetailResp.Id,
+							VoteRate:           lo.ToPtr(float32(math.Round(videoDetailResp.GoodRating*10) / 10)),
+							Region:             lo.ToPtr(strings.Join(t.replaceRegions(ctx, videoDetailResp.Regions), ",")),
+							Description:        lo.ToPtr(videoDetailResp.Overview),
+							PublishDay:         lo.ToPtr(time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate)),
+							Thumbnail:          lo.ToPtr(fmt.Sprintf(constant.PrimaryThumbnail, videoDetailResp.Id)),
+							Genres:             lo.ToPtr(strings.Join(t.replaceGenres(ctx, videoDetailResp.Genres), ",")),
+							JellyfinID:         videoDetailResp.Id,
 							JellyfinCreateTime: time_util.ParseUtcTime(videoDetailResp.DateCreated),
 						}
 						err := t.videoRepo.Create(ctx, nil, video)
@@ -245,4 +250,33 @@ func splitJellyfinPath(url string) (string, string) {
 	filename := filepath.Base(url) // "蜘蛛侠：英雄无归.Spider-Man.No.Way.Home.2021.UHD.BluRay.2160p.x265.10bit.DoVi.2Audios.mUHD-FRDS.mkv"
 
 	return path, filename
+}
+
+func (t *XiaoyaVideoTask) replaceRegions(ctx context.Context, regions []string) []string {
+	return lo.Map(regions, func(item string, index int) string {
+		newRegion, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_RegionMapping, item)
+		if err != nil {
+			return item
+		}
+		if newRegion == "" {
+			return item
+		}
+		return newRegion
+	})
+}
+
+func (t *XiaoyaVideoTask) replaceGenres(ctx context.Context, genres []string) []string {
+	temp := lo.Map(genres, func(item string, index int) string {
+		newGenre, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_GenreMapping, item)
+		if err != nil {
+			return ""
+		}
+		if newGenre == "" {
+			return ""
+		}
+		return newGenre
+	})
+	return lo.Filter(temp, func(item string, index int) bool {
+		return item != ""
+	})
 }

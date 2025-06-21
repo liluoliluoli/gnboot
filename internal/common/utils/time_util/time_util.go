@@ -11,7 +11,7 @@ func FormatStrToYYYYMMDD(timeStr string) string {
 	if err != nil {
 		return ""
 	}
-	return t.Format("200601")
+	return t.Format("20060101")
 }
 
 func ParseUtcTime(timeStr string) time.Time {

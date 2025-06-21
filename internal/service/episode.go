@@ -176,5 +176,6 @@ func (s *EpisodeService) UpdateConfigs(ctx context.Context, configs string) erro
 	if cmd.Err() != nil {
 		return cmd.Err()
 	}
+	s.configRepo.InitConfig(ctx)
 	return nil
 }

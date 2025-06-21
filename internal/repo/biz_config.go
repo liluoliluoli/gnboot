@@ -13,15 +13,22 @@ type ConfigRepo struct {
 }
 
 func NewConfigRepo(client redis.UniversalClient) *ConfigRepo {
-	return &ConfigRepo{
+	config := &ConfigRepo{
 		client: client,
 	}
+	config.InitConfig(context.Background())
+	return config
 }
 
 func (s *ConfigRepo) GetConfigBySubKey(ctx context.Context, key string, subKey string) (string, error) {
+	return constant.ConfigMap[key][subKey], nil
+}
+
+func (s *ConfigRepo) InitConfig(ctx context.Context) error {
 	configMap, err := json_util.Unmarshal[map[string]map[string]string](gerror.HandleRedisStringNotFound(s.client.Get(ctx, constant.RK_Configs).Val()))
 	if err != nil {
-		return "", err
+		return err
 	}
-	return configMap[key][subKey], nil
+	constant.ConfigMap = configMap
+	return nil
 }

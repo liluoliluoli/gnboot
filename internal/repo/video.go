@@ -36,12 +36,12 @@ func (r *VideoRepo) Get(ctx context.Context, id int64) (*sdomain.Video, error) {
 	return (&sdomain.Video{}).ConvertFromRepo(find), nil
 }
 
-func (r *VideoRepo) GetByJellyfinId(ctx context.Context, jellyfinId string) (*sdomain.Video, error) {
+func (r *VideoRepo) GetByJellyfinId(ctx context.Context, jellyfinId string) (*model.Video, error) {
 	find, err := r.do(ctx, nil).Where(gen.Video.JellyfinID.Eq(jellyfinId)).First()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}
-	return (&sdomain.Video{}).ConvertFromRepo(find), nil
+	return find, nil
 }
 
 func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*sdomain.PageResult[*sdomain.Video], error) {
@@ -89,8 +89,8 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 	}, nil
 }
 
-func (r *VideoRepo) Create(ctx context.Context, tx *gen.Query, movie *sdomain.Video) error {
-	err := r.do(ctx, tx).Save(movie.ConvertToRepo())
+func (r *VideoRepo) Create(ctx context.Context, tx *gen.Query, movie *model.Video) error {
+	err := r.do(ctx, tx).Save(movie)
 	if err != nil {
 		return err
 	}

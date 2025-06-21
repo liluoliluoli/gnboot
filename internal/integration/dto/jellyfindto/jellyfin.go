@@ -36,12 +36,32 @@ type VideoDetailResp struct {
 	Characters     []*People      `json:"People"`
 	MediaType      string         `json:"MediaType"` //Video
 	DateCreated    string         `json:"DateCreated"`
+	IsFolder       bool           `json:"IsFolder"`
+	SeriesId       string         `json:"SeriesId"`
+	SeriesName     string         `json:"SeriesName"`
+	SeasonId       string         `json:"SeasonId"`
+	SeasonName     string         `json:"SeasonName"`
 }
 
 type MediaSource struct {
-	Path     string `json:"Path"`
-	Name     string `json:"Name"`
-	Protocol string `json:"Protocol"`
+	Path         string         `json:"Path"`
+	Name         string         `json:"Name"`
+	Protocol     string         `json:"Protocol"`
+	MediaStreams []*MediaStream `json:"MediaStreams"`
+}
+
+type MediaStream struct {
+	Codec                string `json:"Codec"`
+	Language             string `json:"Language"`
+	TimeBase             string `json:"TimeBase"`
+	DisplayTitle         string `json:"DisplayTitle"`
+	IsForced             bool   `json:"IsForced"`
+	Type                 string `json:"Type"`
+	Index                int64  `json:"Index"`
+	Score                int64  `json:"Score"`
+	IsExternal           bool   `json:"IsExternal"`
+	IsTextSubtitleStream bool   `json:"IsTextSubtitleStream"`
+	Path                 string `json:"Path"`
 }
 
 type People struct {
@@ -49,4 +69,36 @@ type People struct {
 	Id   string `json:"Id"`
 	Role string `json:"Role"`
 	Type string `json:"Type"` //Actor,Director
+}
+
+type SeasonListResp struct {
+	TotalRecordCount int64         `json:"TotalRecordCount"`
+	StartIndex       int64         `json:"StartIndex"`
+	Items            []*SeasonItem `json:"Items"`
+}
+
+type SeasonItem struct {
+	Name       string `json:"Name"`
+	Id         string `json:"Id"`
+	IsFolder   bool   `json:"IsFolder"`
+	Type       string `json:"Type"`
+	SeriesName string `json:"SeriesName"`
+	SeriesId   string `json:"SeriesId"`
+}
+
+type EpisodeListResp struct {
+	TotalRecordCount int64          `json:"TotalRecordCount"`
+	StartIndex       int64          `json:"StartIndex"`
+	Items            []*EpisodeItem `json:"Items"`
+}
+
+type EpisodeItem struct {
+	Name       string `json:"Name"`
+	Id         string `json:"Id"`
+	IsFolder   bool   `json:"IsFolder"`
+	Type       string `json:"Type"`
+	SeriesName string `json:"SeriesName"`
+	SeriesId   string `json:"SeriesId"`
+	SeasonId   string `json:"SeasonId"`
+	SeasonName string `json:"SeasonName"`
 }

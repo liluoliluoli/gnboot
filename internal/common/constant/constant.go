@@ -64,12 +64,15 @@ const (
 	XiaoYaTransferStorePath       = "/api/fs/get"
 	XiaoYaM3u8Path                = "/api/fs/other"
 	XiaoYaVideoList               = "/api/fs/list"
-	JellyfinVideoList             = "/Users/%s/Items?IncludeItemTypes=%s&Recursive=true&StartIndex=%d&ParentId=%s&Limit=%d"
+	JellyfinVideoList             = "/Users/%s/Items?Recursive=true&StartIndex=%d&ParentId=%s&Limit=%d"
 	JellyfinVideoDetail           = "/Users/%s/Items/%s"
+	JellyfinSeaonsList            = "/Shows/%s/Seasons"
+	JellyfinEpisodesList          = "/Shows/%s/Episodes"
 	PrimaryThumbnail              = "/Items/%s/Images/Primary"
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
 	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟
 	XiaoYaLoginName               = "admin"                                                            //xiaoya登录账号
 	XiaoYaLoginPassword           = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f" //xiaoya登录密码
 	Platform                      = "aliyun"
+	PageSize                      = 100
 )

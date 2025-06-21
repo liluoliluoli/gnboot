@@ -63,7 +63,7 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	httpServer := server.NewHTTPServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	userPackageCheckTask := user.NewUserPackageCheckTask(c, userService)
-	xiaoyaVideoTask := video.NewXiaoyaVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo)
+	xiaoyaVideoTask := video.NewXiaoyaVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo, actorRepo, videoActorMappingRepo)
 	job := server.NewJob(c, userPackageCheckTask, xiaoyaVideoTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {

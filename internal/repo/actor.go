@@ -6,7 +6,6 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 )
 
 type ActorRepo struct {
@@ -55,13 +54,10 @@ func (r *ActorRepo) FindAll(ctx context.Context) ([]*sdomain.Actor, error) {
 	}), nil
 }
 
-func (r *ActorRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateVideo) error {
-	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
+func (r *ActorRepo) Create(ctx context.Context, tx *gen.Query, actor *model.Actor) error {
+	err := r.do(ctx, tx).Save(actor)
 	if err != nil {
 		return err
-	}
-	if updates.RowsAffected != 1 {
-		return gorm.ErrDuplicatedKey
 	}
 	return nil
 }

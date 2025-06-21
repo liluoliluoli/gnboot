@@ -35,3 +35,19 @@ func (r *EpisodeSubtitleMappingRepo) FindByEpisodeId(ctx context.Context, episod
 		return (&sdomain.EpisodeSubtitleMapping{}).ConvertFromRepo(item)
 	}), nil
 }
+
+func (r *EpisodeSubtitleMappingRepo) Delete(ctx context.Context, tx *gen.Query, episodeId int64) error {
+	_, err := r.do(ctx, tx).Where(gen.EpisodeSubtitleMapping.EpisodeID.Eq(episodeId)).Delete()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *EpisodeSubtitleMappingRepo) Create(ctx context.Context, tx *gen.Query, mapping *model.EpisodeSubtitleMapping) error {
+	err := r.do(ctx, tx).Save(mapping)
+	if err != nil {
+		return err
+	}
+	return nil
+}

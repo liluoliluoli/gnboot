@@ -45,3 +45,11 @@ func (r *VideoActorMappingRepo) FindByActorId(ctx context.Context, actorId int64
 		return (&sdomain.VideoActorMapping{}).ConvertFromRepo(item)
 	}), nil
 }
+
+func (r *VideoActorMappingRepo) Create(ctx context.Context, tx *gen.Query, videoActorMapping *model.VideoActorMapping) error {
+	err := r.do(ctx, tx).Save(videoActorMapping)
+	if err != nil {
+		return err
+	}
+	return nil
+}

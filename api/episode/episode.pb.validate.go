@@ -317,6 +317,8 @@ func (m *UpdateConfigRequest) validate(all bool) error {
 
 	// no validation rules for VideoSyncMapping
 
+	// no validation rules for PathVideoTypeMapping
+
 	if len(errors) > 0 {
 		return UpdateConfigRequestMultiError(errors)
 	}

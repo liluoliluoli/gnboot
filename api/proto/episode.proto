@@ -84,4 +84,5 @@ message UpdateConfigRequest {
   map<string, string> genreMapping = 2;
   map<string, string> regionMapping = 3;
   map<string, string> videoSyncMapping = 4;
+  map<string, string> pathVideoTypeMapping = 5;
 }

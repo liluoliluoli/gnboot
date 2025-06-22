@@ -23,10 +23,11 @@ const RK_Configs = "configs"
 type Key = string
 
 const (
-	Key_BoxIpMapping     SubKey = "boxIpMapping"
-	Key_GenreMapping     SubKey = "genreMapping"
-	Key_RegionMapping    SubKey = "regionMapping"
-	Key_VideoSyncMapping SubKey = "videoSyncMapping"
+	Key_BoxIpMapping         SubKey = "boxIpMapping"
+	Key_GenreMapping         SubKey = "genreMapping"
+	Key_RegionMapping        SubKey = "regionMapping"
+	Key_VideoSyncMapping     SubKey = "videoSyncMapping"
+	Key_PathVideoTypeMapping SubKey = "pathVideoTypeMapping"
 )
 
 type SubKey = string
@@ -64,10 +65,10 @@ const (
 	XiaoYaTransferStorePath       = "/api/fs/get"
 	XiaoYaM3u8Path                = "/api/fs/other"
 	XiaoYaVideoList               = "/api/fs/list"
-	JellyfinVideoList             = "/Users/%s/Items?Recursive=true&StartIndex=%d&ParentId=%s&Limit=%d"
+	JellyfinVideoList             = "/Users/%s/Items?Recursive=false&StartIndex=%d&ParentId=%s&Limit=%d"
 	JellyfinVideoDetail           = "/Users/%s/Items/%s"
 	JellyfinSeaonsList            = "/Shows/%s/Seasons"
-	JellyfinEpisodesList          = "/Shows/%s/Episodes"
+	JellyfinEpisodesList          = "/Shows/%s/Episodes?seasonId=%s"
 	JellyfinPlayInfo              = "/Items/%s/PlaybackInfo?UserId=%s"
 	PrimaryThumbnail              = "/Items/%s/Images/Primary"
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟

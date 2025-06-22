@@ -68,6 +68,7 @@ const (
 	JellyfinVideoDetail           = "/Users/%s/Items/%s"
 	JellyfinSeaonsList            = "/Shows/%s/Seasons"
 	JellyfinEpisodesList          = "/Shows/%s/Episodes"
+	JellyfinPlayInfo              = "/Items/%s/PlaybackInfo?UserId=%s"
 	PrimaryThumbnail              = "/Items/%s/Images/Primary"
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
 	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟

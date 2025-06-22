@@ -88,14 +88,16 @@ func (t *XiaoyaVideoTask) Process(task *sdomain.Task) error {
 
 func (t *XiaoyaVideoTask) deepLoopXiaoYaPath(ctx context.Context, domain, currentPath, parentPath string) error {
 	page := int32(1)
+	headerMap := make(map[string]string)
+	headerMap["Authorization"] = constant.XiaoYaToken
 	for {
-		result, err := httpclient_util.DoPost[xiaoyadto.VideoListReq, xiaoyadto.XiaoyaResult[xiaoyadto.VideoListResp]](ctx, domain+constant.XiaoYaVideoList, "", &xiaoyadto.VideoListReq{
+		result, err := httpclient_util.DoPost[xiaoyadto.VideoListReq, xiaoyadto.XiaoyaResult[xiaoyadto.VideoListResp]](ctx, domain+constant.XiaoYaVideoList, &xiaoyadto.VideoListReq{
 			Path:     currentPath,
 			Password: "",
 			Page:     page,
 			PerPage:  constant.PageSize,
 			Refresh:  false,
-		})
+		}, headerMap)
 
 		if err != nil {
 			return fmt.Errorf("xiaoya请求路径 %s 第 %d 页失败: %v", currentPath, page, err)
@@ -363,7 +365,14 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 					}
 				}
 				//字幕处理
-				for _, mediaSource := range videoDetailResp.MediaSources {
+				result, err := httpclient_util.DoPost[any, jellyfindto.PlaybackInfo](ctx, domain+fmt.Sprintf(constant.JellyfinPlayInfo, videoDetailResp.Id, jellyfinDefaultUserId), nil, headerMap)
+				if err != nil {
+					return err
+				}
+				if result == nil {
+					return nil
+				}
+				for _, mediaSource := range result.MediaSources {
 					for _, mediaStream := range mediaSource.MediaStreams {
 						if mediaStream.Type != "Subtitle" {
 							continue
@@ -374,7 +383,7 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 						}
 						err = t.episodeSubtitleMappingRepo.Create(ctx, tx, &model.EpisodeSubtitleMapping{
 							EpisodeID: existEpisode[0].ID,
-							URL:       mediaStream.Path,
+							URL:       mediaStream.DeliveryUrl,
 							Title:     mediaStream.DisplayTitle,
 							Language:  mediaStream.Language,
 							MimeType:  mediaStream.Codec,

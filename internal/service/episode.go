@@ -114,18 +114,20 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clie
 		return "", 0, err
 	}
 	boxIp := array_util.GetHashElement(boxIps, clientIp)
-	transferStoreResult, err := httpclient_util.DoPost[xiaoyadto.TransferStoreReq, xiaoyadto.XiaoyaResult[xiaoyadto.TransferStoreResp]](ctx, boxIp+constant.XiaoYaTransferStorePath, constant.XiaoYaToken, &xiaoyadto.TransferStoreReq{
+	headerMap := make(map[string]string)
+	headerMap["Authorization"] = constant.XiaoYaToken
+	transferStoreResult, err := httpclient_util.DoPost[xiaoyadto.TransferStoreReq, xiaoyadto.XiaoyaResult[xiaoyadto.TransferStoreResp]](ctx, boxIp+constant.XiaoYaTransferStorePath, &xiaoyadto.TransferStoreReq{
 		Path:     xiaoyaPath,
 		Password: "",
-	})
+	}, headerMap)
 	_, ok := err.(*errors.Error)
 	if ok {
 		//请求登录接口获取token
-		loginResult, err := httpclient_util.DoPost[xiaoyadto.LoginReq, xiaoyadto.XiaoyaResult[xiaoyadto.LoginResp]](ctx, boxIp+constant.XiaoYaLoginPath, constant.XiaoYaToken, &xiaoyadto.LoginReq{
+		loginResult, err := httpclient_util.DoPost[xiaoyadto.LoginReq, xiaoyadto.XiaoyaResult[xiaoyadto.LoginResp]](ctx, boxIp+constant.XiaoYaLoginPath, &xiaoyadto.LoginReq{
 			Username: constant.XiaoYaLoginName,
 			Password: constant.XiaoYaLoginPassword,
 			OtpCode:  "",
-		})
+		}, headerMap)
 		if err != nil {
 			return "", 0, err
 		}
@@ -141,11 +143,11 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clie
 		return "", 0, gerror.ErrInternal(ctx, "获取播放地址转存失败")
 	}
 
-	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, constant.XiaoYaToken, &xiaoyadto.M3u8Req{
+	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
 		Path:     xiaoyaPath,
 		Password: "",
 		Method:   "video_preview",
-	})
+	}, headerMap)
 	if err != nil {
 		return "", 0, err
 	}

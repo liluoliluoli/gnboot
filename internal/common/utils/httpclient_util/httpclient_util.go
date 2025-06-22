@@ -31,16 +31,23 @@ func GetHttpClient() *httpclient.Client {
 	return instance
 }
 
-func DoPost[R, T any](ctx context.Context, url string, token string, body *R) (*T, error) {
+func DoPost[R, T any](ctx context.Context, url string, body *R, headerMap map[string]string) (*T, error) {
 	httpClient := GetHttpClient()
 	headers := http.Header{}
 	headers.Set("Content-Type", "application/json")
-	headers.Add("Authorization", token)
-	marshalString, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
+	for key, value := range headerMap {
+		headers.Set(key, value)
 	}
-	response, err := httpClient.Post(url, bytes.NewBuffer(marshalString), headers)
+	var bodyBytes []byte
+	var err error
+	if body != nil {
+		bodyBytes, err = json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	response, err := httpClient.Post(url, bytes.NewBuffer(bodyBytes), headers)
 	if err != nil {
 		return nil, err
 	}

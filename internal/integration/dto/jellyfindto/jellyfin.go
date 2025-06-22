@@ -62,6 +62,7 @@ type MediaStream struct {
 	IsExternal           bool   `json:"IsExternal"`
 	IsTextSubtitleStream bool   `json:"IsTextSubtitleStream"`
 	Path                 string `json:"Path"`
+	DeliveryUrl          string `json:"DeliveryUrl"`
 }
 
 type People struct {
@@ -101,4 +102,8 @@ type EpisodeItem struct {
 	SeriesId   string `json:"SeriesId"`
 	SeasonId   string `json:"SeasonId"`
 	SeasonName string `json:"SeasonName"`
+}
+
+type PlaybackInfo struct {
+	MediaSources []*MediaSource `json:"MediaSources"`
 }

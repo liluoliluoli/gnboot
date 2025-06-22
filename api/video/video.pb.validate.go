@@ -64,7 +64,7 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for VoteRate
 
-	// no validation rules for VoteCount
+	// no validation rules for WatchCount
 
 	// no validation rules for Region
 

@@ -41,6 +41,7 @@ type VideoDetailResp struct {
 	SeriesName     string         `json:"SeriesName"`
 	SeasonId       string         `json:"SeasonId"`
 	SeasonName     string         `json:"SeasonName"`
+	ChildCount     int32          `json:"ChildCount"`
 }
 
 type MediaSource struct {

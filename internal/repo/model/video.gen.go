@@ -16,7 +16,6 @@ type Video struct {
 	Title              string    `gorm:"column:title;type:varchar(1024);not null;comment:标题" json:"title"`
 	VideoType          string    `gorm:"column:video_type;type:varchar(32);not null;comment:影片类型，movie,tvSeries,tvShows,cartoon,record" json:"videoType"`
 	VoteRate           *float32  `gorm:"column:vote_rate;type:float;comment:评分" json:"voteRate"`
-	VoteCount          *int64    `gorm:"column:vote_count;type:bigint;comment:评分数" json:"voteCount"`
 	Region             *string   `gorm:"column:region;type:varchar(32);comment:国家" json:"region"`
 	TotalEpisode       *int32    `gorm:"column:total_episode;type:int;comment:总集数，减去episode的集数判断是否完结" json:"totalEpisode"`
 	Description        *string   `gorm:"column:description;type:varchar(1024);comment:简介" json:"description"`
@@ -30,6 +29,7 @@ type Video struct {
 	Ratio              *string   `gorm:"column:ratio;type:varchar(32);comment:分辨率：1080P，4k，原画" json:"ratio"`
 	JellyfinID         string    `gorm:"column:jellyfin_id;type:varchar(255);not null;comment:jellyfin的id" json:"jellyfinId"`
 	JellyfinCreateTime time.Time `gorm:"column:jellyfin_create_time;type:datetime;not null;comment:jellyfin创建时间" json:"jellyfinCreateTime"`
+	WatchCount         int64     `gorm:"column:watch_count;type:bigint(20) unsigned zerofill;not null;comment:观看次数" json:"watchCount"`
 }
 
 // TableName Video's table name

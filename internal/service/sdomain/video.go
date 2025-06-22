@@ -16,7 +16,7 @@ type Video struct {
 	Title               string
 	VideoType           string
 	VoteRate            float32
-	VoteCount           int64
+	WatchCount          int64
 	Region              string
 	TotalEpisode        int32
 	Description         string
@@ -52,7 +52,7 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		Title:              m.Title,
 		VideoType:          m.VideoType,
 		VoteRate:           lo.FromPtr(m.VoteRate),
-		VoteCount:          lo.FromPtr(m.VoteCount),
+		WatchCount:         m.WatchCount,
 		Region:             lo.FromPtr(m.Region),
 		TotalEpisode:       lo.FromPtr(m.TotalEpisode),
 		Description:        lo.FromPtr(m.Description),
@@ -74,7 +74,7 @@ func (d *Video) ConvertToRepo() *model.Video {
 		Title:              d.Title,
 		VideoType:          d.VideoType,
 		VoteRate:           lo.ToPtr(d.VoteRate),
-		VoteCount:          lo.ToPtr(d.VoteCount),
+		WatchCount:         d.WatchCount,
 		Region:             lo.ToPtr(d.Region),
 		TotalEpisode:       lo.ToPtr(d.TotalEpisode),
 		Description:        lo.ToPtr(d.Description),
@@ -103,7 +103,7 @@ func (d *Video) ConvertToDto() *videodto.Video {
 		Title:        d.Title,
 		VideoType:    d.VideoType,
 		VoteRate:     d.VoteRate,
-		VoteCount:    int32(d.VoteCount),
+		WatchCount:   int32(d.WatchCount),
 		Region:       d.Region,
 		TotalEpisode: d.TotalEpisode,
 		Description:  d.Description,

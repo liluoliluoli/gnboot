@@ -26,6 +26,9 @@ type Episode struct {
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
+	if m == nil {
+		return nil
+	}
 	return &Episode{
 		ID:           m.ID,
 		VideoId:      m.VideoID,

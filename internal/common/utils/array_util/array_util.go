@@ -6,8 +6,9 @@ import (
 )
 
 // GetHashElement 根据客户端ip获取boxip
-func GetHashElement(arr string, clientIp string) string {
-	m := strings.Split(arr, ",")[getIndexByHash(clientIp, len(arr))]
+func GetHashElement(str string, clientIp string) string {
+	arr := strings.Split(str, ",")
+	m := arr[getIndexByHash(clientIp, len(arr))]
 	return m
 }
 

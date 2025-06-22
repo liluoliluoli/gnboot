@@ -16,14 +16,16 @@ import (
 
 type VideoProvider struct {
 	video.UnimplementedVideoRemoteServiceServer
-	video *service.VideoService
-	user  *service.UserService
+	video   *service.VideoService
+	user    *service.UserService
+	episode *service.EpisodeService
 }
 
-func NewVideoProvider(video *service.VideoService, user *service.UserService) *VideoProvider {
+func NewVideoProvider(video *service.VideoService, user *service.UserService, episode *service.EpisodeService) *VideoProvider {
 	return &VideoProvider{
-		video: video,
-		user:  user,
+		video:   video,
+		user:    user,
+		episode: episode,
 	}
 }
 
@@ -41,6 +43,7 @@ func (s *VideoProvider) GetVideo(ctx context.Context, req *video.GetVideoRequest
 	if err != nil {
 		return nil, err
 	}
+	go s.episode.TransferStoreNextEpisodeToAliyun(ctx, res.ID, res.LastPlayedEpisodeId)
 	return res.ConvertToDto(), nil
 }
 

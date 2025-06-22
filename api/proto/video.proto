@@ -97,7 +97,7 @@ additional_properties:
     string title = 2;
     string videoType = 3;
     float voteRate = 4;
-    int32 voteCount = 5;
+    int32 watchCount = 5;
     string region = 6;
     int32 totalEpisode = 7;
     string description = 8;

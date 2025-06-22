@@ -32,7 +32,6 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.Title = field.NewString(tableName, "title")
 	_video.VideoType = field.NewString(tableName, "video_type")
 	_video.VoteRate = field.NewFloat32(tableName, "vote_rate")
-	_video.VoteCount = field.NewInt64(tableName, "vote_count")
 	_video.Region = field.NewString(tableName, "region")
 	_video.TotalEpisode = field.NewInt32(tableName, "total_episode")
 	_video.Description = field.NewString(tableName, "description")
@@ -46,6 +45,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.Ratio = field.NewString(tableName, "ratio")
 	_video.JellyfinID = field.NewString(tableName, "jellyfin_id")
 	_video.JellyfinCreateTime = field.NewTime(tableName, "jellyfin_create_time")
+	_video.WatchCount = field.NewInt64(tableName, "watch_count")
 
 	_video.fillFieldMap()
 
@@ -60,7 +60,6 @@ type video struct {
 	Title              field.String  // 标题
 	VideoType          field.String  // 影片类型，movie,tvSeries,tvShows,cartoon,record
 	VoteRate           field.Float32 // 评分
-	VoteCount          field.Int64   // 评分数
 	Region             field.String  // 国家
 	TotalEpisode       field.Int32   // 总集数，减去episode的集数判断是否完结
 	Description        field.String  // 简介
@@ -74,6 +73,7 @@ type video struct {
 	Ratio              field.String  // 分辨率：1080P，4k，原画
 	JellyfinID         field.String  // jellyfin的id
 	JellyfinCreateTime field.Time    // jellyfin创建时间
+	WatchCount         field.Int64   // 观看次数
 
 	fieldMap map[string]field.Expr
 }
@@ -94,7 +94,6 @@ func (v *video) updateTableName(table string) *video {
 	v.Title = field.NewString(table, "title")
 	v.VideoType = field.NewString(table, "video_type")
 	v.VoteRate = field.NewFloat32(table, "vote_rate")
-	v.VoteCount = field.NewInt64(table, "vote_count")
 	v.Region = field.NewString(table, "region")
 	v.TotalEpisode = field.NewInt32(table, "total_episode")
 	v.Description = field.NewString(table, "description")
@@ -108,6 +107,7 @@ func (v *video) updateTableName(table string) *video {
 	v.Ratio = field.NewString(table, "ratio")
 	v.JellyfinID = field.NewString(table, "jellyfin_id")
 	v.JellyfinCreateTime = field.NewTime(table, "jellyfin_create_time")
+	v.WatchCount = field.NewInt64(table, "watch_count")
 
 	v.fillFieldMap()
 
@@ -135,7 +135,6 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["video_type"] = v.VideoType
 	v.fieldMap["vote_rate"] = v.VoteRate
-	v.fieldMap["vote_count"] = v.VoteCount
 	v.fieldMap["region"] = v.Region
 	v.fieldMap["total_episode"] = v.TotalEpisode
 	v.fieldMap["description"] = v.Description
@@ -149,6 +148,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["ratio"] = v.Ratio
 	v.fieldMap["jellyfin_id"] = v.JellyfinID
 	v.fieldMap["jellyfin_create_time"] = v.JellyfinCreateTime
+	v.fieldMap["watch_count"] = v.WatchCount
 }
 
 func (v video) clone(db *gorm.DB) video {

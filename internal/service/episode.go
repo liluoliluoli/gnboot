@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	errors "github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/array_util"
@@ -83,35 +83,113 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	currentWatchs++
 	s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
 
+	var radio = ""
 	if containPlayUrl {
 		if episode.Url == "" || episode.ExpiredTime == nil || episode.Duration == 0 || episode.ExpiredTime.Sub(time.Now()) < constant.AliyunM3u8EarlyExpireMinutes*time.Minute {
-			clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
-			if err != nil {
-				clientIp = "127.0.0.1"
-			}
-			url, duration, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, clientIp)
+			url, duration, vRadio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
 			if err != nil {
 				return nil, err
 			}
 			episode.Url = url
 			episode.Duration = duration
 			episode.ExpiredTime = lo.ToPtr(time.Now().Add(constant.AliyunM3u8ReallyExpireMinutes * time.Minute))
+			radio = vRadio
 			err = s.episodeRepo.Updates(ctx, nil, episode)
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
+	go func() {
+		err := s.videoRepo.AddWatchCount(ctx, nil, episode.VideoId, radio)
+		if err != nil {
+			log.Errorf("增加总观看次数失败: %v", err)
+		}
+	}()
+	go func() {
+		err := s.TransferStoreNextEpisodeToAliyun(ctx, episode.VideoId, episode.ID)
+		if err != nil {
+			log.Errorf("转存阿里云失败: %v", err)
+		}
+	}()
 	return episode, nil
 }
 
-func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clientIp string) (string, int64, error) {
+func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (string, int64, string, error) {
 	//if len(s.c.Dynamic.BoxServerIps) == 0 {
 	//	return "", 0, nil
 	//}
+	err := s.transferStoreToAliyun(ctx, xiaoyaPath)
+	if err != nil {
+		return "", 0, "", err
+	}
+	clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
+	if err != nil {
+		clientIp = "127.0.0.1"
+	}
 	boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
 	if err != nil {
-		return "", 0, err
+		return "", 0, "", err
+	}
+	boxIp := array_util.GetHashElement(boxIps, clientIp)
+	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
+		Path:     xiaoyaPath,
+		Password: "",
+		Method:   "video_preview",
+	}, nil)
+	if err != nil {
+		return "", 0, "", err
+	}
+	if m3u8Result == nil || m3u8Result.Code != 200 || m3u8Result.Data == nil || m3u8Result.Data.VideoPreviewPlayInfo == nil || len(m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList) == 0 {
+		return "", 0, "", gerror.ErrInternal(ctx, "获取播放地址失败")
+	}
+
+	var m3u8Url = ""
+	var radio = ""
+	for _, item := range m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList {
+		if item.TemplateId == "LD" && item.Status == "finished" && item.Url != "" {
+			m3u8Url = item.Url
+			radio = item.TemplateId
+		}
+		if item.TemplateId == "SD" && item.Status == "finished" && item.Url != "" {
+			m3u8Url = item.Url
+			radio = item.TemplateId
+		}
+		if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
+			m3u8Url = item.Url
+			radio = item.TemplateId
+		}
+		if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
+			m3u8Url = item.Url
+			radio = item.TemplateId
+		}
+	}
+	return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil
+}
+
+func (s *EpisodeService) TransferStoreNextEpisodeToAliyun(ctx context.Context, videoId int64, currentEpisodeId int64) error {
+	episode, err := s.episodeRepo.Next(ctx, videoId, currentEpisodeId)
+	if err != nil {
+		return err
+	}
+	if episode == nil {
+		return nil
+	}
+	err = s.transferStoreToAliyun(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *EpisodeService) transferStoreToAliyun(ctx context.Context, xiaoyaPath string) error {
+	clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
+	if err != nil {
+		clientIp = "127.0.0.1"
+	}
+	boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
+	if err != nil {
+		return err
 	}
 	boxIp := array_util.GetHashElement(boxIps, clientIp)
 	headerMap := make(map[string]string)
@@ -120,57 +198,13 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, clie
 		Path:     xiaoyaPath,
 		Password: "",
 	}, headerMap)
-	_, ok := err.(*errors.Error)
-	if ok {
-		//请求登录接口获取token
-		loginResult, err := httpclient_util.DoPost[xiaoyadto.LoginReq, xiaoyadto.XiaoyaResult[xiaoyadto.LoginResp]](ctx, boxIp+constant.XiaoYaLoginPath, &xiaoyadto.LoginReq{
-			Username: constant.XiaoYaLoginName,
-			Password: constant.XiaoYaLoginPassword,
-			OtpCode:  "",
-		}, headerMap)
-		if err != nil {
-			return "", 0, err
-		}
-		if loginResult != nil && loginResult.Code == 200 && loginResult.Data.Token != "" {
-			constant.XiaoYaToken = loginResult.Data.Token
-			return s.getPlayUrl(ctx, xiaoyaPath, clientIp)
-		}
-	}
 	if err != nil {
-		return "", 0, err
+		return err
 	}
 	if transferStoreResult == nil || transferStoreResult.Code != 200 {
-		return "", 0, gerror.ErrInternal(ctx, "获取播放地址转存失败")
+		return gerror.ErrInternal(ctx, "获取播放地址转存失败")
 	}
-
-	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
-		Path:     xiaoyaPath,
-		Password: "",
-		Method:   "video_preview",
-	}, headerMap)
-	if err != nil {
-		return "", 0, err
-	}
-	if m3u8Result == nil || m3u8Result.Code != 200 || m3u8Result.Data == nil || m3u8Result.Data.VideoPreviewPlayInfo == nil || len(m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList) == 0 {
-		return "", 0, gerror.ErrInternal(ctx, "获取播放地址失败")
-	}
-
-	var m3u8Url = ""
-	for _, item := range m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList {
-		if item.TemplateId == "LD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-		}
-		if item.TemplateId == "SD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-		}
-		if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-		}
-		if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-		}
-	}
-	return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), nil
+	return nil
 }
 
 func (s *EpisodeService) UpdateConfigs(ctx context.Context, configs string) error {

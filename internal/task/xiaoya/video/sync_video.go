@@ -310,6 +310,18 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 							goodRatting = season.GoodRating
 						}
 					}
+					var totalEpisode int32
+					if videoDetailResp.Type == "Movie" {
+						totalEpisode = 1
+					}
+					if videoDetailResp.Type == "Episode" {
+						if series != nil {
+							totalEpisode = series.ChildCount
+						}
+						if videoDetailResp.SeasonId != "" && season.ChildCount != 0 {
+							totalEpisode = season.ChildCount
+						}
+					}
 
 					video = &model.Video{
 						Title:              title,
@@ -318,10 +330,11 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 						Region:             lo.ToPtr(strings.Join(t.replaceRegions(ctx, videoDetailResp.Regions), ",")),
 						Description:        lo.ToPtr(overview),
 						PublishDay:         lo.ToPtr(time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate)),
-						Thumbnail:          lo.ToPtr(strings.Join([]string{videoDetailResp.Id, videoDetailResp.SeasonId, videoDetailResp.SeriesId}, ",")),
+						Thumbnail:          lo.ToPtr(t.getValidThumbnail(ctx, domain, []string{videoDetailResp.Id, videoDetailResp.SeasonId, videoDetailResp.SeriesId})),
 						Genres:             lo.ToPtr(strings.Join(t.replaceGenres(ctx, genres), ",")),
 						JellyfinID:         jellyfinId,
 						JellyfinCreateTime: time_util.ParseUtcTime(videoDetailResp.DateCreated),
+						TotalEpisode:       lo.ToPtr(totalEpisode),
 					}
 					err := t.videoRepo.Create(ctx, tx, video)
 					if err != nil {
@@ -490,4 +503,19 @@ func (t *XiaoyaVideoTask) replaceVideType(ctx context.Context, path string) stri
 		}
 	}
 	return "Unknown"
+}
+
+func (t *XiaoyaVideoTask) getValidThumbnail(ctx context.Context, domain string, ids []string) string {
+	for _, id := range ids {
+		if id == "" {
+			continue
+		}
+		url := fmt.Sprintf(constant.PrimaryThumbnail, id)
+		_, err := httpclient_util.DoGet[string](ctx, domain+url, nil)
+		if err != nil {
+			continue
+		}
+		return url
+	}
+	return constant.DefaultThumbnail
 }

@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/liluoliluoli/gnboot/internal/common/constant"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/array_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
@@ -20,6 +23,7 @@ type VideoService struct {
 	videoUserMappingRepo     *repo.VideoUserMappingRepo
 	episodeRepo              *repo.EpisodeRepo
 	cache                    sdomain.Cache[*sdomain.Video]
+	configRepo               *repo.ConfigRepo
 }
 
 func NewVideoService(c *conf.Bootstrap,
@@ -27,7 +31,7 @@ func NewVideoService(c *conf.Bootstrap,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
 	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo,
 	userRepo *repo.UserRepo, videoUserMappingRepo *repo.VideoUserMappingRepo,
-	episodeRepo *repo.EpisodeRepo) *VideoService {
+	episodeRepo *repo.EpisodeRepo, configRepo *repo.ConfigRepo) *VideoService {
 	return &VideoService{
 		c:                        c,
 		videoRepo:                videoRepo,
@@ -38,6 +42,7 @@ func NewVideoService(c *conf.Bootstrap,
 		videoUserMappingRepo:     videoUserMappingRepo,
 		episodeRepo:              episodeRepo,
 		cache:                    repo.NewCache[*sdomain.Video](c, videoRepo.Data.Cache()),
+		configRepo:               configRepo,
 	}
 }
 
@@ -89,7 +94,6 @@ func (s *VideoService) get(ctx context.Context, id int64, userId int64) (*sdomai
 			item.IsFavorite = videoPlayedMap[item.ID].IsFavorite
 		}
 	}
-
 	return item, nil
 }
 
@@ -119,6 +123,12 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 	}
 
 	if pageResult != nil && len(pageResult.List) != 0 {
+		jellyfinBoxIpStr, _ := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_JellyfinBoxIp)
+		clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
+		if err != nil {
+			clientIp = "127.0.0.1"
+		}
+		boxIp := array_util.GetHashElement(jellyfinBoxIpStr, clientIp)
 		actorsMap, err := s.buildVideoActorsMap(ctx, pageResult.List)
 		if err != nil {
 			return nil, err
@@ -138,6 +148,9 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 					item.LastPlayedEpisodeId = videoPlayedMap[item.ID].LastPlayedEpisodeId
 					item.LastPlayedPosition = videoPlayedMap[item.ID].LastPlayedPosition
 				}
+			}
+			if item.Thumbnail != "" {
+				item.Thumbnail = boxIp + item.Thumbnail
 			}
 		}
 	}

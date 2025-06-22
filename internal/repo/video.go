@@ -65,7 +65,7 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 		do = do.Where(gen.Video.PublishDay.Between(condition.Year+"0101", condition.Year+"1231"))
 	}
 	if condition.Sort == constant.SortByHot {
-		do = do.Order(gen.Video.VoteCount.Desc())
+		do = do.Order(gen.Video.WatchCount.Desc())
 	} else if condition.Sort == constant.SortByRate {
 		do = do.Order(gen.Video.VoteRate.Desc())
 	} else if condition.Sort == constant.SortByPublish {
@@ -99,6 +99,20 @@ func (r *VideoRepo) Create(ctx context.Context, tx *gen.Query, movie *model.Vide
 
 func (r *VideoRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateVideo) error {
 	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
+	if err != nil {
+		return err
+	}
+	if updates.RowsAffected != 1 {
+		return gorm.ErrDuplicatedKey
+	}
+	return nil
+}
+
+func (r *VideoRepo) AddWatchCount(ctx context.Context, tx *gen.Query, id int64, radio string) error {
+	updates, err := r.do(ctx, tx).Where(gen.Video.ID.Eq(id)).Updates(map[string]interface{}{
+		"watch_count": gorm.Expr("watch_count + 1"),
+		"radio":       radio,
+	})
 	if err != nil {
 		return err
 	}

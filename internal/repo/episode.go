@@ -35,8 +35,27 @@ func (r *EpisodeRepo) Get(ctx context.Context, id int64) (*sdomain.Episode, erro
 	return (&sdomain.Episode{}).ConvertFromRepo(find), nil
 }
 
+func (r *EpisodeRepo) Next(ctx context.Context, videoId int64, id int64) (*sdomain.Episode, error) {
+	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.EpisodeTitle).Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	_, index, exist := lo.FindIndexOf(finds, func(item *model.Episode) bool {
+		return item.ID == id
+	})
+	var nextEpisode *model.Episode
+	if exist {
+		if index+1 < len(finds) {
+			nextEpisode = finds[index+1]
+		}
+	} else {
+		nextEpisode = finds[0]
+	}
+	return (&sdomain.Episode{}).ConvertFromRepo(nextEpisode), nil
+}
+
 func (r *EpisodeRepo) QueryByVideoId(ctx context.Context, videoId int64) ([]*sdomain.Episode, error) {
-	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.Episode).Find()
+	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.EpisodeTitle, gen.Episode.Episode).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

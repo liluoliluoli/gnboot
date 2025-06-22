@@ -16,5 +16,6 @@ func FormatStrToYYYYMMDD(timeStr string) string {
 
 func ParseUtcTime(timeStr string) time.Time {
 	parsedTime, _ := time.Parse("2006-01-02T15:04:05.0000000Z", timeStr)
-	return parsedTime
+	t := parsedTime.Truncate(time.Second)
+	return t
 }

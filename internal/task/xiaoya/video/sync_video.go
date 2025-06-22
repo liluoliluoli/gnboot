@@ -237,9 +237,11 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 		existEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, filePath, fileName)
 		if err != nil {
 			log.Errorf("查询episode失败: %v，跳过当前文件", err)
+			return err
 		}
 		if len(existEpisode) == 0 {
 			log.Errorf("查询episode为空: filePath %s fileName %s", filePath, fileName)
+			return nil
 		}
 		if existEpisode[0].VideoId == 0 {
 			jellyfinId := ""
@@ -372,14 +374,14 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 				if result == nil {
 					return nil
 				}
+				err = t.episodeSubtitleMappingRepo.Delete(ctx, tx, existEpisode[0].ID)
+				if err != nil {
+					return err
+				}
 				for _, mediaSource := range result.MediaSources {
 					for _, mediaStream := range mediaSource.MediaStreams {
-						if mediaStream.Type != "Subtitle" {
+						if mediaStream.Type != "Subtitle" || mediaStream.DeliveryUrl == "" {
 							continue
-						}
-						err := t.episodeSubtitleMappingRepo.Delete(ctx, tx, existEpisode[0].ID)
-						if err != nil {
-							return err
 						}
 						err = t.episodeSubtitleMappingRepo.Create(ctx, tx, &model.EpisodeSubtitleMapping{
 							EpisodeID: existEpisode[0].ID,
@@ -393,7 +395,6 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 						}
 					}
 				}
-
 				return nil
 			})
 			if err != nil {
@@ -406,15 +407,18 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 
 // splitJellyfinPath http://xiaoya.host:5678/d/电影/4K系列/Marvel漫威系列/漫威宇宙/蜘蛛侠：英雄无归.Spider-Man.No.Way.Home.2021.UHD.BluRay.2160p.x265.10bit.DoVi.2Audios.mUHD-FRDS.mkv
 func splitJellyfinPath(url string) (string, string) {
-	domain := strings.Split(url, "/")[2] // "xiaoya.host:5678"
-
-	pathStart := strings.Index(url, domain+"/d") + len(domain+"/d")
-	pathEnd := strings.LastIndex(url, "/")
-	path := url[pathStart:pathEnd] // "/电影/4K系列/Marvel漫威系列/漫威宇宙"
-
-	// 3. 提取文件名
+	var path string
+	if strings.HasPrefix(url, "/") {
+		pathStart := 0
+		pathEnd := strings.LastIndex(url, "/")
+		path = url[pathStart:pathEnd]
+	} else {
+		domain := strings.Split(url, "/")[2] // "xiaoya.host:5678"
+		pathStart := strings.Index(url, domain+"/d") + len(domain+"/d")
+		pathEnd := strings.LastIndex(url, "/")
+		path = url[pathStart:pathEnd] // "/电影/4K系列/Marvel漫威系列/漫威宇宙"
+	}
 	filename := filepath.Base(url) // "蜘蛛侠：英雄无归.Spider-Man.No.Way.Home.2021.UHD.BluRay.2160p.x265.10bit.DoVi.2Audios.mUHD-FRDS.mkv"
-
 	return path, filename
 }
 

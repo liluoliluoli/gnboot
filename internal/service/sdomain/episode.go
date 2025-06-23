@@ -23,6 +23,7 @@ type Episode struct {
 	ExpiredTime  *time.Time                `json:"expiredTime"`
 	CreateTime   time.Time                 `json:"createTime"`
 	UpdateTime   time.Time                 `json:"updateTime"`
+	Ratio        string                    `json:"ratio"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -43,6 +44,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		Size:         m.Size,
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
+		Ratio:        lo.FromPtr(m.Ratio),
 	}
 }
 
@@ -59,6 +61,7 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 		Subtitles: lo.Map(d.Subtitles, func(item *EpisodeSubtitleMapping, index int) *subtitledto.Subtitle {
 			return item.ConvertToDto()
 		}),
+		Ratio: d.Ratio,
 	}
 }
 
@@ -77,5 +80,6 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		XiaoyaPath:   lo.ToPtr(d.XiaoYaPath),
 		CreateTime:   d.CreateTime,
 		UpdateTime:   time.Now(),
+		Ratio:        lo.ToPtr(d.Ratio),
 	}
 }

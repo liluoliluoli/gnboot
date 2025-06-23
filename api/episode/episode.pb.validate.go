@@ -106,6 +106,8 @@ func (m *Episode) validate(all bool) error {
 
 	}
 
+	// no validation rules for Ratio
+
 	if len(errors) > 0 {
 		return EpisodeMultiError(errors)
 	}

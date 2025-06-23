@@ -26,10 +26,10 @@ type Video struct {
 	CreateTime         time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
 	UpdateTime         time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 	IsValid            bool      `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
-	Ratio              *string   `gorm:"column:ratio;type:varchar(32);comment:分辨率：1080P，4k，原画" json:"ratio"`
 	JellyfinID         string    `gorm:"column:jellyfin_id;type:varchar(255);not null;comment:jellyfin的id" json:"jellyfinId"`
 	JellyfinCreateTime time.Time `gorm:"column:jellyfin_create_time;type:datetime;not null;comment:jellyfin创建时间" json:"jellyfinCreateTime"`
 	WatchCount         int64     `gorm:"column:watch_count;type:bigint(20) unsigned zerofill;not null;comment:观看次数" json:"watchCount"`
+	Ratio              *string   `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
 }
 
 // TableName Video's table name

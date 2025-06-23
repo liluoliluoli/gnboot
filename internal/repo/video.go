@@ -108,17 +108,30 @@ func (r *VideoRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.Up
 	return nil
 }
 
-func (r *VideoRepo) AddWatchCount(ctx context.Context, tx *gen.Query, id int64, radio string) error {
-	updates, err := r.do(ctx, tx).Where(gen.Video.ID.Eq(id)).Updates(map[string]interface{}{
-		"watch_count": gorm.Expr("watch_count + 1"),
-		"radio":       radio,
-	})
-	if err != nil {
-		return err
+func (r *VideoRepo) AddWatchCount(ctx context.Context, tx *gen.Query, id int64, ratio string) error {
+	if ratio == constant.HD || ratio == constant.QHD {
+		updates, err := r.do(ctx, tx).Where(gen.Video.ID.Eq(id)).Updates(map[string]interface{}{
+			"watch_count": gorm.Expr("watch_count + 1"),
+			"ratio":       ratio,
+		})
+		if err != nil {
+			return err
+		}
+		if updates.RowsAffected != 1 {
+			return gorm.ErrDuplicatedKey
+		}
+	} else {
+		updates, err := r.do(ctx, tx).Where(gen.Video.ID.Eq(id)).Updates(map[string]interface{}{
+			"watch_count": gorm.Expr("watch_count + 1"),
+		})
+		if err != nil {
+			return err
+		}
+		if updates.RowsAffected != 1 {
+			return gorm.ErrDuplicatedKey
+		}
 	}
-	if updates.RowsAffected != 1 {
-		return gorm.ErrDuplicatedKey
-	}
+
 	return nil
 }
 

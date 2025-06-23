@@ -87,6 +87,7 @@ func (d *Video) ConvertToRepo() *model.Video {
 		IsValid:            d.IsValid,
 		JellyfinID:         d.JellyfinId,
 		JellyfinCreateTime: d.JellyfinCreateTime,
+		Ratio:              lo.ToPtr(d.Ratio),
 	}
 }
 

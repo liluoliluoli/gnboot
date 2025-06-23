@@ -55,6 +55,17 @@ const (
 	Year  PackageType = "year"
 )
 
+type Radio = string
+
+const (
+	LD  Radio = "LD"
+	SD  Radio = "SD"
+	HD  Radio = "HD"
+	QHD Radio = "QHD"
+)
+
+var ALLRadio = []string{LD, SD, HD, QHD}
+
 var (
 	XiaoYaToken string                       = ""
 	ConfigMap   map[string]map[string]string = make(map[string]map[string]string)

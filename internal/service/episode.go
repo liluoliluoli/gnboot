@@ -83,17 +83,18 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	currentWatchs++
 	s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
 
-	var radio = ""
+	var newRatio = ""
 	if containPlayUrl {
 		if episode.Url == "" || episode.ExpiredTime == nil || episode.Duration == 0 || episode.ExpiredTime.Sub(time.Now()) < constant.AliyunM3u8EarlyExpireMinutes*time.Minute {
-			url, duration, vRadio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
 			if err != nil {
 				return nil, err
 			}
 			episode.Url = url
 			episode.Duration = duration
 			episode.ExpiredTime = lo.ToPtr(time.Now().Add(constant.AliyunM3u8ReallyExpireMinutes * time.Minute))
-			radio = vRadio
+			episode.Ratio = ratio
+			newRatio = ratio
 			err = s.episodeRepo.Updates(ctx, nil, episode)
 			if err != nil {
 				return nil, err
@@ -101,16 +102,18 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 		}
 	}
 	go func() {
-		err := s.videoRepo.AddWatchCount(ctx, nil, episode.VideoId, radio)
+		err := s.videoRepo.AddWatchCount(ctx, nil, episode.VideoId, newRatio)
 		if err != nil {
 			log.Errorf("增加总观看次数失败: %v", err)
 		}
+		log.Infof("增加总观看次数成功：%d", episode.VideoId)
 	}()
 	go func() {
 		err := s.TransferStoreNextEpisodeToAliyun(ctx, episode.VideoId, episode.ID)
 		if err != nil {
 			log.Errorf("转存阿里云失败: %v", err)
 		}
+		log.Infof("转存阿里云成功：%d的下一集", episode.ID)
 	}()
 	return episode, nil
 }

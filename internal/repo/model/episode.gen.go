@@ -26,6 +26,7 @@ type Episode struct {
 	ExpiredTime  *time.Time `gorm:"column:expired_time;type:datetime;comment:阿里云盘过期时间" json:"expiredTime"`
 	CreateTime   time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
 	UpdateTime   time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	Ratio        *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
 }
 
 // TableName Episode's table name

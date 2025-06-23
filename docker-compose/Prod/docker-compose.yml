@@ -1,0 +1,207 @@
+version: '3.8'
+
+services:
+  # MySQL服务
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: Mysql
+    hostname: Mysql
+    command: mysqld
+    restart: unless-stopped
+    network_mode: media_network
+    ports:
+      - "3306:3306/tcp"
+    environment:
+      - MYSQL_ROOT_PASSWORD=ceKJsIjNoBVfrYyV
+      - MYSQL_USER=video_user
+      - MYSQL_PASSWORD=1JdO9ac3VXvWGOLp
+      - MYSQL_DATABASE=gnvideo
+      - MYSQL_UNIX_PORT=/var/lib/mysql/mysql.sock
+      - MYSQL_LOG_CONSOLE=true
+    volumes:
+      - "${DOCKER_DATA_DIR}/Mysql/data:/var/lib/mysql"
+      - "${DOCKER_DATA_DIR}/Mysql/conf:/etc/mysql/conf.d"
+      - "${DOCKER_DATA_DIR}/Mysql/log:/var/log/mysql"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.9'
+    labels:
+      icon: https://dbs-service.cn/uploads/20200501/d9f8164cc13723caf0bbe265c2513a58.jpg
+
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: Redis
+    hostname: Redis
+    command: redis-server /etc/redis/redis.conf
+    restart: unless-stopped
+    network_mode: media_network
+    ports:
+      - "6379:6379/tcp"
+    volumes:
+      - "${DOCKER_DATA_DIR}/Redis/data:/data"
+      - "${DOCKER_DATA_DIR}/Redis/conf/redis.conf:/etc/redis/redis.conf"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.9'
+    labels:
+      icon: https://upload.wikimedia.org/wikipedia/commons/e/ee/Redis_logo.svg
+
+  # Nacos服务
+  nacos:
+    image: nacos/nacos-server:v2.3.1-slim
+    container_name: Nacos
+    hostname: Nacos
+    restart: unless-stopped
+    network_mode: media_network
+    ports:
+      - "8848:8848/tcp"
+      - "9848:9848/tcp"
+      - "9849:9849/tcp"
+    environment:
+      - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+      - JVM_XMS=256m
+      - JVM_XMX=512m
+      - JVM_XMN=256m  # 修正：XMN <= XMX
+      - JVM_MS=128m
+      - JVM_MMS=320m
+      - TZ=Asia/Shanghai
+      - NACOS_DEBUG=n
+      - NACOS_USER=nacos
+      - FUNCTION_MODE=all
+      - TOMCAT_ACCESSLOG_ENABLED=false
+    volumes:
+      - "${DOCKER_DATA_DIR}/Nacos/data:/home/nacos/data"
+      - "${DOCKER_DATA_DIR}/Nacos/logs:/home/nacos/logs"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.9'
+    labels:
+      icon: https://picx.zhimg.com/v2-c8ed411f210194cc3e19a0b884988518_720w.jpg
+
+  # XiaoYa服务
+  xiaoya:
+    container_name: XiaoYa
+    image: xiaoyaliu/alist:latest
+    hostname: XiaoYa
+    command: ["/opt/alist/alist", "server", "--no-prefix"]
+    privileged: true
+    restart: always
+    cpu_shares: 90
+    environment:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    labels:
+      - "icon=https://s2.loli.net/2023/04/24/Z9bMjB3TutzKDGY.png"
+      - "secondary_icon=https://zhengxin-pub.cdn.bcebos.com/mark/c4585165b3e372fc480f4217e3e5b138_fullsize.jpeg"
+    network_mode: media_network
+    ports:
+      - "2345:2345/tcp"
+      - "2346:2346/tcp"
+      - "2347:2347/tcp"
+      - "5678:80/tcp"
+    volumes:
+      - "${DOCKER_DATA_DIR}/XiaoYa/data:/data"
+      - "${DOCKER_DATA_DIR}/XiaoYa/www/data:/www/data"
+      - "${DOCKER_DATA_DIR}/XiaoYa/opt/alist/data:/opt/alist/data"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # Alist服务
+  alist:
+    image: xhofe/alist:latest
+    container_name: Alist
+    hostname: Alist
+    command: /entrypoint.sh
+    restart: unless-stopped
+    network_mode: media_network
+    ports:
+      - "5244:5244/tcp"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - RUN_ARIA2=false
+    volumes:
+      - "${DOCKER_DATA_DIR}/Alist/data:/opt/alist/data"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    labels:
+      icon: https://cdn.jsdelivr.net/gh/alist-org/logo@main/logo.svg
+
+
+  # Jellyfin服务
+  jellyfin:
+    image: jellyfin/jellyfin:10.8.10
+    container_name: Jellyfin
+    restart: unless-stopped
+    network_mode: media_network
+    devices:
+      - "/dev/dri:/dev/dri"
+    ports:
+      - "8096:8096/tcp"
+    volumes:
+      - "${DOCKER_DATA_DIR}/Jellyfin/config:/config"
+      - "${DOCKER_DATA_DIR}/Jellyfin/cache:/cache"
+      - "${DOCKER_DATA_DIR}/MediaInfo:/media"
+
+  # Gnboot服务
+  gnboot:
+    image: sily1/gnboot:0.1.2
+    container_name: Gnboot
+    hostname: Gnboot
+    environment:
+      - APP_ENV=prod
+    ports:
+      - "8888:8888/tcp"
+      - "9999:9999/tcp"
+    restart: unless-stopped
+    network_mode: media_network
+
+  # Emby服务（端口已修改避免冲突）
+#  emby:
+#    image: linuxserver/emby:4.8.11
+#    container_name: Emby
+#    hostname: Emby
+#    restart: unless-stopped
+#    network_mode: media_network
+#    ports:
+#      - "8097:8096/tcp"  # 外部端口改为8097
+#      - "8920:8920/tcp"
+#    environment:
+#      - HOME=/root
+#      - LANG=en_US.UTF-8
+#      - LANGUAGE=en_US.UTF-8
+#      - LSIO_FIRST_PARTY=true
+#      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+#      - S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
+#      - S6_STAGE2_HOOK=/docker-mods
+#      - S6_VERBOSITY=1
+#      - TERM=xterm
+#      - VIRTUAL_ENV=/lsiopy
+#    volumes:
+#      - "${DOCKER_DATA_DIR}/Emby/Media:/mnt/media"
+#      - "${DOCKER_DATA_DIR}/Emby/config:/config"
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 1024M
+#          cpus: '0.9'
+#    labels:
+#      icon: https://pic1.zhimg.com/v2-385420a3ace83209b38681b6bd9ebf4c_r.jpg
+
+
+networks:
+  media_network:
+    name: media_network
+    external: true

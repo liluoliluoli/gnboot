@@ -10,5 +10,5 @@ import (
 var ProviderSet = wire.NewSet(
 	i4k.NewI4kSyncTask,
 	user.NewUserPackageCheckTask,
-	video.NewXiaoyaVideoTask, // 注册xiaoya_video任务
+	video.NewJfVideoTask,
 )

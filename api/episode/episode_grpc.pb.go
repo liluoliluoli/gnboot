@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	EpisodeRemoteService_GetEpisode_FullMethodName    = "/gnboot.EpisodeRemoteService/GetEpisode"
 	EpisodeRemoteService_UpdateConfigs_FullMethodName = "/gnboot.EpisodeRemoteService/UpdateConfigs"
+	EpisodeRemoteService_TestSyncTask_FullMethodName  = "/gnboot.EpisodeRemoteService/TestSyncTask"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
@@ -30,6 +31,7 @@ const (
 type EpisodeRemoteServiceClient interface {
 	GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error)
 	UpdateConfigs(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestSyncTask(ctx context.Context, in *TestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -58,12 +60,22 @@ func (c *episodeRemoteServiceClient) UpdateConfigs(ctx context.Context, in *Upda
 	return out, nil
 }
 
+func (c *episodeRemoteServiceClient) TestSyncTask(ctx context.Context, in *TestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_TestSyncTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EpisodeRemoteServiceServer is the server API for EpisodeRemoteService service.
 // All implementations must embed UnimplementedEpisodeRemoteServiceServer
 // for forward compatibility
 type EpisodeRemoteServiceServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
 	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
+	TestSyncTask(context.Context, *TestSyncTaskRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -76,6 +88,9 @@ func (UnimplementedEpisodeRemoteServiceServer) GetEpisode(context.Context, *GetE
 }
 func (UnimplementedEpisodeRemoteServiceServer) UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfigs not implemented")
+}
+func (UnimplementedEpisodeRemoteServiceServer) TestSyncTask(context.Context, *TestSyncTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestSyncTask not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -126,6 +141,24 @@ func _EpisodeRemoteService_UpdateConfigs_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EpisodeRemoteService_TestSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestSyncTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EpisodeRemoteServiceServer).TestSyncTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EpisodeRemoteService_TestSyncTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EpisodeRemoteServiceServer).TestSyncTask(ctx, req.(*TestSyncTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EpisodeRemoteService_ServiceDesc is the grpc.ServiceDesc for EpisodeRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -140,6 +173,10 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateConfigs",
 			Handler:    _EpisodeRemoteService_UpdateConfigs_Handler,
+		},
+		{
+			MethodName: "TestSyncTask",
+			Handler:    _EpisodeRemoteService_TestSyncTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

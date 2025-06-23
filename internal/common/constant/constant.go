@@ -35,11 +35,11 @@ const (
 type SubKey = string
 
 const (
-	SubKey_XiaoYaBoxIp             SubKey = "xiaoYaBoxIp"
-	SubKey_JellyfinBoxIp           SubKey = "jellyfinBoxIp"
-	SubKey_XiaoyaVideoSyncCategory SubKey = "xiaoyaVideoSyncCategory"
-	SubKey_JellyfinDefaultUserId   SubKey = "jellyfinDefaultUserId"
-	SubKey_JellyfinDefaultToken    SubKey = "jellyfinDefaultToken"
+	SubKey_XiaoYaBoxIp               SubKey = "xiaoYaBoxIp"
+	SubKey_JellyfinBoxIp             SubKey = "jellyfinBoxIp"
+	SubKey_JellyfinVideoSyncCategory SubKey = "jellyfinVideoSyncCategory"
+	SubKey_JellyfinDefaultUserId     SubKey = "jellyfinDefaultUserId"
+	SubKey_JellyfinDefaultToken      SubKey = "jellyfinDefaultToken"
 )
 
 const CTX_UserName = "CTX_UserName"
@@ -90,8 +90,9 @@ var (
 		IMDb:       3,
 		Trakt:      4,
 	}
-	RegularChinese *regexp.Regexp    = regexp.MustCompile(`[\p{Han}]+`)
-	RegionMap      map[string]string = make(map[string]string)
+	RegularChinese    *regexp.Regexp    = regexp.MustCompile(`[\p{Han}]+`)
+	RegionMap         map[string]string = make(map[string]string)
+	SupportVideoTypes []string          = []string{".mkv", ".mp4", ".rmvb", ".avi"}
 )
 
 const (

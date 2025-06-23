@@ -61,6 +61,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc TestSyncTask(TestSyncTaskRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/test/synctask"
+        body : "*"
+      };
+    }
   }
 
   message Episode {
@@ -87,4 +93,7 @@ message UpdateConfigRequest {
   map<string, string> videoSyncMapping = 4;
   map<string, string> pathVideoTypeMapping = 5;
   map<string, string> apikeyMapping = 6;
+}
+
+message TestSyncTaskRequest {
 }

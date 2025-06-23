@@ -55,7 +55,8 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	userService := service.NewUserService(c, userRepo, videoUserMappingRepo, universalClient)
 	episodeService := service.NewEpisodeService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, episodeRepo, userRepo, universalClient, configRepo)
 	videoProvider := adaptor.NewVideoProvider(videoService, userService, episodeService)
-	episodeProvider := adaptor.NewEpisodeProvider(episodeService, userService)
+	xiaoyaVideoTask := video.NewJfVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo)
+	episodeProvider := adaptor.NewEpisodeProvider(episodeService, userService, xiaoyaVideoTask)
 	userProvider := adaptor.NewUserProvider(userService, universalClient, videoService)
 	appVersionRepo := repo.NewAppVersionRepo(data)
 	appVersionService := service.NewAppVersionService(c, appVersionRepo, universalClient)
@@ -63,7 +64,6 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	httpServer := server.NewHTTPServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	userPackageCheckTask := user.NewUserPackageCheckTask(c, userService)
-	xiaoyaVideoTask := video.NewXiaoyaVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo)
 	job := server.NewJob(c, userPackageCheckTask, xiaoyaVideoTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {

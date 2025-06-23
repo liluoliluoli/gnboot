@@ -2,24 +2,28 @@ package adaptor
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/liluoliluoli/gnboot/api/episode"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
+	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type EpisodeProvider struct {
 	episode.UnimplementedEpisodeRemoteServiceServer
-	episode *service.EpisodeService
-	user    *service.UserService
+	episode     *service.EpisodeService
+	user        *service.UserService
+	jfVideoTask *video.JfVideoTask
 }
 
-func NewEpisodeProvider(episode *service.EpisodeService, user *service.UserService) *EpisodeProvider {
+func NewEpisodeProvider(episode *service.EpisodeService, user *service.UserService, jfVideoTask *video.JfVideoTask) *EpisodeProvider {
 	return &EpisodeProvider{
-		episode: episode,
-		user:    user,
+		episode:     episode,
+		user:        user,
+		jfVideoTask: jfVideoTask,
 	}
 }
 
@@ -47,5 +51,15 @@ func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.Update
 	if err != nil {
 		return nil, err
 	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *EpisodeProvider) TestSyncTask(ctx context.Context, req *episode.TestSyncTaskRequest) (*emptypb.Empty, error) {
+	go func() {
+		err := s.jfVideoTask.DoProcess(ctx)
+		if err != nil {
+			log.Errorf("TestSyncTask fail:%v", err)
+		}
+	}()
 	return &emptypb.Empty{}, nil
 }

@@ -53,3 +53,11 @@ func (r *VideoActorMappingRepo) Create(ctx context.Context, tx *gen.Query, video
 	}
 	return nil
 }
+
+func (r *VideoActorMappingRepo) BatchCreate(ctx context.Context, tx *gen.Query, videoActorMappings []*model.VideoActorMapping) error {
+	err := r.do(ctx, tx).CreateInBatches(videoActorMappings, len(videoActorMappings))
+	if err != nil {
+		return err
+	}
+	return nil
+}

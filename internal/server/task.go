@@ -14,7 +14,7 @@ import (
 type Job struct {
 	c                    *conf.Bootstrap
 	userPackageCheckTask *user.UserPackageCheckTask
-	videoXiaoyaVideoTask *video.XiaoyaVideoTask
+	videoXiaoyaVideoTask *video.JfVideoTask
 	worker               *worker.Worker
 }
 
@@ -27,7 +27,7 @@ func (j *Job) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask, videoXiaoyaVideoTask *video.XiaoyaVideoTask) *Job {
+func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask, videoXiaoyaVideoTask *video.JfVideoTask) *Job {
 	return &Job{
 		c:                    c,
 		userPackageCheckTask: userPackageCheckTask,
@@ -46,11 +46,11 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 					Ctx:     ctx,
 					Payload: p,
 				})
-			case "syncXiaoyaVideo":
-				job.videoXiaoyaVideoTask.Process(&sdomain.Task{
-					Ctx:     ctx,
-					Payload: p,
-				})
+				//case "syncXiaoyaVideo":
+				//	job.videoXiaoyaVideoTask.Process(&sdomain.Task{
+				//		Ctx:     ctx,
+				//		Payload: p,
+				//	})
 			}
 			return nil
 		}),

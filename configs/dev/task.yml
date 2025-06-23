@@ -3,6 +3,6 @@ task:
 #    name: '每10分钟执行'
 #    expr: '*/10 * * * * '
 #
-  syncXiaoyaVideo:
-    name: 'syncXiaoyaVideo'
-    expr: '*/1 * * * * '  # 每1分钟执行
+#  syncXiaoyaVideo:
+#    name: 'syncXiaoyaVideo'
+#    expr: '*/1 * * * * '  # 每1分钟执行

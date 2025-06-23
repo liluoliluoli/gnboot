@@ -24,6 +24,7 @@ func GetCnNameByName(ctx context.Context, name string) string {
 		return ""
 	}
 	if len(lo.FromPtr(regions)) == 0 || lo.FromPtr(regions)[0].Translations == nil {
+		constant.RegionMap[name] = ""
 		return ""
 	}
 	if lo.FromPtr(regions)[0].Translations["zho"] != nil && lo.FromPtr(regions)[0].Translations["zho"]["common"] != "" {
@@ -31,5 +32,6 @@ func GetCnNameByName(ctx context.Context, name string) string {
 		constant.RegionMap[name] = region
 		return region
 	}
+	constant.RegionMap[name] = ""
 	return ""
 }

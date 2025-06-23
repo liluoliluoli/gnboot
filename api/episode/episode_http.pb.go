@@ -21,10 +21,12 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationEpisodeRemoteServiceGetEpisode = "/gnboot.EpisodeRemoteService/GetEpisode"
+const OperationEpisodeRemoteServiceTestSyncTask = "/gnboot.EpisodeRemoteService/TestSyncTask"
 const OperationEpisodeRemoteServiceUpdateConfigs = "/gnboot.EpisodeRemoteService/UpdateConfigs"
 
 type EpisodeRemoteServiceHTTPServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
+	TestSyncTask(context.Context, *TestSyncTaskRequest) (*emptypb.Empty, error)
 	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
 }
 
@@ -32,6 +34,7 @@ func RegisterEpisodeRemoteServiceHTTPServer(s *http.Server, srv EpisodeRemoteSer
 	r := s.Route("/")
 	r.POST("/api/episode/get", _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv))
 	r.POST("/api/test/config/update", _EpisodeRemoteService_UpdateConfigs0_HTTP_Handler(srv))
+	r.POST("/api/test/synctask", _EpisodeRemoteService_TestSyncTask0_HTTP_Handler(srv))
 }
 
 func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -78,8 +81,31 @@ func _EpisodeRemoteService_UpdateConfigs0_HTTP_Handler(srv EpisodeRemoteServiceH
 	}
 }
 
+func _EpisodeRemoteService_TestSyncTask0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TestSyncTaskRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEpisodeRemoteServiceTestSyncTask)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TestSyncTask(ctx, req.(*TestSyncTaskRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type EpisodeRemoteServiceHTTPClient interface {
 	GetEpisode(ctx context.Context, req *GetEpisodeRequest, opts ...http.CallOption) (rsp *Episode, err error)
+	TestSyncTask(ctx context.Context, req *TestSyncTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateConfigs(ctx context.Context, req *UpdateConfigRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -96,6 +122,19 @@ func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisode(ctx context.Context, in 
 	pattern := "/api/episode/get"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisode))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *EpisodeRemoteServiceHTTPClientImpl) TestSyncTask(ctx context.Context, in *TestSyncTaskRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/api/test/synctask"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceTestSyncTask))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

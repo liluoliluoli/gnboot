@@ -38,3 +38,9 @@ bin/
 docs/*/*
 !docs/gnboot-proto/gnboot.openapi.yaml
 .trae/.ignore
+/docker-compose/cache/
+/docker-compose/conf/
+/docker-compose/data/
+/docker-compose/Dev-Sily/
+/docker-compose/init.d/
+/docker-compose/log/

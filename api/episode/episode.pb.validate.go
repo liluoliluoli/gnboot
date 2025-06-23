@@ -321,6 +321,8 @@ func (m *UpdateConfigRequest) validate(all bool) error {
 
 	// no validation rules for PathVideoTypeMapping
 
+	// no validation rules for ApikeyMapping
+
 	if len(errors) > 0 {
 		return UpdateConfigRequestMultiError(errors)
 	}

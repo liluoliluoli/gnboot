@@ -6,6 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/httpclient_util"
+	"github.com/liluoliluoli/gnboot/internal/common/utils/region_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/integration/dto/jellyfindto"
@@ -18,6 +19,7 @@ import (
 	"math"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -322,12 +324,25 @@ func (t *XiaoyaVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain
 							totalEpisode = season.ChildCount
 						}
 					}
+					//国家处理
+					var externalUrls []*jellyfindto.ExternalUrl
+					if videoDetailResp.Type == "Movie" {
+						externalUrls = videoDetailResp.ExternalUrls
+					}
+					if videoDetailResp.Type == "Episode" {
+						if series != nil {
+							externalUrls = append(externalUrls, series.ExternalUrls...)
+						}
+						if videoDetailResp.SeasonId != "" && season.ChildCount != 0 {
+							externalUrls = append(externalUrls, season.ExternalUrls...)
+						}
+					}
 
 					video = &model.Video{
 						Title:              title,
 						VideoType:          t.replaceVideType(ctx, videoDetailResp.MediaSources[0].Path),
 						VoteRate:           lo.ToPtr(float32(math.Round(goodRatting*10) / 10)),
-						Region:             lo.ToPtr(strings.Join(t.replaceRegions(ctx, videoDetailResp.Regions), ",")),
+						Region:             lo.ToPtr(t.getRegion(ctx, externalUrls)),
 						Description:        lo.ToPtr(overview),
 						PublishDay:         lo.ToPtr(time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate)),
 						Thumbnail:          lo.ToPtr(t.getValidThumbnail(ctx, domain, []string{videoDetailResp.Id, videoDetailResp.SeasonId, videoDetailResp.SeriesId})),
@@ -518,4 +533,33 @@ func (t *XiaoyaVideoTask) getValidThumbnail(ctx context.Context, domain string, 
 		return url
 	}
 	return constant.DefaultThumbnail
+}
+
+func (t *XiaoyaVideoTask) getRegion(ctx context.Context, externalUrls []*jellyfindto.ExternalUrl) string {
+	if len(externalUrls) == 0 {
+		return ""
+	}
+	uniqExternalUrls := lo.UniqBy(externalUrls, func(item *jellyfindto.ExternalUrl) string {
+		return item.Name
+	})
+	sort.Slice(uniqExternalUrls, func(i, j int) bool {
+		return uniqExternalUrls[i].Name < uniqExternalUrls[j].Name
+	})
+	for _, externalUrl := range uniqExternalUrls {
+		html, err := httpclient_util.DoHtml(ctx, externalUrl.Url)
+		if err != nil {
+			continue
+		}
+		regular := constant.RegularMap[externalUrl.Name]
+		if regular != nil {
+			matches := regular.FindStringSubmatch(html)
+			if len(matches) > 1 {
+				region := region_util.GetCnNameByName(ctx, matches[1])
+				if region != "" {
+					return region
+				}
+			}
+		}
+	}
+	return ""
 }

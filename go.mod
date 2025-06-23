@@ -43,6 +43,7 @@ require (
 )
 
 require (
+	github.com/biter777/countries v1.7.5
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/valyala/fasthttp v1.57.0

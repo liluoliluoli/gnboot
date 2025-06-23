@@ -97,3 +97,30 @@ func DoGet[T any](ctx context.Context, url string, headerMap map[string]string) 
 	}
 	return unmarshal, nil
 }
+
+func DoHtml(ctx context.Context, url string) (string, error) {
+	httpClient := GetHttpClient()
+	headers := http.Header{}
+	headers.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+	headers.Set("Referer", "https://www.douban.com/")
+	headers.Set("Accept-Language", "zh-CN,zh;q=0.9")
+	response, err := httpClient.Get(url, headers)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+	rBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	if response.StatusCode >= 401 && response.StatusCode <= 403 {
+		return "", errors.New(response.StatusCode, "token expired", "")
+	}
+	if response.StatusCode != 200 {
+		return "", errors.New(response.StatusCode, "request failed", "")
+	}
+	if err != nil {
+		return "", err
+	}
+	return string(rBody), nil
+}

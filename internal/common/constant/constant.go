@@ -1,5 +1,7 @@
 package constant
 
+import "regexp"
+
 const (
 	GN_OPERATOR_CONTEXT = "gn_operator_context"
 	SYS_PWD             = "SDDSIOPOPPP"
@@ -64,11 +66,32 @@ const (
 	QHD Radio = "QHD"
 )
 
-var ALLRadio = []string{LD, SD, HD, QHD}
+type Provider = string
+
+const (
+	IMDb       Provider = "IMDb"
+	TheMovieDb Provider = "TheMovieDb"
+	Trakt      Provider = "Trakt"
+	Douban     Provider = "Douban"
+)
 
 var (
 	XiaoYaToken string                       = ""
 	ConfigMap   map[string]map[string]string = make(map[string]map[string]string)
+	RegularMap  map[string]*regexp.Regexp    = map[string]*regexp.Regexp{
+		IMDb:       regexp.MustCompile(`tt_dt_cnt">(.*?)</a>`),
+		TheMovieDb: nil,
+		Trakt:      regexp.MustCompile(`<label>Country</label>(.*?)\s*</li>`),
+		Douban:     regexp.MustCompile(`<span class="pl">制片国家/地区:</span>\s*(.*?)<br/>`),
+	}
+	SortMap map[string]int32 = map[string]int32{
+		Douban:     1,
+		TheMovieDb: 2,
+		IMDb:       3,
+		Trakt:      4,
+	}
+	RegularChinese *regexp.Regexp    = regexp.MustCompile(`[\p{Han}]+`)
+	RegionMap      map[string]string = make(map[string]string)
 )
 
 const (
@@ -82,6 +105,7 @@ const (
 	JellyfinEpisodesList          = "/Shows/%s/Episodes?seasonId=%s"
 	JellyfinPlayInfo              = "/Items/%s/PlaybackInfo?UserId=%s"
 	PrimaryThumbnail              = "/Items/%s/Images/Primary"
+	GetCountryDetail              = "https://restcountries.com/v3.1/alpha/%s"
 	DefaultThumbnail              = ""
 	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
 	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟

@@ -28,8 +28,9 @@ type Video struct {
 	IsValid            bool      `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
 	JellyfinID         string    `gorm:"column:jellyfin_id;type:varchar(255);not null;comment:jellyfin的id" json:"jellyfinId"`
 	JellyfinCreateTime time.Time `gorm:"column:jellyfin_create_time;type:datetime;not null;comment:jellyfin创建时间" json:"jellyfinCreateTime"`
-	WatchCount         int64     `gorm:"column:watch_count;type:bigint(20) unsigned zerofill;not null;comment:观看次数" json:"watchCount"`
+	WatchCount         int64     `gorm:"column:watch_count;type:bigint unsigned;not null;comment:观看次数" json:"watchCount"`
 	Ratio              *string   `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
+	JellyfinRootPathID *string   `gorm:"column:jellyfin_root_path_id;type:varchar(255)" json:"jellyfinRootPathId"`
 }
 
 // TableName Video's table name

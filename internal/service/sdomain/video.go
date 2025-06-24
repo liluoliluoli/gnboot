@@ -36,6 +36,7 @@ type Video struct {
 	Ext                 string
 	JellyfinId          string
 	JellyfinCreateTime  time.Time
+	JellyfinRootPathId  string
 }
 
 func (d *Video) MarshalBinary() ([]byte, error) {
@@ -66,6 +67,7 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		IsValid:            m.IsValid,
 		JellyfinId:         m.JellyfinID,
 		JellyfinCreateTime: m.JellyfinCreateTime,
+		JellyfinRootPathId: lo.FromPtr(m.JellyfinRootPathID),
 	}
 }
 
@@ -88,6 +90,7 @@ func (d *Video) ConvertToRepo() *model.Video {
 		JellyfinID:         d.JellyfinId,
 		JellyfinCreateTime: d.JellyfinCreateTime,
 		Ratio:              lo.ToPtr(d.Ratio),
+		JellyfinRootPathID: lo.ToPtr(d.JellyfinRootPathId),
 	}
 }
 

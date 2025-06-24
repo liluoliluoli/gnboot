@@ -24,6 +24,7 @@ type Episode struct {
 	CreateTime   time.Time                 `json:"createTime"`
 	UpdateTime   time.Time                 `json:"updateTime"`
 	Ratio        string                    `json:"ratio"`
+	JellyfinId   string                    `json:"jellyfinId"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -45,6 +46,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
 		Ratio:        lo.FromPtr(m.Ratio),
+		JellyfinId:   lo.FromPtr(m.JellyfinID),
 	}
 }
 
@@ -81,5 +83,6 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		CreateTime:   d.CreateTime,
 		UpdateTime:   time.Now(),
 		Ratio:        lo.ToPtr(d.Ratio),
+		JellyfinID:   lo.ToPtr(d.JellyfinId),
 	}
 }

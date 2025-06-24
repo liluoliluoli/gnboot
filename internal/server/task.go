@@ -2,19 +2,19 @@ package server
 
 import (
 	"context"
+	"github.com/liluoliluoli/gnboot/internal/task/video"
 
 	"github.com/go-cinch/common/log"
 	"github.com/go-cinch/common/worker"
 	"github.com/liluoliluoli/gnboot/internal/conf"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/liluoliluoli/gnboot/internal/task/user"
-	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
 )
 
 type Job struct {
 	c                    *conf.Bootstrap
 	userPackageCheckTask *user.UserPackageCheckTask
-	videoXiaoyaVideoTask *video.JfVideoTask
+	jfVideoTask          *video.JfVideoTask
 	worker               *worker.Worker
 }
 
@@ -27,11 +27,11 @@ func (j *Job) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask, videoXiaoyaVideoTask *video.JfVideoTask) *Job {
+func NewJob(c *conf.Bootstrap, userPackageCheckTask *user.UserPackageCheckTask, jfVideoTask *video.JfVideoTask) *Job {
 	return &Job{
 		c:                    c,
 		userPackageCheckTask: userPackageCheckTask,
-		videoXiaoyaVideoTask: videoXiaoyaVideoTask,
+		jfVideoTask:          jfVideoTask,
 	}
 }
 
@@ -46,11 +46,11 @@ func NewWorker(c *conf.Bootstrap, job *Job) *worker.Worker {
 					Ctx:     ctx,
 					Payload: p,
 				})
-				//case "syncXiaoyaVideo":
-				//	job.videoXiaoyaVideoTask.Process(&sdomain.Task{
-				//		Ctx:     ctx,
-				//		Payload: p,
-				//	})
+			case "syncVideo":
+				job.jfVideoTask.Process(&sdomain.Task{
+					Ctx:     ctx,
+					Payload: p,
+				})
 			}
 			return nil
 		}),

@@ -8,6 +8,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
+	"time"
 )
 
 type VideoRepo struct {
@@ -141,4 +142,16 @@ func (r *VideoRepo) Delete(ctx context.Context, tx *gen.Query, ids ...int64) err
 		return err
 	}
 	return nil
+}
+
+func (r *VideoRepo) QueryLastSyncTimeByJfId(ctx context.Context, jfRootId string) (*time.Time, error) {
+	finds, err := r.do(ctx, nil).Select(gen.Video.JellyfinCreateTime.Max()).Where(gen.Video.JellyfinRootPathID.Eq(jfRootId)).Group(gen.Video.JellyfinRootPathID).Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	first, _ := lo.First(finds)
+	if first == nil {
+		return nil, nil
+	}
+	return lo.ToPtr(first.JellyfinCreateTime), nil
 }

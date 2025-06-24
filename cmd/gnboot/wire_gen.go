@@ -14,7 +14,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/server"
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/liluoliluoli/gnboot/internal/task/user"
-	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
+	"github.com/liluoliluoli/gnboot/internal/task/video"
 )
 
 import (
@@ -55,8 +55,8 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	userService := service.NewUserService(c, userRepo, videoUserMappingRepo, universalClient)
 	episodeService := service.NewEpisodeService(c, videoRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo, episodeRepo, userRepo, universalClient, configRepo)
 	videoProvider := adaptor.NewVideoProvider(videoService, userService, episodeService)
-	xiaoyaVideoTask := video.NewJfVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo)
-	episodeProvider := adaptor.NewEpisodeProvider(episodeService, userService, xiaoyaVideoTask)
+	jfVideoTask := video.NewJfVideoTask(episodeRepo, videoRepo, universalClient, c, configRepo, actorRepo, videoActorMappingRepo, episodeSubtitleMappingRepo)
+	episodeProvider := adaptor.NewEpisodeProvider(episodeService, userService, jfVideoTask)
 	userProvider := adaptor.NewUserProvider(userService, universalClient, videoService)
 	appVersionRepo := repo.NewAppVersionRepo(data)
 	appVersionService := service.NewAppVersionService(c, appVersionRepo, universalClient)
@@ -64,7 +64,7 @@ func wireApp(c *conf.Bootstrap) (*kratos.App, func(), error) {
 	grpcServer := server.NewGRPCServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	httpServer := server.NewHTTPServer(c, videoProvider, episodeProvider, userProvider, appVersionProvider, universalClient)
 	userPackageCheckTask := user.NewUserPackageCheckTask(c, userService)
-	job := server.NewJob(c, userPackageCheckTask, xiaoyaVideoTask)
+	job := server.NewJob(c, userPackageCheckTask, jfVideoTask)
 	app := newApp(grpcServer, httpServer, job)
 	return app, func() {
 		cleanup()

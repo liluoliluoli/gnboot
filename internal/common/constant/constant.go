@@ -115,3 +115,13 @@ const (
 	Platform                      = "aliyun"
 	PageSize                      = 100
 )
+
+type JfVideoType = string
+
+const (
+	JfMovie   JfVideoType = "Movie"
+	JfEpisode JfVideoType = "Episode"
+	JfSeason  JfVideoType = "Season"
+	JfSeries  JfVideoType = "Series"
+	JfFolder  JfVideoType = "Folder"
+)

@@ -43,6 +43,7 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.CreateTime = field.NewTime(tableName, "create_time")
 	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 	_episode.Ratio = field.NewString(tableName, "ratio")
+	_episode.JellyfinID = field.NewString(tableName, "jellyfin_id")
 
 	_episode.fillFieldMap()
 
@@ -68,6 +69,7 @@ type episode struct {
 	CreateTime   field.Time   // 创建时间
 	UpdateTime   field.Time   // 更新时间
 	Ratio        field.String // 分辨率LD，SD，HD，QHD
+	JellyfinID   field.String // jellyfin id
 
 	fieldMap map[string]field.Expr
 }
@@ -99,6 +101,7 @@ func (e *episode) updateTableName(table string) *episode {
 	e.CreateTime = field.NewTime(table, "create_time")
 	e.UpdateTime = field.NewTime(table, "update_time")
 	e.Ratio = field.NewString(table, "ratio")
+	e.JellyfinID = field.NewString(table, "jellyfin_id")
 
 	e.fillFieldMap()
 
@@ -121,7 +124,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 15)
+	e.fieldMap = make(map[string]field.Expr, 16)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["video_id"] = e.VideoID
 	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
@@ -137,6 +140,7 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["create_time"] = e.CreateTime
 	e.fieldMap["update_time"] = e.UpdateTime
 	e.fieldMap["ratio"] = e.Ratio
+	e.fieldMap["jellyfin_id"] = e.JellyfinID
 }
 
 func (e episode) clone(db *gorm.DB) episode {

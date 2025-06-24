@@ -46,6 +46,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.JellyfinCreateTime = field.NewTime(tableName, "jellyfin_create_time")
 	_video.WatchCount = field.NewInt64(tableName, "watch_count")
 	_video.Ratio = field.NewString(tableName, "ratio")
+	_video.JellyfinRootPathID = field.NewString(tableName, "jellyfin_root_path_id")
 
 	_video.fillFieldMap()
 
@@ -74,6 +75,7 @@ type video struct {
 	JellyfinCreateTime field.Time    // jellyfin创建时间
 	WatchCount         field.Int64   // 观看次数
 	Ratio              field.String  // 分辨率LD，SD，HD，QHD
+	JellyfinRootPathID field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -108,6 +110,7 @@ func (v *video) updateTableName(table string) *video {
 	v.JellyfinCreateTime = field.NewTime(table, "jellyfin_create_time")
 	v.WatchCount = field.NewInt64(table, "watch_count")
 	v.Ratio = field.NewString(table, "ratio")
+	v.JellyfinRootPathID = field.NewString(table, "jellyfin_root_path_id")
 
 	v.fillFieldMap()
 
@@ -130,7 +133,7 @@ func (v *video) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *video) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 18)
+	v.fieldMap = make(map[string]field.Expr, 19)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["video_type"] = v.VideoType
@@ -149,6 +152,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["jellyfin_create_time"] = v.JellyfinCreateTime
 	v.fieldMap["watch_count"] = v.WatchCount
 	v.fieldMap["ratio"] = v.Ratio
+	v.fieldMap["jellyfin_root_path_id"] = v.JellyfinRootPathID
 }
 
 func (v video) clone(db *gorm.DB) video {

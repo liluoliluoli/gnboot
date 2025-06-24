@@ -8,7 +8,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/gerror"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
 	"github.com/liluoliluoli/gnboot/internal/service"
-	"github.com/liluoliluoli/gnboot/internal/task/xiaoya/video"
+	"github.com/liluoliluoli/gnboot/internal/task/video"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

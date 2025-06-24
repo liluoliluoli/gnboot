@@ -58,30 +58,6 @@ func (t *JfVideoTask) Process(task *sdomain.Task) error {
 	return nil
 }
 
-//func (t *JfVideoTask) DoProcessXiaoYa(ctx context.Context) error {
-//	xiaoyaBoxIpStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
-//	if err != nil {
-//		return err
-//	}
-//	xiaoyaBoxIps := strings.Split(xiaoyaBoxIpStr, ",")
-//	scanPathStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_XiaoyaVideoSyncCategory)
-//	if err != nil {
-//		return err
-//	}
-//	scanPaths := strings.Split(scanPathStr, ",")
-//	for _, scanPath := range scanPaths {
-//		mappingPath := strings.Split(scanPath, "::")
-//		log.Infof("开始同步xiaoya视频: syncURL=%s, initialPath=%s", constant.XiaoYaVideoList, mappingPath[0])
-//		err := t.deepLoopXiaoYaPath(ctx, xiaoyaBoxIps[0], mappingPath[0], "")
-//		if err != nil {
-//			log.Errorf("同步xiaoya视频失败: %v", err)
-//			return err
-//		}
-//		log.Infof("结束同步xiaoya视频: syncURL=%s, initialPath=%s", constant.XiaoYaVideoList, mappingPath[0])
-//	}
-//	return nil
-//}
-
 func (t *JfVideoTask) DoProcess(ctx context.Context) error {
 	jellyfinBoxIpStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_JellyfinBoxIp)
 	if err != nil {
@@ -94,8 +70,12 @@ func (t *JfVideoTask) DoProcess(ctx context.Context) error {
 	}
 	scanPathIds := strings.Split(scanPathStr, ",")
 	for _, scanPathId := range scanPathIds {
-		log.Infof("开始同步jellyfin刮削: syncURL=%s, pathid=%s", jellyfinBoxIps[0], scanPathId)
-		err = t.deepLoopListJellyfinPath(ctx, jellyfinBoxIps[0], scanPathId)
+		lastSyncTime, err := t.videoRepo.QueryLastSyncTimeByJfId(ctx, scanPathId)
+		if err != nil {
+			return err
+		}
+		log.Infof("开始同步jellyfin刮削: syncURL=%s, pathid=%s, 上次同步时间=%v", jellyfinBoxIps[0], scanPathId, lastSyncTime)
+		err = t.deepLoopListJellyfinPath(ctx, jellyfinBoxIps[0], scanPathId, lastSyncTime, scanPathId)
 		if err != nil {
 			log.Errorf("同步jellyfin刮削失败: %v", err)
 			return err
@@ -105,73 +85,7 @@ func (t *JfVideoTask) DoProcess(ctx context.Context) error {
 	return nil
 }
 
-//func (t *JfVideoTask) deepLoopXiaoYaPath(ctx context.Context, domain, currentPath, parentPath string) error {
-//	page := int32(1)
-//	headerMap := make(map[string]string)
-//	headerMap["Authorization"] = constant.XiaoYaToken
-//	for {
-//		result, err := httpclient_util.DoPost[xiaoyadto.VideoListReq, xiaoyadto.XiaoyaResult[xiaoyadto.VideoListResp]](ctx, domain+constant.XiaoYaVideoList, &xiaoyadto.VideoListReq{
-//			Path:     currentPath,
-//			Password: "",
-//			Page:     page,
-//			PerPage:  constant.PageSize,
-//			Refresh:  false,
-//		}, headerMap)
-//
-//		if err != nil {
-//			return fmt.Errorf("xiaoya请求路径 %s 第 %d 页失败: %v", currentPath, page, err)
-//		}
-//
-//		if result == nil || result.Code != 200 || result.Data == nil {
-//			return fmt.Errorf("xiaoya路径 %s 第 %d 页返回结果无效", currentPath, page)
-//		}
-//
-//		for _, content := range result.Data.Content {
-//			log.Infof("xiaoya处理内容: 路径=%s, 父级=%s, 名称=%s, 是目录=%v", currentPath, parentPath, content.Name, content.IsDir)
-//			if content.IsDir {
-//				newPath := path.Join(currentPath, content.Name)
-//				err := t.deepLoopXiaoYaPath(ctx, domain, newPath, content.Name)
-//				if err != nil {
-//					log.Errorf("递归查询小雅失败: %v", err)
-//					return err
-//				}
-//			} else {
-//				existEpisode, err := t.episodeRepo.QueryByPathAndName(ctx, currentPath, content.Name) // 查询时使用currentPath
-//				if err != nil {
-//					log.Errorf("查询episode失败: %v，跳过当前文件", err)
-//					continue
-//				}
-//				if len(existEpisode) == 0 {
-//					episode := &model.Episode{
-//						XiaoyaPath:   &currentPath,
-//						EpisodeTitle: content.Name,
-//						Size:         fmt.Sprintf("%d", content.Size),
-//						Platform:     lo.ToPtr(constant.Platform),
-//						IsValid:      true,
-//						CreateTime:   time.Now(),
-//						UpdateTime:   time.Now(),
-//					}
-//					if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
-//						log.Errorf("写入episode失败（path=%s, title=%s）: %v", currentPath, content.Name, err)
-//					} else {
-//						log.Infof("成功写入episode: path=%s, title=%s", currentPath, content.Name)
-//					}
-//				} else {
-//					log.Infof("episode已存在（跳过）: path=%s, title=%s", currentPath, content.Name)
-//				}
-//			}
-//		}
-//
-//		if int64(page)*int64(constant.PageSize) >= result.Data.Total {
-//			break
-//		}
-//		page++
-//	}
-//
-//	return nil
-//}
-
-func (t *JfVideoTask) deepLoopListJellyfinPath(ctx context.Context, domain, parentId string) error {
+func (t *JfVideoTask) deepLoopListJellyfinPath(ctx context.Context, domain, parentId string, lastSyncTime *time.Time, rootPathId string) error {
 	startIndex := int32(0)
 	jellyfinDefaultToken, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_JellyfinDefaultToken)
 	if err != nil {
@@ -192,8 +106,8 @@ func (t *JfVideoTask) deepLoopListJellyfinPath(ctx context.Context, domain, pare
 		if videoListResp == nil {
 			return fmt.Errorf("jellyfin parentId %s 游标 %d 开始的返回结果无效", parentId, startIndex)
 		}
-		for _, content := range videoListResp.Items {
-			err = t.deepLoopDetailJellyfinPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, jellyfinDefaultUserId, headerMap)
+		for index, content := range videoListResp.Items {
+			err = t.deepLoopDetailJellyfinPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, jellyfinDefaultUserId, headerMap, index, lastSyncTime, rootPathId)
 			if err != nil {
 				return err
 			}
@@ -206,7 +120,7 @@ func (t *JfVideoTask) deepLoopListJellyfinPath(ctx context.Context, domain, pare
 	return nil
 }
 
-func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *jellyfindto.VideoDetailResp, series *jellyfindto.VideoDetailResp, jellyfinDefaultUserId string, headerMap map[string]string) error {
+func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *jellyfindto.VideoDetailResp, series *jellyfindto.VideoDetailResp, jellyfinDefaultUserId string, headerMap map[string]string, index int, lastSyncTime *time.Time, rootPathId string) error {
 	syncDetailURL := fmt.Sprintf(domain+constant.JellyfinVideoDetail, jellyfinDefaultUserId, id)
 	videoDetailResp, err := httpclient_util.DoGet[jellyfindto.VideoDetailResp](ctx, syncDetailURL, headerMap)
 	if err != nil {
@@ -216,10 +130,10 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 		return fmt.Errorf("jellyfin videoDetailResp parentId %s file %s 返回结果无效", parentId, id)
 	}
 	if videoDetailResp.IsFolder {
-		if mediaType == "Folder" {
-			return t.deepLoopListJellyfinPath(ctx, domain, videoDetailResp.Id)
+		if mediaType == constant.JfFolder {
+			return t.deepLoopListJellyfinPath(ctx, domain, videoDetailResp.Id, lastSyncTime, rootPathId)
 		}
-		if mediaType == "Series" {
+		if mediaType == constant.JfSeries {
 			syncSeasonListURL := fmt.Sprintf(domain+constant.JellyfinSeaonsList, id)
 			seasonListResp, err := httpclient_util.DoGet[jellyfindto.SeasonListResp](ctx, syncSeasonListURL, headerMap)
 			if err != nil {
@@ -228,14 +142,14 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 			if seasonListResp == nil {
 				return fmt.Errorf("jellyfin seasonListResp parentId %s file %s 返回结果无效", parentId, id)
 			}
-			for _, content := range seasonListResp.Items {
-				err := t.deepLoopDetailJellyfinPath(ctx, domain, id, content.Id, "Season", nil, videoDetailResp, jellyfinDefaultUserId, headerMap)
+			for newIndex, content := range seasonListResp.Items {
+				err := t.deepLoopDetailJellyfinPath(ctx, domain, id, content.Id, "Season", nil, videoDetailResp, jellyfinDefaultUserId, headerMap, newIndex, lastSyncTime, rootPathId)
 				if err != nil {
 					return err
 				}
 			}
 		}
-		if mediaType == "Season" {
+		if mediaType == constant.JfSeason {
 			syncEpisodeListURL := fmt.Sprintf(domain+constant.JellyfinEpisodesList, parentId, id)
 			episodeListResp, err := httpclient_util.DoGet[jellyfindto.EpisodeListResp](ctx, syncEpisodeListURL, headerMap)
 			if err != nil {
@@ -244,8 +158,8 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 			if episodeListResp == nil {
 				return fmt.Errorf("jellyfin episodeListResp parentId %s file %s 返回结果无效", parentId, id)
 			}
-			for _, content := range episodeListResp.Items {
-				err := t.deepLoopDetailJellyfinPath(ctx, domain, id, content.Id, "Episode", videoDetailResp, series, jellyfinDefaultUserId, headerMap)
+			for newIndex, content := range episodeListResp.Items {
+				err := t.deepLoopDetailJellyfinPath(ctx, domain, id, content.Id, "Episode", videoDetailResp, series, jellyfinDefaultUserId, headerMap, newIndex, lastSyncTime, rootPathId)
 				if err != nil {
 					return err
 				}
@@ -261,16 +175,22 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 		if !valid {
 			return nil
 		}
-		jellyfinId := ""
-		if videoDetailResp.Type == "Movie" {
-			jellyfinId = videoDetailResp.Id
+		dateCreated := time_util.ParseUtcTime(videoDetailResp.DateCreated)
+		if lastSyncTime != nil && dateCreated.Before(lo.FromPtr(lastSyncTime)) {
+			log.Infof("最后更新时间小于库记录，跳过处理【video】: title=%s", videoDetailResp.Name)
+			return nil
 		}
-		if videoDetailResp.Type == "Episode" {
+
+		jellyfinId := ""
+		if videoDetailResp.Type == constant.JfMovie {
+			jellyfinId = fmt.Sprintf("%s-%s", videoDetailResp.Id, constant.JfMovie)
+		}
+		if videoDetailResp.Type == constant.JfEpisode {
 			if videoDetailResp.SeriesId != "" {
-				jellyfinId = videoDetailResp.SeriesId
+				jellyfinId = fmt.Sprintf("%s|%s", videoDetailResp.SeriesId, constant.JfSeries)
 			}
 			if videoDetailResp.SeasonId != "" {
-				jellyfinId = videoDetailResp.SeasonId
+				jellyfinId = fmt.Sprintf("%s|%s", videoDetailResp.SeasonId, constant.JfSeason)
 			}
 		}
 		video, err := t.videoRepo.GetByJellyfinId(ctx, jellyfinId)
@@ -298,7 +218,7 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 				}
 				if videoDetailResp.Type == "Episode" {
 					overview = videoDetailResp.Overview
-					if videoDetailResp.SeasonId != "" {
+					if videoDetailResp.SeasonId != "" && season.Overview != "" {
 						overview = season.Overview
 					}
 				}
@@ -307,7 +227,8 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 					genres = videoDetailResp.Genres
 				}
 				if videoDetailResp.Type == "Episode" {
-					if series != nil {
+					genres = videoDetailResp.Genres
+					if series != nil && len(series.Genres) > 0 {
 						genres = series.Genres
 					}
 					if videoDetailResp.SeasonId != "" && len(season.Genres) != 0 {
@@ -320,7 +241,7 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 				}
 				if videoDetailResp.Type == "Episode" {
 					goodRatting = videoDetailResp.GoodRating
-					if series != nil {
+					if series != nil && series.GoodRating != 0 {
 						goodRatting = series.GoodRating
 					}
 					if videoDetailResp.SeasonId != "" && season.GoodRating != 0 {
@@ -353,21 +274,26 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 					}
 				}
 				region, externalUrls := t.getRegion(ctx, externalUrls)
-				externalUrlStr, _ := json_util.MarshalString(externalUrls)
+				externalUrlStr := ""
+				if len(externalUrls) > 0 {
+					externalUrlStr, _ = json_util.MarshalString(externalUrls)
+				}
 
 				video = &model.Video{
-					Title:              title,
+					Title:              strings.TrimSpace(title),
 					VideoType:          t.replaceVideType(ctx, videoDetailResp.MediaSources[0].Path),
 					VoteRate:           lo.ToPtr(float32(math.Round(goodRatting*10) / 10)),
 					Region:             lo.ToPtr(region),
-					Description:        lo.ToPtr(overview),
+					Description:        lo.ToPtr(strings.TrimSpace(overview)),
 					PublishDay:         lo.ToPtr(time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate)),
 					Thumbnail:          lo.ToPtr(t.getValidThumbnail(ctx, domain, []string{videoDetailResp.Id, videoDetailResp.SeasonId, videoDetailResp.SeriesId})),
 					Genres:             lo.ToPtr(strings.Join(t.replaceGenres(ctx, genres), ",")),
 					JellyfinID:         jellyfinId,
-					JellyfinCreateTime: time_util.ParseUtcTime(videoDetailResp.DateCreated),
+					JellyfinCreateTime: dateCreated,
 					TotalEpisode:       lo.ToPtr(totalEpisode),
 					Ext:                lo.ToPtr(externalUrlStr),
+					WatchCount:         0,
+					JellyfinRootPathID: lo.ToPtr(rootPathId),
 				}
 				err = t.videoRepo.Create(ctx, tx, video)
 				if err != nil {
@@ -390,6 +316,8 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 					CreateTime:   time.Now(),
 					UpdateTime:   time.Now(),
 					VideoID:      video.ID,
+					Episode:      int32(index + 1),
+					JellyfinID:   lo.ToPtr(videoDetailResp.Id),
 				}
 				if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
 					log.Errorf("写入episode失败（path=%s, title=%s）: %v", filePath, fileName, err)
@@ -404,7 +332,10 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 			}
 			if videoDetailResp.Type == "Episode" {
 				characters = videoDetailResp.Characters
-				if videoDetailResp.SeasonId != "" {
+				if series != nil && len(series.Characters) > 0 {
+					characters = series.Characters
+				}
+				if videoDetailResp.SeasonId != "" && len(season.Characters) != 0 {
 					characters = season.Characters
 				}
 			}
@@ -414,7 +345,8 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 			})
 			for _, character := range characterGroup["Director"] {
 				actor := &model.Actor{
-					Name: character.Name,
+					Name:      character.Name,
+					Thumbnail: lo.ToPtr(fmt.Sprintf(constant.PrimaryThumbnail, character.Id)),
 				}
 				err := t.actorRepo.Create(ctx, tx, actor)
 				if err != nil {
@@ -433,7 +365,8 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 					break
 				}
 				actor := &model.Actor{
-					Name: character.Name,
+					Name:      character.Name,
+					Thumbnail: lo.ToPtr(fmt.Sprintf(constant.PrimaryThumbnail, character.Id)),
 				}
 				err := t.actorRepo.Create(ctx, tx, actor)
 				if err != nil {
@@ -556,7 +489,7 @@ func (t *JfVideoTask) getValidThumbnail(ctx context.Context, domain string, ids 
 			continue
 		}
 		url := fmt.Sprintf(constant.PrimaryThumbnail, id)
-		_, err := httpclient_util.DoGet[string](ctx, domain+url, nil)
+		_, err := httpclient_util.DoHtml(ctx, domain+url)
 		if err != nil {
 			continue
 		}
@@ -586,6 +519,7 @@ func (t *JfVideoTask) getRegion(ctx context.Context, externalUrls []*jellyfindto
 			if len(matches) > 1 {
 				region := region_util.GetCnNameByName(ctx, matches[1])
 				if region != "" {
+					externalUrl.Used = true
 					return region, uniqExternalUrls
 				}
 			}

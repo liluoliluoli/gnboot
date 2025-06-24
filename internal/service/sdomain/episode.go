@@ -25,6 +25,7 @@ type Episode struct {
 	UpdateTime   time.Time                 `json:"updateTime"`
 	Ratio        string                    `json:"ratio"`
 	JellyfinId   string                    `json:"jellyfinId"`
+	DisplayTitle string                    `json:"displayTitle"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -47,6 +48,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		UpdateTime:   m.UpdateTime,
 		Ratio:        lo.FromPtr(m.Ratio),
 		JellyfinId:   lo.FromPtr(m.JellyfinID),
+		DisplayTitle: lo.FromPtr(m.DisplayTitle),
 	}
 }
 
@@ -63,7 +65,8 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 		Subtitles: lo.Map(d.Subtitles, func(item *EpisodeSubtitleMapping, index int) *subtitledto.Subtitle {
 			return item.ConvertToDto()
 		}),
-		Ratio: d.Ratio,
+		Ratio:        d.Ratio,
+		DisplayTitle: d.DisplayTitle,
 	}
 }
 
@@ -84,5 +87,6 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		UpdateTime:   time.Now(),
 		Ratio:        lo.ToPtr(d.Ratio),
 		JellyfinID:   lo.ToPtr(d.JellyfinId),
+		DisplayTitle: lo.ToPtr(d.DisplayTitle),
 	}
 }

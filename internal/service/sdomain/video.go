@@ -102,6 +102,9 @@ func (d *Video) ConvertToDto() *videodto.Video {
 	actors := lo.Map(d.Actors, func(item *VideoActorMapping, index int) *actordto.Actor {
 		return item.ConvertToDto()
 	})
+	actors = lo.Filter(actors, func(item *actordto.Actor, index int) bool {
+		return item != nil
+	})
 	return &videodto.Video{
 		Id:           int32(d.ID),
 		Title:        d.Title,

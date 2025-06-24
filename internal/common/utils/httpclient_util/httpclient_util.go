@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	errors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -101,9 +104,9 @@ func DoGet[T any](ctx context.Context, url string, headerMap map[string]string) 
 func DoHtml(ctx context.Context, url string) (string, error) {
 	httpClient := GetHttpClient()
 	headers := http.Header{}
-	headers.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-	headers.Set("Referer", "https://www.douban.com/")
-	headers.Set("Accept-Language", "zh-CN,zh;q=0.9")
+	//headers.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+	//headers.Set("Referer", "https://www.douban.com/")
+	//headers.Set("Accept-Language", "zh-CN,zh;q=0.9")
 	response, err := httpClient.Get(url, headers)
 	if err != nil {
 		return "", err
@@ -123,4 +126,35 @@ func DoHtml(ctx context.Context, url string) (string, error) {
 		return "", err
 	}
 	return string(rBody), nil
+}
+
+func CheckImageUrl(url string) (bool, error) {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		return false, fmt.Errorf("请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return false, nil
+	}
+
+	// 只读取前512字节用于验证
+	buf := make([]byte, 512)
+	_, err = io.ReadFull(resp.Body, buf)
+	if err != nil {
+		return false, fmt.Errorf("读取图片失败: %v", err)
+	}
+
+	// 检测内容类型
+	contentType := http.DetectContentType(buf)
+	if !strings.HasPrefix(contentType, "image/") {
+		return false, fmt.Errorf("无效的图片格式: %s", contentType)
+	}
+
+	return true, nil
 }

@@ -145,7 +145,7 @@ func (r *VideoRepo) Delete(ctx context.Context, tx *gen.Query, ids ...int64) err
 }
 
 func (r *VideoRepo) QueryLastSyncTimeByJfId(ctx context.Context, jfRootId string) (*time.Time, error) {
-	finds, err := r.do(ctx, nil).Select(gen.Video.JellyfinCreateTime.Max()).Where(gen.Video.JellyfinRootPathID.Eq(jfRootId)).Group(gen.Video.JellyfinRootPathID).Find()
+	finds, err := r.do(ctx, nil).Select(gen.Video.JellyfinCreateTime.Max().As("jellyfin_create_time")).Where(gen.Video.JellyfinRootPathID.Eq(jfRootId)).Group(gen.Video.JellyfinRootPathID).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

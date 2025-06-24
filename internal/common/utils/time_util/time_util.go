@@ -7,7 +7,7 @@ func FormatYYYYMMDD(t time.Time) string {
 }
 
 func FormatStrToYYYYMMDD(timeStr string) string {
-	t, err := time.Parse("2006-01-02T15:04:05.0000000Z", timeStr)
+	t, err := time.ParseInLocation("2006-01-02T15:04:05.0000000Z", timeStr, time.Local)
 	if err != nil {
 		return ""
 	}
@@ -15,7 +15,7 @@ func FormatStrToYYYYMMDD(timeStr string) string {
 }
 
 func ParseUtcTime(timeStr string) time.Time {
-	parsedTime, _ := time.Parse("2006-01-02T15:04:05.0000000Z", timeStr)
+	parsedTime, _ := time.ParseInLocation("2006-01-02T15:04:05.0000000Z", timeStr, time.Local)
 	t := parsedTime.Truncate(time.Second)
 	return t
 }

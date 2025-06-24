@@ -147,7 +147,7 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 	if gerror.HandleRedisNotFoundError(err) != nil {
 		return nil, err
 	}
-	res, err := s.video.PageFavorites(ctx, 1, &sdomain.Page{
+	res, err := s.video.PageFavorites(ctx, currentUser.ID, &sdomain.Page{
 		CurrentPage: 1,
 		PageSize:    100,
 	})

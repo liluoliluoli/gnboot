@@ -26,6 +26,9 @@ func (d *VideoActorMapping) ConvertFromRepo(m *model.VideoActorMapping) *VideoAc
 }
 
 func (d *VideoActorMapping) ConvertToDto() *actordto.Actor {
+	if d.Actor == nil {
+		return nil
+	}
 	return &actordto.Actor{
 		Id:         int32(d.ID),
 		Name:       d.Actor.Name,

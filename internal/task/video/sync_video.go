@@ -318,6 +318,7 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 					VideoID:      video.ID,
 					Episode:      int32(index + 1),
 					JellyfinID:   lo.ToPtr(videoDetailResp.Id),
+					DisplayTitle: lo.ToPtr(lo.Ternary(videoDetailResp.Name != "", videoDetailResp.Name, fileName)),
 				}
 				if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
 					log.Errorf("写入episode失败（path=%s, title=%s）: %v", filePath, fileName, err)
@@ -381,7 +382,7 @@ func (t *JfVideoTask) deepLoopDetailJellyfinPath(ctx context.Context, domain, pa
 				break
 			}
 			err = t.videoActorMappingRepo.BatchCreate(ctx, tx, videoActorMappings)
-			if err != nil {
+			if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
 				return err
 			}
 			log.Infof("成功写入【videoActorMappingRepo】")
@@ -489,11 +490,13 @@ func (t *JfVideoTask) getValidThumbnail(ctx context.Context, domain string, ids 
 			continue
 		}
 		url := fmt.Sprintf(constant.PrimaryThumbnail, id)
-		_, err := httpclient_util.DoHtml(ctx, domain+url)
+		valid, err := httpclient_util.CheckImageUrl(domain + url)
 		if err != nil {
 			continue
 		}
-		return url
+		if valid {
+			return url
+		}
 	}
 	return constant.DefaultThumbnail
 }

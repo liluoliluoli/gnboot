@@ -28,6 +28,7 @@ type Episode struct {
 	UpdateTime   time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 	Ratio        *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
 	JellyfinID   *string    `gorm:"column:jellyfin_id;type:varchar(255);comment:jellyfin id" json:"jellyfinId"`
+	DisplayTitle *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
 }
 
 // TableName Episode's table name

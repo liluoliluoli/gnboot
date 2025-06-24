@@ -178,7 +178,7 @@ func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavori
 				return item.VideoId
 			}),
 			Page:      page,
-			IsHistory: !isFavorite,
+			IsHistory: false,
 		}, userId)
 	}
 	return &sdomain.PageResult[*sdomain.Video]{

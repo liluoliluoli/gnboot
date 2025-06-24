@@ -80,6 +80,7 @@ additional_properties:
     int32 duration = 8;
     repeated gnboot.Subtitle subtitles = 9;
     string ratio = 10;
+    string displayTitle = 11;
   }
 
   message GetEpisodeRequest {

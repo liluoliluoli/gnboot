@@ -1,22 +1,15 @@
 package httpclient_util
 
 import (
-	"context"
 	"fmt"
-	"github.com/biter777/countries"
-	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"testing"
 )
 
 func TestRegular(t *testing.T) {
-	ctx := context.Background()
-	html, _ := DoHtml(ctx, "https://www.imdb.com/title/tt18302114")
-	regular := constant.RegularMap[constant.IMDb]
-	matches := regular.FindStringSubmatch(html)
-	if len(matches) > 1 {
-		country := countries.ByName(matches[1])
-		fmt.Println("find:" + country.Domain().String())
+	//ctx := context.Background()
+	html, err := CheckImageUrl("https://2a43-45-196-216-126.ngrok-free.app/Items/8d52885cdf2977c47dad7b060e5dd5e9/Images/Primary")
+	if err != nil {
+		fmt.Println("find:" + err.Error())
 	}
-	//rs := GetLocalNameByName(ctx, "United States")
-	//fmt.Println("find:" + rs)
+	fmt.Println("find:" + fmt.Sprintf("%v", html))
 }

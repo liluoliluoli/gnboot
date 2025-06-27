@@ -9,9 +9,12 @@ import (
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/json_util"
+	"github.com/samber/lo"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -157,4 +160,44 @@ func CheckImageUrl(url string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func ExtractAliM3u8UrlExpireTime(rawUrl string) (*time.Time, error) {
+	if rawUrl == "" {
+		return nil, nil
+	}
+	parsedURL, err := url.Parse(rawUrl)
+	if err != nil {
+		return nil, err
+	}
+	queryParams := parsedURL.Query()
+	xOssExpires := queryParams.Get("x-oss-expires")
+	if xOssExpires == "" {
+		return nil, nil
+	}
+	parseInt, err := strconv.ParseInt(xOssExpires, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	return lo.ToPtr(time.UnixMilli(parseInt)), nil
+}
+
+func ExtractAliVideoUrlDriveAndFileId(rawUrl string) (string, string, error) {
+	if rawUrl == "" {
+		return "", "", nil
+	}
+	parsedURL, err := url.Parse(rawUrl)
+	if err != nil {
+		return "", "", err
+	}
+	queryParams := parsedURL.Query()
+	driveId := queryParams.Get("dr")
+	if driveId == "" {
+		return "", "", nil
+	}
+	fileId := queryParams.Get("f")
+	if fileId == "" {
+		return "", "", nil
+	}
+	return driveId, fileId, nil
 }

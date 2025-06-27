@@ -21,6 +21,7 @@ func init() {
 	tableMap["video_actor_mapping"] = "VideoActorMapping"
 	tableMap["episode_subtitle_mapping"] = "EpisodeSubtitleMapping"
 	tableMap["video_user_mapping"] = "VideoUserMapping"
+	tableMap["episode_audio_mapping"] = "EpisodeAudioMapping"
 }
 
 func main() {

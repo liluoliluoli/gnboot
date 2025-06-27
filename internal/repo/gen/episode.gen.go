@@ -45,6 +45,8 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.Ratio = field.NewString(tableName, "ratio")
 	_episode.JellyfinID = field.NewString(tableName, "jellyfin_id")
 	_episode.DisplayTitle = field.NewString(tableName, "display_title")
+	_episode.AliDriveID = field.NewString(tableName, "ali_drive_id")
+	_episode.AliFileID = field.NewString(tableName, "ali_file_id")
 
 	_episode.fillFieldMap()
 
@@ -72,6 +74,8 @@ type episode struct {
 	Ratio        field.String // 分辨率LD，SD，HD，QHD
 	JellyfinID   field.String // jellyfin id
 	DisplayTitle field.String // 用于展示的title
+	AliDriveID   field.String // 阿里云盘driveid
+	AliFileID    field.String // 阿里云盘fileid
 
 	fieldMap map[string]field.Expr
 }
@@ -105,6 +109,8 @@ func (e *episode) updateTableName(table string) *episode {
 	e.Ratio = field.NewString(table, "ratio")
 	e.JellyfinID = field.NewString(table, "jellyfin_id")
 	e.DisplayTitle = field.NewString(table, "display_title")
+	e.AliDriveID = field.NewString(table, "ali_drive_id")
+	e.AliFileID = field.NewString(table, "ali_file_id")
 
 	e.fillFieldMap()
 
@@ -127,7 +133,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 17)
+	e.fieldMap = make(map[string]field.Expr, 19)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["video_id"] = e.VideoID
 	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
@@ -145,6 +151,8 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["ratio"] = e.Ratio
 	e.fieldMap["jellyfin_id"] = e.JellyfinID
 	e.fieldMap["display_title"] = e.DisplayTitle
+	e.fieldMap["ali_drive_id"] = e.AliDriveID
+	e.fieldMap["ali_file_id"] = e.AliFileID
 }
 
 func (e episode) clone(db *gorm.DB) episode {

@@ -19,6 +19,7 @@ type Episode struct {
 	Size         string                    `json:"size"`
 	Ext          string                    `json:"ext"`
 	Subtitles    []*EpisodeSubtitleMapping `json:"subtitles"`
+	Audios       []*EpisodeAudioMapping    `json:"audios"`
 	XiaoYaPath   string                    `json:"xiaoYaPath"`
 	ExpiredTime  *time.Time                `json:"expiredTime"`
 	CreateTime   time.Time                 `json:"createTime"`
@@ -26,6 +27,8 @@ type Episode struct {
 	Ratio        string                    `json:"ratio"`
 	JellyfinId   string                    `json:"jellyfinId"`
 	DisplayTitle string                    `json:"displayTitle"`
+	AliDriveId   string                    `json:"aliDriveId"`
+	AliFileId    string                    `json:"aliFileId"`
 }
 
 func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
@@ -49,6 +52,8 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		Ratio:        lo.FromPtr(m.Ratio),
 		JellyfinId:   lo.FromPtr(m.JellyfinID),
 		DisplayTitle: lo.FromPtr(m.DisplayTitle),
+		AliDriveId:   lo.FromPtr(m.AliDriveID),
+		AliFileId:    lo.FromPtr(m.AliFileID),
 	}
 }
 
@@ -63,6 +68,9 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 		Ext:          d.Ext,
 		Duration:     int32(d.Duration),
 		Subtitles: lo.Map(d.Subtitles, func(item *EpisodeSubtitleMapping, index int) *subtitledto.Subtitle {
+			return item.ConvertToDto()
+		}),
+		Audios: lo.Map(d.Audios, func(item *EpisodeAudioMapping, index int) *episodedto.Audio {
 			return item.ConvertToDto()
 		}),
 		Ratio:        d.Ratio,
@@ -88,5 +96,7 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		Ratio:        lo.ToPtr(d.Ratio),
 		JellyfinID:   lo.ToPtr(d.JellyfinId),
 		DisplayTitle: lo.ToPtr(d.DisplayTitle),
+		AliDriveID:   lo.ToPtr(d.AliDriveId),
+		AliFileID:    lo.ToPtr(d.AliFileId),
 	}
 }

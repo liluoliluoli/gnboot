@@ -29,6 +29,8 @@ type Episode struct {
 	Ratio        *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
 	JellyfinID   *string    `gorm:"column:jellyfin_id;type:varchar(255);comment:jellyfin id" json:"jellyfinId"`
 	DisplayTitle *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
+	AliDriveID   *string    `gorm:"column:ali_drive_id;type:varchar(255);comment:阿里云盘driveid" json:"aliDriveId"`
+	AliFileID    *string    `gorm:"column:ali_file_id;type:varchar(255);comment:阿里云盘fileid" json:"aliFileId"`
 }
 
 // TableName Episode's table name

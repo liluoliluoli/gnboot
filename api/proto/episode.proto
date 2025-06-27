@@ -81,6 +81,8 @@ additional_properties:
     repeated gnboot.Subtitle subtitles = 9;
     string ratio = 10;
     string displayTitle = 11;
+    repeated Audio audios = 12;
+
   }
 
   message GetEpisodeRequest {
@@ -97,4 +99,12 @@ message UpdateConfigRequest {
 }
 
 message TestSyncTaskRequest {
+}
+
+message Audio{
+  int32 id = 1;
+  string url = 2;
+  string title = 3;
+  string language = 4;
+  string mimeType = 5;
 }

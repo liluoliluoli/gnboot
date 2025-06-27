@@ -149,7 +149,7 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 					item.LastPlayedPosition = videoPlayedMap[item.ID].LastPlayedPosition
 				}
 			}
-			if item.Thumbnail != "" {
+			if item.Thumbnail != "" && !condition.IsHistory {
 				item.Thumbnail = boxIp + item.Thumbnail
 			}
 		}

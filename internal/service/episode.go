@@ -12,6 +12,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/common/utils/httpclient_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/time_util"
 	"github.com/liluoliluoli/gnboot/internal/conf"
+	"github.com/liluoliluoli/gnboot/internal/integration/dto/alidto"
 	"github.com/liluoliluoli/gnboot/internal/integration/dto/xiaoyadto"
 	"github.com/liluoliluoli/gnboot/internal/repo"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
@@ -21,34 +22,36 @@ import (
 )
 
 type EpisodeService struct {
-	c                        *conf.Bootstrap
-	videoRepo                *repo.VideoRepo
-	actorRepo                *repo.ActorRepo
-	videoActorMappingRepo    *repo.VideoActorMappingRepo
-	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
-	episodeRepo              *repo.EpisodeRepo
-	userRepo                 *repo.UserRepo
-	client                   redis.UniversalClient
-	cache                    sdomain.Cache[*sdomain.Episode]
-	configRepo               *repo.ConfigRepo
+	c                          *conf.Bootstrap
+	videoRepo                  *repo.VideoRepo
+	actorRepo                  *repo.ActorRepo
+	videoActorMappingRepo      *repo.VideoActorMappingRepo
+	episodeSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
+	episodeRepo                *repo.EpisodeRepo
+	userRepo                   *repo.UserRepo
+	client                     redis.UniversalClient
+	cache                      sdomain.Cache[*sdomain.Episode]
+	configRepo                 *repo.ConfigRepo
+	episodeAudioMappingRepo    *repo.EpisodeAudioMappingRepo
 }
 
 func NewEpisodeService(c *conf.Bootstrap,
 	videoRepo *repo.VideoRepo,
 	actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo,
-	videoSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo,
-	userRepo *repo.UserRepo, client redis.UniversalClient, configRepo *repo.ConfigRepo) *EpisodeService {
+	episodeSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo, episodeRepo *repo.EpisodeRepo,
+	userRepo *repo.UserRepo, client redis.UniversalClient, configRepo *repo.ConfigRepo, episodeAudioMappingRepo *repo.EpisodeAudioMappingRepo) *EpisodeService {
 	return &EpisodeService{
-		c:                        c,
-		videoRepo:                videoRepo,
-		actorRepo:                actorRepo,
-		videoActorMappingRepo:    videoActorMappingRepo,
-		videoSubtitleMappingRepo: videoSubtitleMappingRepo,
-		episodeRepo:              episodeRepo,
-		userRepo:                 userRepo,
-		client:                   client,
-		cache:                    repo.NewCache[*sdomain.Episode](c, videoRepo.Data.Cache()),
-		configRepo:               configRepo,
+		c:                          c,
+		videoRepo:                  videoRepo,
+		actorRepo:                  actorRepo,
+		videoActorMappingRepo:      videoActorMappingRepo,
+		episodeSubtitleMappingRepo: episodeSubtitleMappingRepo,
+		episodeRepo:                episodeRepo,
+		userRepo:                   userRepo,
+		client:                     client,
+		cache:                      repo.NewCache[*sdomain.Episode](c, videoRepo.Data.Cache()),
+		configRepo:                 configRepo,
+		episodeAudioMappingRepo:    episodeAudioMappingRepo,
 	}
 }
 
@@ -74,25 +77,33 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	if err != nil {
 		return nil, err
 	}
-	subtitleMappings, err := s.videoSubtitleMappingRepo.FindByEpisodeId(ctx, episode.ID)
+	subtitleMappings, err := s.episodeSubtitleMappingRepo.FindByEpisodeId(ctx, episode.ID)
 	if err != nil {
 		return nil, err
 	}
 	episode.Subtitles = subtitleMappings
+	audioMappings, err := s.episodeAudioMappingRepo.FindByEpisodeId(ctx, episode.ID)
+	if err != nil {
+		return nil, err
+	}
+	episode.Audios = audioMappings
 
 	currentWatchs++
 	s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
 
 	var newRatio = ""
 	if containPlayUrl {
-		if episode.Url == "" || episode.ExpiredTime == nil || episode.Duration == 0 || episode.ExpiredTime.Sub(time.Now()) < constant.AliyunM3u8EarlyExpireMinutes*time.Minute {
-			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+		if episode.Url == "" || episode.ExpiredTime == nil || episode.ExpiredTime.Before(time.Now()) {
+			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, true)
 			if err != nil {
 				return nil, err
 			}
 			episode.Url = url
 			episode.Duration = duration
-			episode.ExpiredTime = lo.ToPtr(time.Now().Add(constant.AliyunM3u8ReallyExpireMinutes * time.Minute))
+			expiredTime, _ := httpclient_util.ExtractAliM3u8UrlExpireTime(url)
+			if expiredTime != nil && expiredTime.Unix() > time.Now().Unix()+duration+constant.AliyunM3u8EarlyExpireSeconds {
+				episode.ExpiredTime = lo.ToPtr(expiredTime.Add(-time.Duration(duration+constant.AliyunM3u8EarlyExpireSeconds) * time.Second))
+			}
 			episode.Ratio = ratio
 			newRatio = ratio
 			err = s.episodeRepo.Updates(ctx, nil, episode)
@@ -118,56 +129,103 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	return episode, nil
 }
 
-func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string) (string, int64, string, error) {
+func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useAliOpenAPi bool) (string, int64, string, error) {
 	//if len(s.c.Dynamic.BoxServerIps) == 0 {
 	//	return "", 0, nil
 	//}
-	err := s.transferStoreToAliyun(ctx, xiaoyaPath)
+	url, err := s.transferStoreToAliyun(ctx, xiaoyaPath)
 	if err != nil {
 		return "", 0, "", err
 	}
+	driveId, fileId, _ := httpclient_util.ExtractAliVideoUrlDriveAndFileId(url)
 	clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
 	if err != nil {
 		clientIp = "127.0.0.1"
 	}
-	boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
-	if err != nil {
-		return "", 0, "", err
-	}
-	boxIp := array_util.GetHashElement(boxIps, clientIp)
-	m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
-		Path:     xiaoyaPath,
-		Password: "",
-		Method:   "video_preview",
-	}, nil)
-	if err != nil {
-		return "", 0, "", err
-	}
-	if m3u8Result == nil || m3u8Result.Code != 200 || m3u8Result.Data == nil || m3u8Result.Data.VideoPreviewPlayInfo == nil || len(m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList) == 0 {
-		return "", 0, "", gerror.ErrInternal(ctx, "获取播放地址失败")
-	}
+	if useAliOpenAPi {
+		aliOpenapiDomain, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_AliOpenapiDomain)
+		if err != nil {
+			return "", 0, "", err
+		}
+		aliOpenapiToken, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_AliOpenapiToken)
+		if err != nil {
+			return "", 0, "", err
+		}
+		headerMap := make(map[string]string)
+		headerMap["Authorization"] = aliOpenapiToken
+		m3u8Result, err := httpclient_util.DoPost[alidto.GetVideoPreviewPlayInfoReq, alidto.VideoPreviewPlayInfoResp](ctx, aliOpenapiDomain+constant.AliyunM3u8Path, &alidto.GetVideoPreviewPlayInfoReq{
+			DriveId:      driveId,
+			FileId:       fileId,
+			Category:     "live_transcoding",
+			UrlExpireSec: 14400,
+		}, headerMap)
+		if err != nil {
+			return "", 0, "", err
+		}
+		if m3u8Result == nil {
+			return "", 0, "", nil
+		}
+		var m3u8Url = ""
+		var radio = ""
+		for _, item := range m3u8Result.VideoPreviewPlayInfo.LiveTranscodingTaskList {
+			if item.TemplateId == "LD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "SD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+		}
+		return m3u8Url, 0, radio, nil
+	} else {
+		boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
+		if err != nil {
+			return "", 0, "", err
+		}
+		boxIp := array_util.GetHashElement(boxIps, clientIp)
+		m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
+			Path:     xiaoyaPath,
+			Password: "",
+			Method:   "video_preview",
+		}, nil)
+		if err != nil {
+			return "", 0, "", err
+		}
+		if m3u8Result == nil || m3u8Result.Code != 200 || m3u8Result.Data == nil || m3u8Result.Data.VideoPreviewPlayInfo == nil || len(m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList) == 0 {
+			return "", 0, "", gerror.ErrInternal(ctx, "获取播放地址失败")
+		}
 
-	var m3u8Url = ""
-	var radio = ""
-	for _, item := range m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList {
-		if item.TemplateId == "LD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-			radio = item.TemplateId
+		var m3u8Url = ""
+		var radio = ""
+		for _, item := range m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList {
+			if item.TemplateId == "LD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "SD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
+			if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
+				m3u8Url = item.Url
+				radio = item.TemplateId
+			}
 		}
-		if item.TemplateId == "SD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-			radio = item.TemplateId
-		}
-		if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-			radio = item.TemplateId
-		}
-		if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
-			m3u8Url = item.Url
-			radio = item.TemplateId
-		}
+		return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil
 	}
-	return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil
 }
 
 func (s *EpisodeService) TransferStoreNextEpisodeToAliyun(ctx context.Context, videoId int64, currentEpisodeId int64) error {
@@ -178,21 +236,28 @@ func (s *EpisodeService) TransferStoreNextEpisodeToAliyun(ctx context.Context, v
 	if episode == nil {
 		return nil
 	}
-	err = s.transferStoreToAliyun(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+	url, err := s.transferStoreToAliyun(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle)
+	if err != nil {
+		return err
+	}
+	driveId, fileId, _ := httpclient_util.ExtractAliVideoUrlDriveAndFileId(url)
+	episode.AliDriveId = driveId
+	episode.AliFileId = fileId
+	err = s.episodeRepo.Updates(ctx, nil, episode)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *EpisodeService) transferStoreToAliyun(ctx context.Context, xiaoyaPath string) error {
+func (s *EpisodeService) transferStoreToAliyun(ctx context.Context, xiaoyaPath string) (string, error) {
 	clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
 	if err != nil {
 		clientIp = "127.0.0.1"
 	}
 	boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
 	if err != nil {
-		return err
+		return "", err
 	}
 	boxIp := array_util.GetHashElement(boxIps, clientIp)
 	headerMap := make(map[string]string)
@@ -202,12 +267,12 @@ func (s *EpisodeService) transferStoreToAliyun(ctx context.Context, xiaoyaPath s
 		Password: "",
 	}, headerMap)
 	if err != nil {
-		return err
+		return "", err
 	}
-	if transferStoreResult == nil || transferStoreResult.Code != 200 {
-		return gerror.ErrInternal(ctx, "获取播放地址转存失败")
+	if transferStoreResult == nil || transferStoreResult.Code != 200 || transferStoreResult.Data == nil || transferStoreResult.Data.RawUrl == "" {
+		return "", gerror.ErrInternal(ctx, "获取播放地址转存失败")
 	}
-	return nil
+	return transferStoreResult.Data.RawUrl, nil
 }
 
 func (s *EpisodeService) UpdateConfigs(ctx context.Context, configs string) error {

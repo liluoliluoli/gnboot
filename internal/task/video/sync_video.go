@@ -509,7 +509,10 @@ func (t *JfVideoTask) getRegion(ctx context.Context, externalUrls []*jellyfindto
 		return item.Name
 	})
 	sort.Slice(uniqExternalUrls, func(i, j int) bool {
-		return uniqExternalUrls[i].Name < uniqExternalUrls[j].Name
+		if constant.SortMap[uniqExternalUrls[i].Name] == 0 || constant.SortMap[uniqExternalUrls[j].Name] == 0 {
+			return true
+		}
+		return constant.SortMap[uniqExternalUrls[i].Name] < constant.SortMap[uniqExternalUrls[j].Name]
 	})
 	for _, externalUrl := range uniqExternalUrls {
 		html, err := httpclient_util.DoHtml(ctx, externalUrl.Url)

@@ -20,6 +20,7 @@ var (
 	Actor                  *actor
 	AppVersion             *appVersion
 	Episode                *episode
+	EpisodeAudioMapping    *episodeAudioMapping
 	EpisodeSubtitleMapping *episodeSubtitleMapping
 	User                   *user
 	Video                  *video
@@ -32,6 +33,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Actor = &Q.Actor
 	AppVersion = &Q.AppVersion
 	Episode = &Q.Episode
+	EpisodeAudioMapping = &Q.EpisodeAudioMapping
 	EpisodeSubtitleMapping = &Q.EpisodeSubtitleMapping
 	User = &Q.User
 	Video = &Q.Video
@@ -45,6 +47,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Actor:                  newActor(db, opts...),
 		AppVersion:             newAppVersion(db, opts...),
 		Episode:                newEpisode(db, opts...),
+		EpisodeAudioMapping:    newEpisodeAudioMapping(db, opts...),
 		EpisodeSubtitleMapping: newEpisodeSubtitleMapping(db, opts...),
 		User:                   newUser(db, opts...),
 		Video:                  newVideo(db, opts...),
@@ -59,6 +62,7 @@ type Query struct {
 	Actor                  actor
 	AppVersion             appVersion
 	Episode                episode
+	EpisodeAudioMapping    episodeAudioMapping
 	EpisodeSubtitleMapping episodeSubtitleMapping
 	User                   user
 	Video                  video
@@ -74,6 +78,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Actor:                  q.Actor.clone(db),
 		AppVersion:             q.AppVersion.clone(db),
 		Episode:                q.Episode.clone(db),
+		EpisodeAudioMapping:    q.EpisodeAudioMapping.clone(db),
 		EpisodeSubtitleMapping: q.EpisodeSubtitleMapping.clone(db),
 		User:                   q.User.clone(db),
 		Video:                  q.Video.clone(db),
@@ -96,6 +101,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Actor:                  q.Actor.replaceDB(db),
 		AppVersion:             q.AppVersion.replaceDB(db),
 		Episode:                q.Episode.replaceDB(db),
+		EpisodeAudioMapping:    q.EpisodeAudioMapping.replaceDB(db),
 		EpisodeSubtitleMapping: q.EpisodeSubtitleMapping.replaceDB(db),
 		User:                   q.User.replaceDB(db),
 		Video:                  q.Video.replaceDB(db),
@@ -108,6 +114,7 @@ type queryCtx struct {
 	Actor                  IActorDo
 	AppVersion             IAppVersionDo
 	Episode                IEpisodeDo
+	EpisodeAudioMapping    IEpisodeAudioMappingDo
 	EpisodeSubtitleMapping IEpisodeSubtitleMappingDo
 	User                   IUserDo
 	Video                  IVideoDo
@@ -120,6 +127,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Actor:                  q.Actor.WithContext(ctx),
 		AppVersion:             q.AppVersion.WithContext(ctx),
 		Episode:                q.Episode.WithContext(ctx),
+		EpisodeAudioMapping:    q.EpisodeAudioMapping.WithContext(ctx),
 		EpisodeSubtitleMapping: q.EpisodeSubtitleMapping.WithContext(ctx),
 		User:                   q.User.WithContext(ctx),
 		Video:                  q.Video.WithContext(ctx),

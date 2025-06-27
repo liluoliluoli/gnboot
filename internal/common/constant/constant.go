@@ -40,6 +40,8 @@ const (
 	SubKey_JellyfinVideoSyncCategory SubKey = "jellyfinVideoSyncCategory"
 	SubKey_JellyfinDefaultUserId     SubKey = "jellyfinDefaultUserId"
 	SubKey_JellyfinDefaultToken      SubKey = "jellyfinDefaultToken"
+	SubKey_AliOpenapiDomain          SubKey = "aliOpenapiDomain"
+	SubKey_AliOpenapiToken           SubKey = "aliOpenapiToken"
 )
 
 const CTX_UserName = "CTX_UserName"
@@ -96,24 +98,24 @@ var (
 )
 
 const (
-	XiaoYaLoginPath               = "/api/auth/login/hash"
-	XiaoYaTransferStorePath       = "/api/fs/get"
-	XiaoYaM3u8Path                = "/api/fs/other"
-	XiaoYaVideoList               = "/api/fs/list"
-	JellyfinVideoList             = "/Users/%s/Items?Recursive=false&StartIndex=%d&ParentId=%s&Limit=%d"
-	JellyfinVideoDetail           = "/Users/%s/Items/%s"
-	JellyfinSeaonsList            = "/Shows/%s/Seasons"
-	JellyfinEpisodesList          = "/Shows/%s/Episodes?seasonId=%s"
-	JellyfinPlayInfo              = "/Items/%s/PlaybackInfo?UserId=%s"
-	PrimaryThumbnail              = "/Items/%s/Images/Primary"
-	GetCountryDetail              = "https://restcountries.com/v3.1/alpha/%s"
-	DefaultThumbnail              = ""
-	AliyunM3u8EarlyExpireMinutes  = 2 * 60                                                             //提前失效分钟
-	AliyunM3u8ReallyExpireMinutes = 4 * 60                                                             //实际失效分钟
-	XiaoYaLoginName               = "admin"                                                            //xiaoya登录账号
-	XiaoYaLoginPassword           = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f" //xiaoya登录密码
-	Platform                      = "aliyun"
-	PageSize                      = 100
+	XiaoYaLoginPath              = "/api/auth/login/hash"
+	XiaoYaTransferStorePath      = "/api/fs/get"
+	XiaoYaM3u8Path               = "/api/fs/other"
+	AliyunM3u8Path               = "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
+	XiaoYaVideoList              = "/api/fs/list"
+	JellyfinVideoList            = "/Users/%s/Items?Recursive=false&StartIndex=%d&ParentId=%s&Limit=%d"
+	JellyfinVideoDetail          = "/Users/%s/Items/%s"
+	JellyfinSeaonsList           = "/Shows/%s/Seasons"
+	JellyfinEpisodesList         = "/Shows/%s/Episodes?seasonId=%s"
+	JellyfinPlayInfo             = "/Items/%s/PlaybackInfo?UserId=%s"
+	PrimaryThumbnail             = "/Items/%s/Images/Primary"
+	GetCountryDetail             = "https://restcountries.com/v3.1/alpha/%s"
+	DefaultThumbnail             = ""
+	AliyunM3u8EarlyExpireSeconds = 10 * 60                                                            //提前失效分钟
+	XiaoYaLoginName              = "admin"                                                            //xiaoya登录账号
+	XiaoYaLoginPassword          = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f" //xiaoya登录密码
+	Platform                     = "aliyun"
+	PageSize                     = 100
 )
 
 type JfVideoType = string

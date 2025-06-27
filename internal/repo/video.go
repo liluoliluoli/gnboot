@@ -72,7 +72,7 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 	} else if condition.Sort == constant.SortByPublish {
 		do = do.Order(gen.Video.PublishDay.Desc())
 	} else {
-		do = do.Order(gen.Video.UpdateTime.Desc())
+		do = do.Order(gen.Video.JellyfinCreateTime.Desc())
 	}
 	list, total, err := do.FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {

@@ -28,6 +28,7 @@ const (
 	UserRemoteService_GetCurrentWatchCount_FullMethodName = "/gnboot.UserRemoteService/GetCurrentWatchCount"
 	UserRemoteService_GetUser_FullMethodName              = "/gnboot.UserRemoteService/GetUser"
 	UserRemoteService_UpdateNotice_FullMethodName         = "/gnboot.UserRemoteService/UpdateNotice"
+	UserRemoteService_UpdatePackageType_FullMethodName    = "/gnboot.UserRemoteService/UpdatePackageType"
 )
 
 // UserRemoteServiceClient is the client API for UserRemoteService service.
@@ -42,6 +43,7 @@ type UserRemoteServiceClient interface {
 	GetCurrentWatchCount(ctx context.Context, in *GetCurrentWatchCountRequest, opts ...grpc.CallOption) (*GetCurrentWatchCountResp, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 	UpdateNotice(ctx context.Context, in *UpdateNoticeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdatePackageType(ctx context.Context, in *UpdatePackageTypeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userRemoteServiceClient struct {
@@ -124,6 +126,15 @@ func (c *userRemoteServiceClient) UpdateNotice(ctx context.Context, in *UpdateNo
 	return out, nil
 }
 
+func (c *userRemoteServiceClient) UpdatePackageType(ctx context.Context, in *UpdatePackageTypeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserRemoteService_UpdatePackageType_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserRemoteServiceServer is the server API for UserRemoteService service.
 // All implementations must embed UnimplementedUserRemoteServiceServer
 // for forward compatibility
@@ -136,6 +147,7 @@ type UserRemoteServiceServer interface {
 	GetCurrentWatchCount(context.Context, *GetCurrentWatchCountRequest) (*GetCurrentWatchCountResp, error)
 	GetUser(context.Context, *GetUserRequest) (*User, error)
 	UpdateNotice(context.Context, *UpdateNoticeRequest) (*emptypb.Empty, error)
+	UpdatePackageType(context.Context, *UpdatePackageTypeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserRemoteServiceServer()
 }
 
@@ -166,6 +178,9 @@ func (UnimplementedUserRemoteServiceServer) GetUser(context.Context, *GetUserReq
 }
 func (UnimplementedUserRemoteServiceServer) UpdateNotice(context.Context, *UpdateNoticeRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotice not implemented")
+}
+func (UnimplementedUserRemoteServiceServer) UpdatePackageType(context.Context, *UpdatePackageTypeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePackageType not implemented")
 }
 func (UnimplementedUserRemoteServiceServer) mustEmbedUnimplementedUserRemoteServiceServer() {}
 
@@ -324,6 +339,24 @@ func _UserRemoteService_UpdateNotice_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserRemoteService_UpdatePackageType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePackageTypeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserRemoteServiceServer).UpdatePackageType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserRemoteService_UpdatePackageType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserRemoteServiceServer).UpdatePackageType(ctx, req.(*UpdatePackageTypeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserRemoteService_ServiceDesc is the grpc.ServiceDesc for UserRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -362,6 +395,10 @@ var UserRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateNotice",
 			Handler:    _UserRemoteService_UpdateNotice_Handler,
+		},
+		{
+			MethodName: "UpdatePackageType",
+			Handler:    _UserRemoteService_UpdatePackageType_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

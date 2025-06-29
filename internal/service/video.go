@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/array_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
@@ -11,6 +12,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/repo/gen"
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
+	"sort"
 )
 
 type VideoService struct {
@@ -123,6 +125,13 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 	}
 
 	if pageResult != nil && len(pageResult.List) != 0 {
+		idToIndex := make(map[string]int)
+		for i, id := range condition.Ids {
+			idToIndex[fmt.Sprintf("%d", id)] = i
+		}
+		sort.Slice(pageResult.List, func(i, j int) bool {
+			return idToIndex[fmt.Sprintf("%d", pageResult.List[i].ID)] < idToIndex[fmt.Sprintf("%d", pageResult.List[j].ID)]
+		})
 		jellyfinBoxIpStr, _ := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_JellyfinBoxIp)
 		clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
 		if err != nil {

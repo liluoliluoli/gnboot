@@ -66,17 +66,25 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	if err != nil {
 		return nil, err
 	}
-	currentWatchs, err := s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
-	if gerror.HandleRedisNotFoundError(err) != nil {
-		return nil, err
-	}
-	if currentWatchs > constant.MaxWatchCountByDay {
-		return nil, gerror.ErrExceedWatchCount(ctx, fmt.Sprintf("%d", constant.MaxWatchCountByDay))
-	}
 	episode, err := s.episodeRepo.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
+
+	var currentWatchs = 0
+	if episode.VideoId != constant.TrailVideoId { //不是试看目录才记录观看数
+		currentWatchs, err = s.client.HGet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now())).Int()
+		if gerror.HandleRedisNotFoundError(err) != nil {
+			return nil, err
+		}
+		if currentWatchs > constant.MaxWatchCountByDay {
+			return nil, gerror.ErrExceedWatchCount(ctx, fmt.Sprintf("%d", constant.MaxWatchCountByDay))
+		}
+		currentWatchs++
+	}
+	packageType := s.client.Get(ctx, fmt.Sprintf(constant.RK_UserPackagePrefix, userName)).Val()
+	packageType = lo.Ternary(packageType == "", constant.None, packageType)
+
 	subtitleMappings, err := s.episodeSubtitleMappingRepo.FindByEpisodeId(ctx, episode.ID)
 	if err != nil {
 		return nil, err
@@ -88,13 +96,10 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	}
 	episode.Audios = audioMappings
 
-	currentWatchs++
-	s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
-
 	var newRatio = ""
 	if containPlayUrl {
 		if episode.Url == "" || episode.ExpiredTime == nil || episode.ExpiredTime.Before(time.Now()) {
-			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, true)
+			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, true, packageType, episode.VideoId)
 			if err != nil {
 				return nil, err
 			}
@@ -113,6 +118,9 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 		}
 	}
 	go func() {
+		if episode.VideoId != constant.TrailVideoId {
+			s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
+		}
 		err := s.videoRepo.AddWatchCount(ctx, nil, episode.VideoId, newRatio)
 		if err != nil {
 			log.Errorf("增加总观看次数失败: %v", err)
@@ -129,7 +137,7 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	return episode, nil
 }
 
-func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useAliOpenAPi bool) (string, int64, string, error) {
+func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useAliOpenAPi bool, packageType string, videoId int64) (string, int64, string, error) {
 	//if len(s.c.Dynamic.BoxServerIps) == 0 {
 	//	return "", 0, nil
 	//}
@@ -176,13 +184,22 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useA
 				m3u8Url = item.Url
 				radio = item.TemplateId
 			}
-			if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
-				m3u8Url = item.Url
-				radio = item.TemplateId
-			}
-			if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
-				m3u8Url = item.Url
-				radio = item.TemplateId
+			if packageType == constant.Year || videoId == constant.TrailVideoId {
+				if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
+					m3u8Url = item.Url
+					radio = item.TemplateId
+				}
+				if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
+					m3u8Url = item.Url
+					radio = item.TemplateId
+				}
+			} else {
+				if item.TemplateId == "HD" {
+					radio = item.TemplateId
+				}
+				if item.TemplateId == "QHD" {
+					radio = item.TemplateId
+				}
 			}
 		}
 		return m3u8Url, 0, radio, nil
@@ -215,13 +232,22 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useA
 				m3u8Url = item.Url
 				radio = item.TemplateId
 			}
-			if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
-				m3u8Url = item.Url
-				radio = item.TemplateId
-			}
-			if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
-				m3u8Url = item.Url
-				radio = item.TemplateId
+			if packageType == constant.Year {
+				if item.TemplateId == "HD" && item.Status == "finished" && item.Url != "" {
+					m3u8Url = item.Url
+					radio = item.TemplateId
+				}
+				if item.TemplateId == "QHD" && item.Status == "finished" && item.Url != "" {
+					m3u8Url = item.Url
+					radio = item.TemplateId
+				}
+			} else {
+				if item.TemplateId == "HD" {
+					radio = item.TemplateId
+				}
+				if item.TemplateId == "QHD" {
+					radio = item.TemplateId
+				}
 			}
 		}
 		return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil

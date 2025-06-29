@@ -15,6 +15,8 @@ type VideoUserMapping struct {
 	LastPlayedEpisodeId int64      `json:"lastPlayedEpisodeId"`
 	IsFavorite          bool       `json:"isFavorite"`
 	UserId              int64      `json:"userId"`
+	CreateTime          time.Time  `json:"createTime"`
+	UpdateTime          time.Time  `json:"updateTime"`
 }
 
 func (d *VideoUserMapping) MarshalBinary() ([]byte, error) {
@@ -34,5 +36,7 @@ func (d *VideoUserMapping) ConvertFromRepo(m *model.VideoUserMapping) *VideoUser
 		LastPlayedEpisodeId: lo.FromPtr(m.LastPlayedEpisodeID),
 		IsFavorite:          m.IsFavorite,
 		UserId:              m.UserID,
+		CreateTime:          m.CreateTime,
+		UpdateTime:          m.UpdateTime,
 	}
 }

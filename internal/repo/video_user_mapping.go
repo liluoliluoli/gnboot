@@ -52,7 +52,8 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 
 	if first != nil {
 		first.IsFavorite = favorite
-		_, err := r.do(ctx, tx).Select(gen.VideoUserMapping.IsFavorite).Updates(first)
+		first.UpdateTime = time.Now()
+		_, err := r.do(ctx, tx).Select(gen.VideoUserMapping.IsFavorite, gen.VideoUserMapping.UpdateTime).Updates(first)
 		if err != nil {
 			return err
 		}
@@ -61,6 +62,8 @@ func (r *VideoUserMappingRepo) UpdateFavorite(ctx context.Context, tx *gen.Query
 			VideoID:    videoId,
 			UserID:     userId,
 			IsFavorite: favorite,
+			CreateTime: time.Now(),
+			UpdateTime: time.Now(),
 		})
 		if err != nil {
 			return err
@@ -78,6 +81,7 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 		first.LastPlayedPosition = lo.ToPtr(position)
 		first.LastPlayedTime = lo.ToPtr(time.Unix(playTimestamp, 0))
 		first.LastPlayedEpisodeID = lo.ToPtr(episodeId)
+		first.UpdateTime = time.Now()
 		_, err := r.do(ctx, tx).Updates(first)
 		if err != nil {
 			return err
@@ -90,6 +94,8 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 			LastPlayedEpisodeID: lo.ToPtr(episodeId),
 			LastPlayedPosition:  lo.ToPtr(position),
 			LastPlayedTime:      lo.ToPtr(time.Unix(playTimestamp, 0)),
+			CreateTime:          time.Now(),
+			UpdateTime:          time.Now(),
 		})
 		if err != nil {
 			return err
@@ -99,7 +105,7 @@ func (r *VideoUserMappingRepo) UpdatePlayStatus(ctx context.Context, tx *gen.Que
 }
 
 func (r *VideoUserMappingRepo) Page(ctx context.Context, userId int64, isFavorite bool, page *sdomain.Page) (*sdomain.PageResult[*sdomain.VideoUserMapping], error) {
-	do := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.IsFavorite.Value(isFavorite))
+	do := r.do(ctx, nil).Where(gen.VideoUserMapping.UserID.Eq(userId)).Where(gen.VideoUserMapping.IsFavorite.Value(isFavorite)).Order(gen.VideoUserMapping.UpdateTime.Desc()).Order(gen.VideoUserMapping.LastPlayedTime.Desc())
 	list, total, err := do.FindByPage(int((page.CurrentPage-1)*page.PageSize), int(page.PageSize))
 	if err != nil {
 		return nil, handleQueryError(ctx, err)

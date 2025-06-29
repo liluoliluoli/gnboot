@@ -27,6 +27,7 @@ const OperationUserRemoteServiceLogin = "/gnboot.UserRemoteService/Login"
 const OperationUserRemoteServiceLogout = "/gnboot.UserRemoteService/Logout"
 const OperationUserRemoteServiceUpdateFavorite = "/gnboot.UserRemoteService/UpdateFavorite"
 const OperationUserRemoteServiceUpdateNotice = "/gnboot.UserRemoteService/UpdateNotice"
+const OperationUserRemoteServiceUpdatePackageType = "/gnboot.UserRemoteService/UpdatePackageType"
 const OperationUserRemoteServiceUpdatePlayedStatus = "/gnboot.UserRemoteService/UpdatePlayedStatus"
 
 type UserRemoteServiceHTTPServer interface {
@@ -37,6 +38,7 @@ type UserRemoteServiceHTTPServer interface {
 	Logout(context.Context, *LogoutUserRequest) (*LogoutUserResp, error)
 	UpdateFavorite(context.Context, *UpdateFavoriteRequest) (*emptypb.Empty, error)
 	UpdateNotice(context.Context, *UpdateNoticeRequest) (*emptypb.Empty, error)
+	UpdatePackageType(context.Context, *UpdatePackageTypeRequest) (*emptypb.Empty, error)
 	UpdatePlayedStatus(context.Context, *UpdatePlayedStatusRequest) (*emptypb.Empty, error)
 }
 
@@ -50,6 +52,7 @@ func RegisterUserRemoteServiceHTTPServer(s *http.Server, srv UserRemoteServiceHT
 	r.POST("/api/user/getCurrentWatchCount", _UserRemoteService_GetCurrentWatchCount0_HTTP_Handler(srv))
 	r.POST("/api/user/get", _UserRemoteService_GetUser0_HTTP_Handler(srv))
 	r.POST("/api/test/notice/update", _UserRemoteService_UpdateNotice0_HTTP_Handler(srv))
+	r.POST("/api/test/packageType/update", _UserRemoteService_UpdatePackageType0_HTTP_Handler(srv))
 }
 
 func _UserRemoteService_UpdateFavorite0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -228,6 +231,28 @@ func _UserRemoteService_UpdateNotice0_HTTP_Handler(srv UserRemoteServiceHTTPServ
 	}
 }
 
+func _UserRemoteService_UpdatePackageType0_HTTP_Handler(srv UserRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdatePackageTypeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRemoteServiceUpdatePackageType)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdatePackageType(ctx, req.(*UpdatePackageTypeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserRemoteServiceHTTPClient interface {
 	Create(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetCurrentWatchCount(ctx context.Context, req *GetCurrentWatchCountRequest, opts ...http.CallOption) (rsp *GetCurrentWatchCountResp, err error)
@@ -236,6 +261,7 @@ type UserRemoteServiceHTTPClient interface {
 	Logout(ctx context.Context, req *LogoutUserRequest, opts ...http.CallOption) (rsp *LogoutUserResp, err error)
 	UpdateFavorite(ctx context.Context, req *UpdateFavoriteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateNotice(ctx context.Context, req *UpdateNoticeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	UpdatePackageType(ctx context.Context, req *UpdatePackageTypeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePlayedStatus(ctx context.Context, req *UpdatePlayedStatusRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
@@ -330,6 +356,19 @@ func (c *UserRemoteServiceHTTPClientImpl) UpdateNotice(ctx context.Context, in *
 	pattern := "/api/test/notice/update"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdateNotice))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserRemoteServiceHTTPClientImpl) UpdatePackageType(ctx context.Context, in *UpdatePackageTypeRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/api/test/packageType/update"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserRemoteServiceUpdatePackageType))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

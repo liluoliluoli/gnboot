@@ -1,6 +1,7 @@
 package sdomain
 
 import (
+	"fmt"
 	episodedto "github.com/liluoliluoli/gnboot/api/episode"
 	subtitledto "github.com/liluoliluoli/gnboot/api/subtitle"
 	"github.com/liluoliluoli/gnboot/internal/repo/model"
@@ -74,7 +75,7 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 			return item.ConvertToDto()
 		}),
 		Ratio:        d.Ratio,
-		DisplayTitle: d.DisplayTitle,
+		DisplayTitle: d.DisplayTitle + lo.Ternary(d.Ratio != "", fmt.Sprintf("【%s】", d.Ratio), ""),
 	}
 }
 

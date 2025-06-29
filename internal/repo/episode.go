@@ -45,7 +45,7 @@ func (r *EpisodeRepo) Next(ctx context.Context, videoId int64, id int64) (*sdoma
 	})
 	var nextEpisode *model.Episode
 	if exist {
-		if index+1 < len(finds) {
+		if index < len(finds)-1 {
 			nextEpisode = finds[index+1]
 		}
 	} else {

@@ -17,9 +17,13 @@ const (
 
 const RK_UserTokenPrefix = "ut_%s"
 const RK_UserWatchCountPrefix = "uwc_%s"
+const RK_UserPackagePrefix = "upk_%s"
 const RK_Notice = "notice"
 const HK_NoticeTitle = "title"
 const HK_NoticeContent = "content"
+const HK_NoticeDonateImageUrl = "donateImageUrl"
+const HK_NoticeDonateDesc = "donateDesc"
+
 const RK_Configs = "configs"
 
 type Key = string
@@ -49,14 +53,13 @@ const CTX_SessionToken = "CTX_SessionToken"
 const CTX_ClientIp = "CTX_ClientIp"
 
 const MaxWatchCountByDay = 200
+const TrailVideoId = 1
 
 type PackageType = string
 
 const (
-	None  PackageType = "none"
-	Trial PackageType = "trial"
-	Month PackageType = "month"
-	Year  PackageType = "year"
+	None PackageType = "none" //可观看标清视频和测试目录高清视频
+	Year PackageType = "year" //可观看高清视频
 )
 
 type Radio = string

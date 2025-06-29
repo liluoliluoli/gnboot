@@ -19,6 +19,8 @@ type VideoUserMapping struct {
 	LastPlayedEpisodeID *int64     `gorm:"column:last_played_episode_id;type:bigint;comment:上次点击播放集id" json:"lastPlayedEpisodeId"`
 	IsFavorite          bool       `gorm:"column:is_favorite;type:tinyint(1);not null;comment:是否收藏喜欢" json:"isFavorite"`
 	UserID              int64      `gorm:"column:user_id;type:bigint;not null;comment:用户id" json:"userId"`
+	CreateTime          time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime          time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 }
 
 // TableName VideoUserMapping's table name

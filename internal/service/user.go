@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/liluoliluoli/gnboot/internal/common/constant"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/cache_util"
 	"github.com/liluoliluoli/gnboot/internal/common/utils/context_util"
@@ -99,7 +100,7 @@ func (s *UserService) UpdatePlayStatus(ctx context.Context, userId int64, videoI
 func (s *UserService) Create(ctx context.Context, userName string, password string) error {
 	err := gen.Use(s.videoUserMappingRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.userRepo.Create(ctx, tx, userName, password, constant.Trial)
+			return s.userRepo.Create(ctx, tx, userName, password, constant.None)
 		})
 		if err != nil {
 			return err
@@ -124,7 +125,7 @@ func (s *UserService) GetCurrentUser(ctx context.Context) (*sdomain.User, error)
 	return rs, nil
 }
 
-func (s *UserService) UpdateNotice(ctx context.Context, title string, content string) error {
+func (s *UserService) UpdateNotice(ctx context.Context, title string, content string, donateDesc string, donateImageUrl string) error {
 	cmd := s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeTitle, title)
 	if cmd.Err() != nil {
 		return cmd.Err()
@@ -132,6 +133,31 @@ func (s *UserService) UpdateNotice(ctx context.Context, title string, content st
 	cmd = s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeContent, content)
 	if cmd.Err() != nil {
 		return cmd.Err()
+	}
+	cmd = s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeDonateDesc, donateDesc)
+	if cmd.Err() != nil {
+		return cmd.Err()
+	}
+	cmd = s.client.HSet(ctx, constant.RK_Notice, constant.HK_NoticeDonateImageUrl, donateImageUrl)
+	if cmd.Err() != nil {
+		return cmd.Err()
+	}
+	return nil
+}
+
+func (s *UserService) UpdatePackageType(ctx context.Context, id int32, packageType string) error {
+	updateUser, err := s.userRepo.Get(ctx, int64(id))
+	if err != nil {
+		return err
+	}
+	updateUser.PackageType = packageType
+	cmd := s.client.Set(ctx, fmt.Sprintf(constant.RK_UserPackagePrefix, updateUser.UserName), packageType, 0)
+	if cmd.Err() != nil {
+		return cmd.Err()
+	}
+	err = s.userRepo.Update(ctx, nil, updateUser)
+	if err != nil {
+		return err
 	}
 	return nil
 }

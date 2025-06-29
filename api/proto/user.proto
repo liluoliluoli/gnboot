@@ -96,6 +96,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc UpdatePackageType(UpdatePackageTypeRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/test/packageType/update"
+        body : "*"
+      };
+    }
   }
 
 
@@ -155,9 +161,18 @@ additional_properties:
     optional int32 packageExpiredTime = 6;
     string noticeTitle = 7;
     string noticeContent = 8;
+    string donateDesc = 9;
+    string donateImageUrl = 10;
   }
 
   message UpdateNoticeRequest {
     string title = 1;
     string content = 2;
+    string donateImageUrl = 3;
+    string donateDesc = 4;
   }
+
+message UpdatePackageTypeRequest {
+  int32 id = 1;
+  string packageType = 2;
+}

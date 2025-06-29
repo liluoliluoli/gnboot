@@ -82,24 +82,30 @@ func (s *UserProvider) Login(ctx context.Context, req *user.LoginUserRequest) (*
 	if rs.Password != security_util.SignByHMACSha256(req.Password, constant.SYS_PWD) {
 		return nil, errors.New("密码错误")
 	}
-	authorization, err := jwtutil.GenerateUserToken(&jwtutil.UserClaims{
-		UserName: req.UserName,
-	}, constant.SYS_PWD)
-	if err != nil {
-		return nil, err
+	if lo.FromPtr(rs.SessionToken) != "" && lo.FromPtr(rs.SessionToken) != "-1" {
+		authorization, err := jwtutil.GenerateUserToken(&jwtutil.UserClaims{
+			UserName: req.UserName,
+		}, constant.SYS_PWD)
+		if err != nil {
+			return nil, err
+		}
+		err = s.client.Set(ctx, fmt.Sprintf(constant.RK_UserTokenPrefix, authorization), req.UserName, 0).Err()
+		if err != nil {
+			return nil, err
+		}
+		rs.SessionToken = lo.ToPtr(fmt.Sprintf(constant.RK_UserTokenPrefix, authorization))
+		err = s.user.UpdateSessionToken(ctx, rs)
+		if err != nil {
+			return nil, err
+		}
+		return &user.LoginUserResp{
+			Authorization: fmt.Sprintf(constant.RK_UserTokenPrefix, authorization),
+		}, nil
+	} else {
+		return &user.LoginUserResp{
+			Authorization: fmt.Sprintf(constant.RK_UserTokenPrefix, lo.FromPtr(rs.SessionToken)),
+		}, nil
 	}
-	err = s.client.Set(ctx, fmt.Sprintf(constant.RK_UserTokenPrefix, authorization), req.UserName, 0).Err()
-	if err != nil {
-		return nil, err
-	}
-	rs.SessionToken = lo.ToPtr(fmt.Sprintf(constant.RK_UserTokenPrefix, authorization))
-	err = s.user.UpdateSessionToken(ctx, rs)
-	if err != nil {
-		return nil, err
-	}
-	return &user.LoginUserResp{
-		Authorization: fmt.Sprintf(constant.RK_UserTokenPrefix, authorization),
-	}, nil
 }
 
 func (s *UserProvider) Logout(ctx context.Context, req *user.LogoutUserRequest) (*user.LogoutUserResp, error) {
@@ -153,6 +159,9 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 	})
 	noticeTitle := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeTitle).Val()
 	noticeContent := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeContent).Val()
+	noticeDonateDesc := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeDonateDesc).Val()
+	noticeDonateImageUrl := s.client.HGet(ctx, constant.RK_Notice, constant.HK_NoticeDonateImageUrl).Val()
+
 	return &user.User{
 		WatchCount:     int32(currentWatches),
 		RestWatchCount: int32(constant.MaxWatchCountByDay - currentWatches),
@@ -164,13 +173,23 @@ func (s *UserProvider) GetUser(ctx context.Context, req *user.GetUserRequest) (*
 		}, func() *int32 {
 			return nil
 		}),
-		NoticeTitle:   gerror.HandleRedisStringNotFound(noticeTitle),
-		NoticeContent: gerror.HandleRedisStringNotFound(noticeContent),
+		NoticeTitle:    gerror.HandleRedisStringNotFound(noticeTitle),
+		NoticeContent:  gerror.HandleRedisStringNotFound(noticeContent),
+		DonateDesc:     gerror.HandleRedisStringNotFound(noticeDonateDesc),
+		DonateImageUrl: gerror.HandleRedisStringNotFound(noticeDonateImageUrl),
 	}, nil
 }
 
 func (s *UserProvider) UpdateNotice(ctx context.Context, req *user.UpdateNoticeRequest) (*emptypb.Empty, error) {
-	err := s.user.UpdateNotice(ctx, req.Title, req.Content)
+	err := s.user.UpdateNotice(ctx, req.Title, req.Content, req.DonateDesc, req.DonateImageUrl)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *UserProvider) UpdatePackageType(ctx context.Context, req *user.UpdatePackageTypeRequest) (*emptypb.Empty, error) {
+	err := s.user.UpdatePackageType(ctx, req.Id, req.PackageType)
 	if err != nil {
 		return nil, err
 	}

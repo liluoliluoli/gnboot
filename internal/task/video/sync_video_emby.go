@@ -19,6 +19,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
 	"math"
+	"net/url"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -51,32 +52,39 @@ func NewEmbyVideoTask(episodeRepo *repo.EpisodeRepo, videoRepo *repo.VideoRepo, 
 
 func (t *EmbyVideoTask) Process(task *sdomain.Task) error {
 	ctx := task.Ctx
-	err := t.FullSync(ctx)
+	err := t.FullSync(ctx, "")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t *EmbyVideoTask) FullSync(ctx context.Context) error {
+func (t *EmbyVideoTask) FullSync(ctx context.Context, scanPathIdStr string) error {
+	ctx = context.Background()
 	boxIpStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_EmbyBoxIp)
 	if err != nil {
 		return err
 	}
 	boxIps := strings.Split(boxIpStr, ",")
-	scanPathStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_EmbyVideoSyncCategory)
-	if err != nil {
-		return err
+	var scanPathIds = make([]string, 0)
+	if scanPathIdStr != "" {
+		scanPathIds = strings.Split(scanPathIdStr, ",")
+	} else {
+		scanPathStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_EmbyVideoSyncCategory)
+		if err != nil {
+			return err
+		}
+		scanPathIds = strings.Split(scanPathStr, ",")
 	}
-	scanPathIds := strings.Split(scanPathStr, ",")
+
 	for _, scanPathId := range scanPathIds {
-		log.Infof("开始全量同步emby刮削: syncURL=%s, pathid=%s", boxIps[0], scanPathId)
+		log.Infof("开始全量同步emby刮削: pathid=%s", scanPathId)
 		err = t.deepLoopListEmbyPath(ctx, boxIps[0], scanPathId, scanPathId)
 		if err != nil {
 			log.Errorf("全量同步emby刮削失败: %v", err)
 			return err
 		}
-		log.Infof("结束全量同步emby刮削: syncURL=%s, pathid=%s", boxIps[0], scanPathId)
+		log.Infof("结束全量同步emby刮削: pathid=%s", scanPathId)
 	}
 	return nil
 }
@@ -103,12 +111,13 @@ func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parent
 			return fmt.Errorf("emby parentId %s 游标 %d 开始的返回结果无效", parentId, startIndex)
 		}
 		for index, content := range videoListResp.Items {
-			err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId)
+			err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId, len(videoListResp.Items))
 			if err != nil {
 				return err
 			}
 		}
 		if int64(startIndex+constant.PageSize) >= videoListResp.TotalRecordCount {
+			log.Infof("==============跳出循环: startIndex=%d, total:%d", startIndex+constant.PageSize, videoListResp.TotalRecordCount)
 			break
 		}
 		startIndex = startIndex + constant.PageSize
@@ -116,15 +125,15 @@ func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parent
 	return nil
 }
 
-func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *embydto.VideoDetailResp, series *embydto.VideoDetailResp, embyDefaultUserId string, headerMap map[string]string, index int, rootPathId string) error {
+func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *embydto.VideoDetailResp, series *embydto.VideoDetailResp, embyDefaultUserId string, headerMap map[string]string, index int, rootPathId string, size int) error {
 	//查出详情
 	syncDetailURL := fmt.Sprintf(domain+constant.EmbyVideoDetail, embyDefaultUserId, id)
 	videoDetailResp, err := httpclient_util.DoGet[embydto.VideoDetailResp](ctx, syncDetailURL, headerMap)
 	if err != nil {
-		return fmt.Errorf("jellyfin videoDetailResp parentId %s file %s 返回结果失败: %v", parentId, id, err)
+		return fmt.Errorf("emby videoDetailResp parentId %s file %s 返回结果失败: %v", parentId, id, err)
 	}
 	if videoDetailResp == nil {
-		return fmt.Errorf("jellyfin videoDetailResp parentId %s file %s 返回结果无效", parentId, id)
+		return fmt.Errorf("emby videoDetailResp parentId %s file %s 返回结果无效", parentId, id)
 	}
 
 	//按类型处理
@@ -141,7 +150,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			return fmt.Errorf("emby seasonListResp parentId %s file %s 返回结果无效", parentId, id)
 		}
 		for newIndex, content := range seasonListResp.Items {
-			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfSeason, nil, videoDetailResp, embyDefaultUserId, headerMap, newIndex, rootPathId)
+			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfSeason, nil, videoDetailResp, embyDefaultUserId, headerMap, newIndex, rootPathId, len(seasonListResp.Items))
 			if err != nil {
 				return err
 			}
@@ -157,7 +166,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			return fmt.Errorf("emby episodeListResp parentId %s file %s 返回结果无效", parentId, id)
 		}
 		for newIndex, content := range episodeListResp.Items {
-			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfEpisode, videoDetailResp, series, embyDefaultUserId, headerMap, newIndex, rootPathId)
+			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfEpisode, videoDetailResp, series, embyDefaultUserId, headerMap, newIndex, rootPathId, len(episodeListResp.Items))
 			if err != nil {
 				return err
 			}
@@ -175,12 +184,16 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			return nil
 		}
 
-		filePath, fileName := splitEmbyPath(videoDetailResp.MediaSources[0].Path)
+		sFilePath, sFileName := splitEmbyPath(videoDetailResp.MediaSources[0].Path)
+		filePath, _ := url.PathUnescape(sFilePath)
+		fileName, _ := url.PathUnescape(sFileName)
+		log.Infof("遍历到根节点: xiaoya路径=%s", filePath+fileName)
 		episode, err := t.episodeRepo.QueryByPathAndName(ctx, filePath, fileName)
 		if err != nil {
 			return err
 		}
 		if episode != nil { //先前的任务已经处理过了
+			log.Infof("先前的任务已经处理过了: xiaoya路径=%s", filePath+fileName)
 			return nil
 		}
 
@@ -204,6 +217,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 		}
 		episodeSize := sizeMap[fileName]
 		if episodeSize == 0 { //xiaoya不存在该数据
+			log.Infof("xiaoya不存在该数据: xiaoya路径=%s", filePath+fileName)
 			return nil
 		}
 		ratio := ""
@@ -235,7 +249,20 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 				embyId = fmt.Sprintf("%s|%s", videoDetailResp.SeasonId, constant.JfSeason)
 			}
 		}
-		embyCreateTime := time_util.ParseUtcTime(videoDetailResp.DateCreated)
+		var embyCreateTime time.Time
+		if videoDetailResp.Type == constant.JfMovie {
+			embyCreateTime = time_util.ParseUtcTime(videoDetailResp.DateCreated)
+		}
+		if videoDetailResp.Type == constant.JfEpisode {
+			embyCreateTime = time_util.ParseUtcTime(videoDetailResp.DateCreated)
+			if series != nil {
+				embyCreateTime = time_util.ParseUtcTime(series.DateCreated)
+			}
+			if season != nil {
+				embyCreateTime = time_util.ParseUtcTime(season.DateCreated)
+			}
+		}
+
 		video, err := t.videoRepo.GetByJellyfinId(ctx, embyId)
 		if err != nil {
 			log.Errorf("查询video失败: %v", err)
@@ -252,7 +279,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 						title = videoDetailResp.SeriesName
 					}
 					if videoDetailResp.SeasonId != "" {
-						title = videoDetailResp.SeriesName + "：" + videoDetailResp.SeasonName
+						title = lo.Ternary(series.ChildCount == 1, videoDetailResp.SeriesName, videoDetailResp.SeriesName+"："+videoDetailResp.SeasonName)
 					}
 				}
 				overview := ""
@@ -331,7 +358,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 					VoteRate:           lo.ToPtr(float32(math.Round(goodRatting*10) / 10)),
 					Region:             lo.ToPtr(region),
 					Description:        lo.ToPtr(strings.TrimSpace(overview)),
-					PublishDay:         lo.ToPtr(time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate)),
+					PublishDay:         lo.ToPtr(lo.Ternary(videoDetailResp.PremiereDate != "", time_util.FormatStrToYYYYMMDD(videoDetailResp.PremiereDate), time_util.FormatStrToYYYYMMDD(videoDetailResp.DateCreated))),
 					Thumbnail:          lo.ToPtr(t.getValidThumbnail(ctx, domain, []string{videoDetailResp.Id, videoDetailResp.SeasonId, videoDetailResp.SeriesId})),
 					Genres:             lo.ToPtr(strings.Join(t.replaceGenres(ctx, genres), ",")),
 					JellyfinID:         embyId,
@@ -347,7 +374,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 					log.Errorf("创建video失败: %v", err)
 					return err
 				}
-				log.Infof("成功写入【video】: title=%s", title)
+				log.Infof("成功写入【video】: xiaoya路径=%s", filePath+fileName)
 			}
 
 			episode = &model.Episode{
@@ -370,7 +397,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			if err := t.episodeRepo.Create(ctx, nil, episode); err != nil {
 				log.Errorf("写入episode失败（path=%s, title=%s）: %v", filePath, fileName, err)
 			} else {
-				log.Infof("成功写入【episode】: path=%s, title=%s", filePath, fileName)
+				log.Infof("成功写入【episode】: xiaoya路径=%s", filePath+fileName)
 			}
 			//演员处理
 			characters := make([]*embydto.People, 0)
@@ -430,7 +457,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
 				return err
 			}
-			log.Infof("成功写入【videoActorMappingRepo】")
+			log.Infof("成功写入【videoActorMappingRepo】: xiaoya路径=%s", filePath+fileName)
 			//字幕处理
 			result, err := httpclient_util.DoGet[embydto.PlaybackInfo](ctx, domain+fmt.Sprintf(constant.EmbyPlayInfo, videoDetailResp.Id), headerMap)
 			if err != nil {
@@ -458,7 +485,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 					if err != nil {
 						return err
 					}
-					log.Infof("成功写入【subtitle】: url=%s", mediaStream.DeliveryUrl)
+					log.Infof("成功写入【subtitle】: xiaoya路径=%s", filePath+fileName)
 				}
 			}
 			return nil

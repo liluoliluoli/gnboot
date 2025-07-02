@@ -461,6 +461,8 @@ func (m *TestSyncTaskRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for ScanPathIds
+
 	if len(errors) > 0 {
 		return TestSyncTaskRequestMultiError(errors)
 	}

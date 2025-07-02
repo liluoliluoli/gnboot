@@ -58,7 +58,7 @@ func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.Update
 
 func (s *EpisodeProvider) TestSyncTask(ctx context.Context, req *episode.TestSyncTaskRequest) (*emptypb.Empty, error) {
 	go func() {
-		err := s.embyVideoTask.FullSync(ctx)
+		err := s.embyVideoTask.FullSync(ctx, req.ScanPathIds)
 		if err != nil {
 			log.Errorf("TestSyncTask fail:%v", err)
 		}

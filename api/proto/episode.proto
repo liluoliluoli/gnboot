@@ -99,6 +99,7 @@ message UpdateConfigRequest {
 }
 
 message TestSyncTaskRequest {
+    string scanPathIds = 1;
 }
 
 message Audio{

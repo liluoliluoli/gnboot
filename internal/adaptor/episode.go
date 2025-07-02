@@ -14,16 +14,18 @@ import (
 
 type EpisodeProvider struct {
 	episode.UnimplementedEpisodeRemoteServiceServer
-	episode     *service.EpisodeService
-	user        *service.UserService
-	jfVideoTask *video.JfVideoTask
+	episode       *service.EpisodeService
+	user          *service.UserService
+	jfVideoTask   *video.JfVideoTask
+	embyVideoTask *video.EmbyVideoTask
 }
 
-func NewEpisodeProvider(episode *service.EpisodeService, user *service.UserService, jfVideoTask *video.JfVideoTask) *EpisodeProvider {
+func NewEpisodeProvider(episode *service.EpisodeService, user *service.UserService, jfVideoTask *video.JfVideoTask, embyVideoTask *video.EmbyVideoTask) *EpisodeProvider {
 	return &EpisodeProvider{
-		episode:     episode,
-		user:        user,
-		jfVideoTask: jfVideoTask,
+		episode:       episode,
+		user:          user,
+		jfVideoTask:   jfVideoTask,
+		embyVideoTask: embyVideoTask,
 	}
 }
 
@@ -56,7 +58,7 @@ func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.Update
 
 func (s *EpisodeProvider) TestSyncTask(ctx context.Context, req *episode.TestSyncTaskRequest) (*emptypb.Empty, error) {
 	go func() {
-		err := s.jfVideoTask.DoProcess(ctx)
+		err := s.embyVideoTask.FullSync(ctx)
 		if err != nil {
 			log.Errorf("TestSyncTask fail:%v", err)
 		}

@@ -47,6 +47,10 @@ const (
 	SubKey_AliOpenapiDomain          SubKey = "aliOpenapiDomain"
 	SubKey_AliOpenapiToken           SubKey = "aliOpenapiToken"
 	SubKey_UseAliOpenapi             SubKey = "useAliOpenapi"
+	SubKey_EmbyBoxIp                 SubKey = "embyBoxIp"
+	SubKey_EmbyVideoSyncCategory     SubKey = "embyVideoSyncCategory"
+	SubKey_EmbyDefaultToken          SubKey = "embyDefaultToken"
+	SubKey_EmbyDefaultUserId         SubKey = "embyDefaultUserId"
 )
 
 const CTX_UserName = "CTX_UserName"
@@ -123,6 +127,13 @@ const (
 	XiaoYaLoginPassword          = "6fcb57cd10b2c11d765dcf16148d99130afd895082af83725ee8bb181b1d2b0f" //xiaoya登录密码
 	Platform                     = "aliyun"
 	PageSize                     = 100
+
+	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=false&Limit=%d"
+	EmbyVideoDetail      = "/emby/Users/%s/Items/%s"
+	EmbySeaonsList       = "/emby/Shows/%s/Seasons?Limit=%d"
+	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d"
+	EmbyPrimaryThumbnail = "/emby/Items/%s/Images/Primary"
+	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo"
 )
 
 type JfVideoType = string

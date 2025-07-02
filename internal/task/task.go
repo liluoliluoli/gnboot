@@ -8,5 +8,5 @@ import (
 
 var ProviderSet = wire.NewSet(
 	user.NewUserPackageCheckTask,
-	video.NewJfVideoTask,
+	video.NewJfVideoTask, video.NewEmbyVideoTask,
 )

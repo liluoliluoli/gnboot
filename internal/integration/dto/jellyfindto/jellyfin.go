@@ -46,9 +46,9 @@ type VideoDetailResp struct {
 }
 
 type ExternalUrl struct {
-	Name string `json:"Name"`
-	Url  string `json:"Url"`
-	Used bool   `json:"Used"`
+	Name        string `json:"Name"`
+	Url         string `json:"Url"`
+	UsedCountry bool   `json:"UsedCountry"`
 }
 
 type MediaSource struct {

@@ -7,6 +7,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
+	"time"
 )
 
 type EpisodeRepo struct {
@@ -103,4 +104,28 @@ func (r *EpisodeRepo) QueryByPathAndName(ctx context.Context, path, name string)
 		return nil, handleQueryError(ctx, err)
 	}
 	return find, nil
+}
+
+func (r *EpisodeRepo) QueryLastJfCreateTimeByJfId(ctx context.Context, jfRootId string) (*time.Time, error) {
+	finds, err := r.do(ctx, nil).Select(gen.Episode.JfCreateTime.Max().As("jf_create_time")).Where(gen.Episode.JfRootPathID.Eq(jfRootId)).Group(gen.Episode.JfRootPathID).Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	first, _ := lo.First(finds)
+	if first == nil {
+		return nil, nil
+	}
+	return first.JfCreateTime, nil
+}
+
+func (r *EpisodeRepo) QueryLastPublishTimeByJfId(ctx context.Context, jfRootId string) (*time.Time, error) {
+	finds, err := r.do(ctx, nil).Select(gen.Episode.JfPublishTime.Max().As("jf_publish_time")).Where(gen.Episode.JfRootPathID.Eq(jfRootId)).Group(gen.Episode.JfRootPathID).Find()
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	first, _ := lo.First(finds)
+	if first == nil {
+		return nil, nil
+	}
+	return first.JfCreateTime, nil
 }

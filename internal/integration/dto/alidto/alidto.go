@@ -1,10 +1,11 @@
 package alidto
 
 type GetVideoPreviewPlayInfoReq struct {
-	DriveId      string `json:"drive_id"`
-	FileId       string `json:"file_id"`
-	Category     string `json:"category"`
-	UrlExpireSec int64  `json:"url_expire_sec"`
+	DriveId         string `json:"drive_id"`
+	FileId          string `json:"file_id"`
+	Category        string `json:"category"`
+	UrlExpireSec    int64  `json:"url_expire_sec"`
+	GetSubtitleInfo bool   `json:"get_subtitle_info"`
 }
 
 type VideoPreviewPlayInfoResp struct {

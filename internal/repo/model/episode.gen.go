@@ -12,25 +12,28 @@ const TableNameEpisode = "episode"
 
 // Episode mapped from table <episode>
 type Episode struct {
-	ID           int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
-	VideoID      int64      `gorm:"column:video_id;type:bigint;not null;comment:影片id" json:"videoId"`
-	XiaoyaPath   *string    `gorm:"column:xiaoya_path;type:varchar(512)" json:"xiaoyaPath"`
-	Episode      int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
-	EpisodeTitle string     `gorm:"column:episode_title;type:varchar(256);not null;comment:集标题" json:"episodeTitle"`
-	URL          *string    `gorm:"column:url;type:varchar(4096);comment:影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址" json:"url"`
-	Platform     *string    `gorm:"column:platform;type:varchar(45);comment: aliyun" json:"platform"`
-	Ext          *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
-	Duration     *int64     `gorm:"column:duration;type:bigint;comment:影片时长，秒" json:"duration"`
-	Size         string     `gorm:"column:size;type:varchar(256);not null;comment:影片大小" json:"size"`
-	IsValid      bool       `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
-	ExpiredTime  *time.Time `gorm:"column:expired_time;type:datetime;comment:阿里云盘过期时间" json:"expiredTime"`
-	CreateTime   time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
-	UpdateTime   time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
-	Ratio        *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
-	JellyfinID   *string    `gorm:"column:jellyfin_id;type:varchar(255);comment:jellyfin id" json:"jellyfinId"`
-	DisplayTitle *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
-	AliDriveID   *string    `gorm:"column:ali_drive_id;type:varchar(255);comment:阿里云盘driveid" json:"aliDriveId"`
-	AliFileID    *string    `gorm:"column:ali_file_id;type:varchar(255);comment:阿里云盘fileid" json:"aliFileId"`
+	ID            int64      `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:主键" json:"id"`
+	VideoID       int64      `gorm:"column:video_id;type:bigint;not null;comment:影片id" json:"videoId"`
+	XiaoyaPath    *string    `gorm:"column:xiaoya_path;type:varchar(512)" json:"xiaoyaPath"`
+	Episode       int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
+	EpisodeTitle  string     `gorm:"column:episode_title;type:varchar(256);not null;comment:集标题" json:"episodeTitle"`
+	URL           *string    `gorm:"column:url;type:varchar(4096);comment:影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址" json:"url"`
+	Platform      *string    `gorm:"column:platform;type:varchar(45);comment: aliyun" json:"platform"`
+	Ext           *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
+	Duration      *int64     `gorm:"column:duration;type:bigint;comment:影片时长，秒" json:"duration"`
+	Size          *int64     `gorm:"column:size;type:bigint;comment:影片大小" json:"size"`
+	IsValid       bool       `gorm:"column:is_valid;type:tinyint(1);not null;default:1;comment:是否有效" json:"isValid"`
+	ExpiredTime   *time.Time `gorm:"column:expired_time;type:datetime;comment:阿里云盘过期时间" json:"expiredTime"`
+	CreateTime    time.Time  `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
+	UpdateTime    time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
+	Ratio         *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
+	JellyfinID    *string    `gorm:"column:jellyfin_id;type:varchar(255);comment:jellyfin id" json:"jellyfinId"`
+	DisplayTitle  *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
+	AliDriveID    *string    `gorm:"column:ali_drive_id;type:varchar(255);comment:阿里云盘driveid" json:"aliDriveId"`
+	AliFileID     *string    `gorm:"column:ali_file_id;type:varchar(255);comment:阿里云盘fileid" json:"aliFileId"`
+	JfCreateTime  *time.Time `gorm:"column:jf_create_time;type:datetime;comment:jf侧创建时间" json:"jfCreateTime"`
+	JfPublishTime *time.Time `gorm:"column:jf_publish_time;type:datetime;comment:jf侧影片发布时间" json:"jfPublishTime"`
+	JfRootPathID  *string    `gorm:"column:jf_root_path_id;type:varchar(255);comment:jf侧的根目录id" json:"jfRootPathId"`
 }
 
 // TableName Episode's table name

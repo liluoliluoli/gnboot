@@ -37,7 +37,7 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.Platform = field.NewString(tableName, "platform")
 	_episode.Ext = field.NewString(tableName, "ext")
 	_episode.Duration = field.NewInt64(tableName, "duration")
-	_episode.Size = field.NewString(tableName, "size")
+	_episode.Size = field.NewInt64(tableName, "size")
 	_episode.IsValid = field.NewBool(tableName, "is_valid")
 	_episode.ExpiredTime = field.NewTime(tableName, "expired_time")
 	_episode.CreateTime = field.NewTime(tableName, "create_time")
@@ -47,6 +47,9 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.DisplayTitle = field.NewString(tableName, "display_title")
 	_episode.AliDriveID = field.NewString(tableName, "ali_drive_id")
 	_episode.AliFileID = field.NewString(tableName, "ali_file_id")
+	_episode.JfCreateTime = field.NewTime(tableName, "jf_create_time")
+	_episode.JfPublishTime = field.NewTime(tableName, "jf_publish_time")
+	_episode.JfRootPathID = field.NewString(tableName, "jf_root_path_id")
 
 	_episode.fillFieldMap()
 
@@ -56,26 +59,29 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 type episode struct {
 	episodeDo episodeDo
 
-	ALL          field.Asterisk
-	ID           field.Int64 // 主键
-	VideoID      field.Int64 // 影片id
-	XiaoyaPath   field.String
-	Episode      field.Int32  // 第几集
-	EpisodeTitle field.String // 集标题
-	URL          field.String // 影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址
-	Platform     field.String //  aliyun
-	Ext          field.String // 扩展参数
-	Duration     field.Int64  // 影片时长，秒
-	Size         field.String // 影片大小
-	IsValid      field.Bool   // 是否有效
-	ExpiredTime  field.Time   // 阿里云盘过期时间
-	CreateTime   field.Time   // 创建时间
-	UpdateTime   field.Time   // 更新时间
-	Ratio        field.String // 分辨率LD，SD，HD，QHD
-	JellyfinID   field.String // jellyfin id
-	DisplayTitle field.String // 用于展示的title
-	AliDriveID   field.String // 阿里云盘driveid
-	AliFileID    field.String // 阿里云盘fileid
+	ALL           field.Asterisk
+	ID            field.Int64 // 主键
+	VideoID       field.Int64 // 影片id
+	XiaoyaPath    field.String
+	Episode       field.Int32  // 第几集
+	EpisodeTitle  field.String // 集标题
+	URL           field.String // 影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址
+	Platform      field.String //  aliyun
+	Ext           field.String // 扩展参数
+	Duration      field.Int64  // 影片时长，秒
+	Size          field.Int64  // 影片大小
+	IsValid       field.Bool   // 是否有效
+	ExpiredTime   field.Time   // 阿里云盘过期时间
+	CreateTime    field.Time   // 创建时间
+	UpdateTime    field.Time   // 更新时间
+	Ratio         field.String // 分辨率LD，SD，HD，QHD
+	JellyfinID    field.String // jellyfin id
+	DisplayTitle  field.String // 用于展示的title
+	AliDriveID    field.String // 阿里云盘driveid
+	AliFileID     field.String // 阿里云盘fileid
+	JfCreateTime  field.Time   // jf侧创建时间
+	JfPublishTime field.Time   // jf侧影片发布时间
+	JfRootPathID  field.String // jf侧的根目录id
 
 	fieldMap map[string]field.Expr
 }
@@ -101,7 +107,7 @@ func (e *episode) updateTableName(table string) *episode {
 	e.Platform = field.NewString(table, "platform")
 	e.Ext = field.NewString(table, "ext")
 	e.Duration = field.NewInt64(table, "duration")
-	e.Size = field.NewString(table, "size")
+	e.Size = field.NewInt64(table, "size")
 	e.IsValid = field.NewBool(table, "is_valid")
 	e.ExpiredTime = field.NewTime(table, "expired_time")
 	e.CreateTime = field.NewTime(table, "create_time")
@@ -111,6 +117,9 @@ func (e *episode) updateTableName(table string) *episode {
 	e.DisplayTitle = field.NewString(table, "display_title")
 	e.AliDriveID = field.NewString(table, "ali_drive_id")
 	e.AliFileID = field.NewString(table, "ali_file_id")
+	e.JfCreateTime = field.NewTime(table, "jf_create_time")
+	e.JfPublishTime = field.NewTime(table, "jf_publish_time")
+	e.JfRootPathID = field.NewString(table, "jf_root_path_id")
 
 	e.fillFieldMap()
 
@@ -133,7 +142,7 @@ func (e *episode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (e *episode) fillFieldMap() {
-	e.fieldMap = make(map[string]field.Expr, 19)
+	e.fieldMap = make(map[string]field.Expr, 22)
 	e.fieldMap["id"] = e.ID
 	e.fieldMap["video_id"] = e.VideoID
 	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
@@ -153,6 +162,9 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["display_title"] = e.DisplayTitle
 	e.fieldMap["ali_drive_id"] = e.AliDriveID
 	e.fieldMap["ali_file_id"] = e.AliFileID
+	e.fieldMap["jf_create_time"] = e.JfCreateTime
+	e.fieldMap["jf_publish_time"] = e.JfPublishTime
+	e.fieldMap["jf_root_path_id"] = e.JfRootPathID
 }
 
 func (e episode) clone(db *gorm.DB) episode {

@@ -17,7 +17,7 @@ type Episode struct {
 	Url          string                    `json:"url"`
 	Platform     string                    `json:"platform"`
 	Duration     int64                     `json:"duration"`
-	Size         string                    `json:"size"`
+	Size         int64                     `json:"size"`
 	Ext          string                    `json:"ext"`
 	Subtitles    []*EpisodeSubtitleMapping `json:"subtitles"`
 	Audios       []*EpisodeAudioMapping    `json:"audios"`
@@ -47,7 +47,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		Ext:          lo.FromPtr(m.Ext),
 		XiaoYaPath:   lo.FromPtr(m.XiaoyaPath),
 		ExpiredTime:  m.ExpiredTime,
-		Size:         m.Size,
+		Size:         lo.FromPtr(m.Size),
 		CreateTime:   m.CreateTime,
 		UpdateTime:   m.UpdateTime,
 		Ratio:        lo.FromPtr(m.Ratio),
@@ -89,7 +89,7 @@ func (d *Episode) ConvertToRepo() *model.Episode {
 		Platform:     lo.ToPtr(d.Platform),
 		Ext:          lo.ToPtr(d.Ext),
 		Duration:     lo.ToPtr(d.Duration),
-		Size:         d.Size,
+		Size:         lo.ToPtr(d.Size),
 		ExpiredTime:  d.ExpiredTime,
 		XiaoyaPath:   lo.ToPtr(d.XiaoYaPath),
 		CreateTime:   d.CreateTime,

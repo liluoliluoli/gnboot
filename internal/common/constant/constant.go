@@ -46,6 +46,7 @@ const (
 	SubKey_JellyfinDefaultToken      SubKey = "jellyfinDefaultToken"
 	SubKey_AliOpenapiDomain          SubKey = "aliOpenapiDomain"
 	SubKey_AliOpenapiToken           SubKey = "aliOpenapiToken"
+	SubKey_UseAliOpenapi             SubKey = "useAliOpenapi"
 )
 
 const CTX_UserName = "CTX_UserName"
@@ -54,6 +55,9 @@ const CTX_ClientIp = "CTX_ClientIp"
 
 const MaxWatchCountByDay = 200
 const TrailVideoId = 1
+const HD_EPISODE_MIN_SIZE = 1024 * 1024 * 1024 * 1.5
+const HD_MOVIE_MIN_SIZE = 1024 * 1024 * 1024 * 5
+const QHD_MOVIE_MIN_SIZE = 1024 * 1024 * 1024 * 10
 
 type PackageType = string
 
@@ -106,7 +110,7 @@ const (
 	XiaoYaM3u8Path               = "/api/fs/other"
 	AliyunM3u8Path               = "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
 	XiaoYaVideoList              = "/api/fs/list"
-	JellyfinVideoList            = "/Users/%s/Items?Recursive=false&StartIndex=%d&ParentId=%s&Limit=%d"
+	JellyfinVideoList            = "/Users/%s/Items?SortBy=DateCreated&SortOrder=Descending&Recursive=false&StartIndex=%d&ParentId=%s&Limit=%d"
 	JellyfinVideoDetail          = "/Users/%s/Items/%s"
 	JellyfinSeaonsList           = "/Shows/%s/Seasons"
 	JellyfinEpisodesList         = "/Shows/%s/Episodes?seasonId=%s"

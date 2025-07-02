@@ -99,7 +99,7 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	var newRatio = ""
 	if containPlayUrl {
 		if episode.Url == "" || episode.ExpiredTime == nil || episode.ExpiredTime.Before(time.Now()) {
-			url, duration, ratio, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, true, packageType, episode.VideoId)
+			url, duration, ratio, subtitles, err := s.getPlayUrl(ctx, episode.XiaoYaPath+"/"+episode.EpisodeTitle, packageType, episode.VideoId, episode.ID)
 			if err != nil {
 				return nil, err
 			}
@@ -112,6 +112,7 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 			episode.Ratio = ratio
 			newRatio = ratio
 			err = s.episodeRepo.Updates(ctx, nil, episode)
+			episode.Subtitles = append(episode.Subtitles, subtitles...)
 			if err != nil {
 				return nil, err
 			}
@@ -137,41 +138,44 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 	return episode, nil
 }
 
-func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useAliOpenAPi bool, packageType string, videoId int64) (string, int64, string, error) {
+func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, packageType string, videoId int64, episodeId int64) (string, int64, string, []*sdomain.EpisodeSubtitleMapping, error) {
 	//if len(s.c.Dynamic.BoxServerIps) == 0 {
 	//	return "", 0, nil
 	//}
 	url, err := s.transferStoreToAliyun(ctx, xiaoyaPath)
 	if err != nil {
-		return "", 0, "", err
+		return "", 0, "", nil, err
 	}
 	driveId, fileId, _ := httpclient_util.ExtractAliVideoUrlDriveAndFileId(url)
 	clientIp, err := context_util.GetGenericContext[string](ctx, constant.CTX_ClientIp)
 	if err != nil {
 		clientIp = "127.0.0.1"
 	}
+	useAliOpenapiStr, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_UseAliOpenapi)
+	useAliOpenAPi := lo.Ternary(useAliOpenapiStr == "true", true, false)
 	if useAliOpenAPi {
 		aliOpenapiDomain, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_AliOpenapiDomain)
 		if err != nil {
-			return "", 0, "", err
+			return "", 0, "", nil, err
 		}
 		aliOpenapiToken, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_AliOpenapiToken)
 		if err != nil {
-			return "", 0, "", err
+			return "", 0, "", nil, err
 		}
 		headerMap := make(map[string]string)
 		headerMap["Authorization"] = aliOpenapiToken
 		m3u8Result, err := httpclient_util.DoPost[alidto.GetVideoPreviewPlayInfoReq, alidto.VideoPreviewPlayInfoResp](ctx, aliOpenapiDomain+constant.AliyunM3u8Path, &alidto.GetVideoPreviewPlayInfoReq{
-			DriveId:      driveId,
-			FileId:       fileId,
-			Category:     "live_transcoding",
-			UrlExpireSec: 14400,
+			DriveId:         driveId,
+			FileId:          fileId,
+			Category:        "live_transcoding",
+			UrlExpireSec:    14400,
+			GetSubtitleInfo: true,
 		}, headerMap)
 		if err != nil {
-			return "", 0, "", err
+			return "", 0, "", nil, err
 		}
 		if m3u8Result == nil {
-			return "", 0, "", nil
+			return "", 0, "", nil, nil
 		}
 		var m3u8Url = ""
 		var radio = ""
@@ -202,11 +206,22 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useA
 				}
 			}
 		}
-		return m3u8Url, 0, radio, nil
+		subtitles := make([]*sdomain.EpisodeSubtitleMapping, 0)
+		for i, item := range m3u8Result.VideoPreviewPlayInfo.LiveTranscodingSubtitleTaskList {
+			if item.Status == "finished" {
+				subtitles = append(subtitles, &sdomain.EpisodeSubtitleMapping{
+					ID:        int64(-i),
+					EpisodeId: episodeId,
+					Url:       item.Url,
+					Language:  item.Language,
+				})
+			}
+		}
+		return m3u8Url, 0, radio, subtitles, nil
 	} else {
 		boxIps, err := s.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_XiaoYaBoxIp)
 		if err != nil {
-			return "", 0, "", err
+			return "", 0, "", nil, err
 		}
 		boxIp := array_util.GetHashElement(boxIps, clientIp)
 		m3u8Result, err := httpclient_util.DoPost[xiaoyadto.M3u8Req, xiaoyadto.XiaoyaResult[xiaoyadto.M3u8Resp]](ctx, boxIp+constant.XiaoYaM3u8Path, &xiaoyadto.M3u8Req{
@@ -215,10 +230,10 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useA
 			Method:   "video_preview",
 		}, nil)
 		if err != nil {
-			return "", 0, "", err
+			return "", 0, "", nil, err
 		}
 		if m3u8Result == nil || m3u8Result.Code != 200 || m3u8Result.Data == nil || m3u8Result.Data.VideoPreviewPlayInfo == nil || len(m3u8Result.Data.VideoPreviewPlayInfo.LiveTranscodingTaskList) == 0 {
-			return "", 0, "", gerror.ErrInternal(ctx, "获取播放地址失败")
+			return "", 0, "", nil, gerror.ErrInternal(ctx, "获取播放地址失败")
 		}
 
 		var m3u8Url = ""
@@ -250,7 +265,7 @@ func (s *EpisodeService) getPlayUrl(ctx context.Context, xiaoyaPath string, useA
 				}
 			}
 		}
-		return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil
+		return m3u8Url, int64(m3u8Result.Data.VideoPreviewPlayInfo.Meta.Duration), radio, nil, nil
 	}
 }
 

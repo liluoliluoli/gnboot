@@ -35,10 +35,11 @@ type EmbyVideoTask struct {
 	actorRepo                  *repo.ActorRepo
 	videoActorMappingRepo      *repo.VideoActorMappingRepo
 	episodeSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo
+	PalyInfoReq                *embydto.PlaybackInfoReq
 }
 
 func NewEmbyVideoTask(episodeRepo *repo.EpisodeRepo, videoRepo *repo.VideoRepo, client redis.UniversalClient, c *conf.Bootstrap, configRepo *repo.ConfigRepo, actorRepo *repo.ActorRepo, videoActorMappingRepo *repo.VideoActorMappingRepo, episodeSubtitleMappingRepo *repo.EpisodeSubtitleMappingRepo) *EmbyVideoTask {
-	return &EmbyVideoTask{
+	task := &EmbyVideoTask{
 		episodeRepo:                episodeRepo,
 		videoRepo:                  videoRepo,
 		client:                     client,
@@ -48,6 +49,12 @@ func NewEmbyVideoTask(episodeRepo *repo.EpisodeRepo, videoRepo *repo.VideoRepo, 
 		videoActorMappingRepo:      videoActorMappingRepo,
 		episodeSubtitleMappingRepo: episodeSubtitleMappingRepo,
 	}
+	embyPlayinfoReq, err := json_util.Unmarshal[*embydto.PlaybackInfoReq]("{\"DeviceProfile\":{\"MaxStaticBitrate\":140000000,\"MaxStreamingBitrate\":140000000,\"MusicStreamingTranscodingBitrate\":192000,\"DirectPlayProfiles\":[{\"Container\":\"mp4,m4v\",\"Type\":\"Video\",\"VideoCodec\":\"h264,hevc,av1,vp8,vp9\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\"},{\"Container\":\"mkv\",\"Type\":\"Video\",\"VideoCodec\":\"h264,hevc,av1,vp8,vp9\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\"},{\"Container\":\"flv\",\"Type\":\"Video\",\"VideoCodec\":\"h264\",\"AudioCodec\":\"aac,mp3\"},{\"Container\":\"3gp\",\"Type\":\"Video\",\"VideoCodec\":\"\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\"},{\"Container\":\"mov\",\"Type\":\"Video\",\"VideoCodec\":\"h264\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\"},{\"Container\":\"opus\",\"Type\":\"Audio\"},{\"Container\":\"mp3\",\"Type\":\"Audio\",\"AudioCodec\":\"mp3\"},{\"Container\":\"mp2,mp3\",\"Type\":\"Audio\",\"AudioCodec\":\"mp2\"},{\"Container\":\"m4a\",\"AudioCodec\":\"aac\",\"Type\":\"Audio\"},{\"Container\":\"mp4\",\"AudioCodec\":\"aac\",\"Type\":\"Audio\"},{\"Container\":\"flac\",\"Type\":\"Audio\"},{\"Container\":\"webma,webm\",\"Type\":\"Audio\"},{\"Container\":\"wav\",\"Type\":\"Audio\",\"AudioCodec\":\"PCM_S16LE,PCM_S24LE\"},{\"Container\":\"ogg\",\"Type\":\"Audio\"},{\"Container\":\"webm\",\"Type\":\"Video\",\"AudioCodec\":\"vorbis,opus\",\"VideoCodec\":\"av1,VP8,VP9\"}],\"TranscodingProfiles\":[{\"Container\":\"aac\",\"Type\":\"Audio\",\"AudioCodec\":\"aac\",\"Context\":\"Streaming\",\"Protocol\":\"hls\",\"MaxAudioChannels\":\"2\",\"MinSegments\":\"1\",\"BreakOnNonKeyFrames\":true},{\"Container\":\"aac\",\"Type\":\"Audio\",\"AudioCodec\":\"aac\",\"Context\":\"Streaming\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"mp3\",\"Type\":\"Audio\",\"AudioCodec\":\"mp3\",\"Context\":\"Streaming\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"opus\",\"Type\":\"Audio\",\"AudioCodec\":\"opus\",\"Context\":\"Streaming\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"wav\",\"Type\":\"Audio\",\"AudioCodec\":\"wav\",\"Context\":\"Streaming\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"opus\",\"Type\":\"Audio\",\"AudioCodec\":\"opus\",\"Context\":\"Static\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"mp3\",\"Type\":\"Audio\",\"AudioCodec\":\"mp3\",\"Context\":\"Static\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"aac\",\"Type\":\"Audio\",\"AudioCodec\":\"aac\",\"Context\":\"Static\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"wav\",\"Type\":\"Audio\",\"AudioCodec\":\"wav\",\"Context\":\"Static\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"mkv\",\"Type\":\"Video\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\",\"VideoCodec\":\"h264,hevc,av1,vp8,vp9\",\"Context\":\"Static\",\"MaxAudioChannels\":\"2\",\"CopyTimestamps\":true},{\"Container\":\"ts\",\"Type\":\"Video\",\"AudioCodec\":\"mp3,aac\",\"VideoCodec\":\"hevc,h264,av1\",\"Context\":\"Streaming\",\"Protocol\":\"hls\",\"MaxAudioChannels\":\"2\",\"MinSegments\":\"1\",\"BreakOnNonKeyFrames\":true,\"ManifestSubtitles\":\"vtt\"},{\"Container\":\"webm\",\"Type\":\"Video\",\"AudioCodec\":\"vorbis\",\"VideoCodec\":\"vpx\",\"Context\":\"Streaming\",\"Protocol\":\"http\",\"MaxAudioChannels\":\"2\"},{\"Container\":\"mp4\",\"Type\":\"Video\",\"AudioCodec\":\"mp3,aac,opus,flac,vorbis\",\"VideoCodec\":\"h264\",\"Context\":\"Static\",\"Protocol\":\"http\"}],\"ContainerProfiles\":[],\"CodecProfiles\":[{\"Type\":\"VideoAudio\",\"Codec\":\"aac\",\"Conditions\":[{\"Condition\":\"Equals\",\"Property\":\"IsSecondaryAudio\",\"Value\":\"false\",\"IsRequired\":\"false\"}]},{\"Type\":\"VideoAudio\",\"Conditions\":[{\"Condition\":\"Equals\",\"Property\":\"IsSecondaryAudio\",\"Value\":\"false\",\"IsRequired\":\"false\"}]},{\"Type\":\"Video\",\"Codec\":\"h264\",\"Conditions\":[{\"Condition\":\"EqualsAny\",\"Property\":\"VideoProfile\",\"Value\":\"high|main|baseline|constrained baseline|high 10\",\"IsRequired\":false},{\"Condition\":\"LessThanEqual\",\"Property\":\"VideoLevel\",\"Value\":\"62\",\"IsRequired\":false}]},{\"Type\":\"Video\",\"Codec\":\"hevc\",\"Conditions\":[{\"Condition\":\"EqualsAny\",\"Property\":\"VideoCodecTag\",\"Value\":\"hvc1|hev1|hevc|hdmv\",\"IsRequired\":false}]}],\"SubtitleProfiles\":[{\"Format\":\"vtt\",\"Method\":\"Hls\"},{\"Format\":\"eia_608\",\"Method\":\"VideoSideData\",\"Protocol\":\"hls\"},{\"Format\":\"eia_708\",\"Method\":\"VideoSideData\",\"Protocol\":\"hls\"},{\"Format\":\"vtt\",\"Method\":\"External\"},{\"Format\":\"ass\",\"Method\":\"External\"},{\"Format\":\"ssa\",\"Method\":\"External\"}],\"ResponseProfiles\":[{\"Type\":\"Video\",\"Container\":\"m4v\",\"MimeType\":\"video/mp4\"}]}}")
+	if err != nil {
+
+	}
+	task.PalyInfoReq = embyPlayinfoReq
+	return task
 }
 
 func (t *EmbyVideoTask) Process(task *sdomain.Task) error {
@@ -68,19 +75,23 @@ func (t *EmbyVideoTask) FullSync(ctx context.Context, scanPathStr string) error 
 	boxIps := strings.Split(boxIpStr, ",")
 	var scanPaths = make([]string, 0)
 	if scanPathStr != "" {
-		scanPaths = strings.Split(scanPathStr, ",")
+		scanPaths = strings.Split(scanPathStr, "|")
 	} else {
 		scanPathStr, err = t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_EmbyVideoSyncCategory)
 		if err != nil {
 			return err
 		}
-		scanPaths = strings.Split(scanPathStr, ",")
+		scanPaths = strings.Split(scanPathStr, "|")
 	}
 
 	for _, scanPath := range scanPaths {
 		log.Infof("开始全量同步emby刮削: pathid=%s", scanPath)
 		scanPathAndType := strings.Split(scanPath, ":")
-		err = t.deepLoopListEmbyPath(ctx, boxIps[0], scanPathAndType[0], scanPathAndType[0], lo.Ternary(len(scanPathAndType) == 2, scanPathAndType[1], ""))
+		err = t.deepLoopListEmbyPath(ctx, boxIps[0], scanPathAndType[0], scanPathAndType[0], lo.TernaryF(len(scanPathAndType) == 2, func() string {
+			return scanPathAndType[1]
+		}, func() string {
+			return ""
+		}))
 		if err != nil {
 			log.Errorf("全量同步emby刮削失败: %v", err)
 			return err
@@ -146,7 +157,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 		return t.deepLoopListEmbyPath(ctx, domain, id, rootPathId, "")
 	}
 	if mediaType == constant.JfSeries {
-		syncSeasonListURL := fmt.Sprintf(domain+constant.EmbySeaonsList, id, 10000)
+		syncSeasonListURL := fmt.Sprintf(domain+constant.EmbySeaonsList, id, 10000, embyDefaultUserId)
 		seasonListResp, err := httpclient_util.DoGet[embydto.SeasonListResp](ctx, syncSeasonListURL, headerMap)
 		if err != nil {
 			return fmt.Errorf("emby seasonListResp parentId %s file %s 返回结果失败: %v", parentId, id, err)
@@ -162,7 +173,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 		}
 	}
 	if mediaType == constant.JfSeason {
-		syncEpisodeListURL := fmt.Sprintf(domain+constant.EmbyEpisodesList, parentId, id, 10000)
+		syncEpisodeListURL := fmt.Sprintf(domain+constant.EmbyEpisodesList, parentId, id, 10000, embyDefaultUserId)
 		episodeListResp, err := httpclient_util.DoGet[embydto.EpisodeListResp](ctx, syncEpisodeListURL, headerMap)
 		if err != nil {
 			return fmt.Errorf("emby episodeListResp parentId %s file %s 返回结果失败: %v", parentId, id, err)
@@ -351,7 +362,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 						externalUrls = append(externalUrls, season.ExternalUrls...)
 					}
 				}
-				region, externalUrls := t.getRegion(ctx, externalUrls, videoDetailResp.MediaSources[0].Path)
+				region, externalUrls := t.getRegion(ctx, externalUrls, videoDetailResp.MediaSources[0].Path, videoDetailResp.Regions)
 				externalUrlStr := ""
 				if len(externalUrls) > 0 {
 					externalUrlStr, _ = json_util.MarshalString(externalUrls)
@@ -464,14 +475,14 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			}
 			log.Infof("成功写入【videoActorMappingRepo】: xiaoya路径=%s", filePath+fileName)
 			//字幕处理
-			result, err := httpclient_util.DoGet[embydto.PlaybackInfo](ctx, domain+fmt.Sprintf(constant.EmbyPlayInfo, videoDetailResp.Id), headerMap)
+			result, err := httpclient_util.DoPost[embydto.PlaybackInfoReq, embydto.PlaybackInfo](ctx, domain+fmt.Sprintf(constant.EmbyPlayInfo, videoDetailResp.Id), t.PalyInfoReq, headerMap)
 			if err != nil {
 				return err
 			}
 			if result == nil {
 				return nil
 			}
-			err = t.episodeSubtitleMappingRepo.Delete(ctx, tx, episode.ID)
+			err = t.episodeSubtitleMappingRepo.Delete(ctx, nil, episode.ID)
 			if err != nil {
 				return err
 			}
@@ -480,7 +491,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 					if mediaStream.Type != "Subtitle" || mediaStream.DeliveryUrl == "" {
 						continue
 					}
-					err = t.episodeSubtitleMappingRepo.Create(ctx, tx, &model.EpisodeSubtitleMapping{
+					err = t.episodeSubtitleMappingRepo.Create(ctx, nil, &model.EpisodeSubtitleMapping{
 						EpisodeID: episode.ID,
 						URL:       mediaStream.DeliveryUrl,
 						Title:     mediaStream.DisplayTitle,
@@ -521,6 +532,9 @@ func splitEmbyPath(url string) (string, string) {
 }
 
 func (t *EmbyVideoTask) replaceRegions(ctx context.Context, regions []string) []string {
+	if len(regions) == 0 {
+		return nil
+	}
 	regionMap, _ := t.configRepo.GetConfigMapByKey(ctx, constant.Key_RegionMapping)
 	targets := lo.Map(regions, func(item string, index int) string {
 		for source, target := range regionMap {
@@ -568,7 +582,7 @@ func (t *EmbyVideoTask) getValidThumbnail(ctx context.Context, domain string, id
 		if id == "" {
 			continue
 		}
-		url := fmt.Sprintf(constant.PrimaryThumbnail, id)
+		url := fmt.Sprintf(constant.EmbyPrimaryThumbnail, id)
 		valid, err := httpclient_util.CheckImageUrl(domain + url)
 		if err != nil {
 			continue
@@ -580,10 +594,17 @@ func (t *EmbyVideoTask) getValidThumbnail(ctx context.Context, domain string, id
 	return constant.DefaultThumbnail
 }
 
-func (t *EmbyVideoTask) getRegion(ctx context.Context, externalUrls []*embydto.ExternalUrl, xiaoyaPath string) (string, []*embydto.ExternalUrl) {
+func (t *EmbyVideoTask) getRegion(ctx context.Context, externalUrls []*embydto.ExternalUrl, xiaoyaPath string, regions []string) (string, []*embydto.ExternalUrl) {
 	newRegions := t.replaceRegions(ctx, []string{xiaoyaPath})
 	if len(newRegions) != 0 {
 		return newRegions[0], externalUrls
+	}
+	if len(regions) != 0 {
+		newRegions = t.replaceRegions(ctx, regions)
+		if len(newRegions) != 0 {
+			return newRegions[0], externalUrls
+		}
+		return regions[0], externalUrls
 	}
 	if len(externalUrls) == 0 {
 		return "", externalUrls

@@ -18,6 +18,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/service/sdomain"
 	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
+	"runtime/debug"
 	"time"
 )
 
@@ -119,6 +120,11 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 		}
 	}
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("AddWatchCount panic recovered: %v\n%s", r, debug.Stack())
+			}
+		}()
 		if episode.VideoId != constant.TrailVideoId {
 			s.client.HSet(ctx, fmt.Sprintf(constant.RK_UserWatchCountPrefix, userName), time_util.FormatYYYYMMDD(time.Now()), currentWatchs)
 		}
@@ -129,6 +135,11 @@ func (s *EpisodeService) get(ctx context.Context, id int64, containPlayUrl bool)
 		log.Infof("增加总观看次数成功：%d", episode.VideoId)
 	}()
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("TransferStoreNextEpisodeToAliyun panic recovered: %v\n%s", r, debug.Stack())
+			}
+		}()
 		err := s.TransferStoreNextEpisodeToAliyun(ctx, episode.VideoId, episode.ID)
 		if err != nil {
 			log.Errorf("转存阿里云失败: %v", err)

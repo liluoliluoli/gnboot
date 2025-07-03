@@ -112,3 +112,60 @@ type EpisodeItem struct {
 type PlaybackInfo struct {
 	MediaSources []*MediaSource `json:"MediaSources"`
 }
+
+type PlaybackInfoReq struct {
+	DeviceProfile *DeviceProfile `json:"DeviceProfile"`
+}
+
+type DeviceProfile struct {
+	MaxStaticBitrate                 int64                 `json:"MaxStaticBitrate"`
+	MaxStreamingBitrate              int64                 `json:"MaxStreamingBitrate"`
+	MusicStreamingTranscodingBitrate int64                 `json:"MusicStreamingTranscodingBitrate"`
+	DirectPlayProfiles               []*DirectPlayProfile  `json:"DirectPlayProfiles"`
+	TranscodingProfiles              []*TranscodingProfile `json:"TranscodingProfiles"`
+	CodecProfiles                    []*CodecProfile       `json:"CodecProfiles"`
+	SubtitleProfiles                 []*SubtitleProfile    `json:"SubtitleProfiles"`
+	ResponseProfiles                 []*ResponseProfile    `json:"ResponseProfiles"`
+}
+
+type DirectPlayProfile struct {
+	Container  *string `json:"Container"`
+	Type       *string `json:"Type"`
+	VideoCodec *string `json:"VideoCodec"`
+	AudioCodec *string `json:"AudioCodec"`
+}
+
+type TranscodingProfile struct {
+	Container           *string `json:"Container"`
+	Type                *string `json:"Type"`
+	AudioCodec          *string `json:"AudioCodec"`
+	Context             *string `json:"Context"`
+	Protocol            *string `json:"Protocol"`
+	MaxAudioChannels    *string `json:"MaxAudioChannels"`
+	MinSegments         *string `json:"MinSegments"`
+	BreakOnNonKeyFrames *bool   `json:"BreakOnNonKeyFrames"`
+}
+
+type CodecProfile struct {
+	Type       *string      `json:"Type"`
+	Codec      *string      `json:"Codec"`
+	Conditions []*Condition `json:"Conditions"`
+}
+
+type Condition struct {
+	Condition  *string `json:"Condition"`
+	Property   *string `json:"Property"`
+	Value      *string `json:"Value"`
+	IsRequired *string `json:"IsRequired"`
+}
+
+type SubtitleProfile struct {
+	Format *string `json:"Format"`
+	Method *string `json:"Method"`
+}
+
+type ResponseProfile struct {
+	Type      *string `json:"Type"`
+	Container *string `json:"Container"`
+	MimeType  *string `json:"MimeType"`
+}

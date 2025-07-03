@@ -10,6 +10,7 @@ import (
 	"github.com/liluoliluoli/gnboot/internal/service"
 	"github.com/liluoliluoli/gnboot/internal/task/video"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"runtime/debug"
 )
 
 type EpisodeProvider struct {
@@ -58,6 +59,12 @@ func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.Update
 
 func (s *EpisodeProvider) TestSyncTask(ctx context.Context, req *episode.TestSyncTaskRequest) (*emptypb.Empty, error) {
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("FullSync panic recovered: %v\n%s", r, debug.Stack())
+			}
+		}()
+
 		err := s.embyVideoTask.FullSync(ctx, req.ScanPathIds)
 		if err != nil {
 			log.Errorf("TestSyncTask fail:%v", err)

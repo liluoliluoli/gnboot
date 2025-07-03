@@ -1,6 +1,8 @@
 package constant
 
-import "regexp"
+import (
+	"regexp"
+)
 
 const (
 	GN_OPERATOR_CONTEXT = "gn_operator_context"
@@ -130,10 +132,10 @@ const (
 
 	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=true&Limit=%d"
 	EmbyVideoDetail      = "/emby/Users/%s/Items/%s"
-	EmbySeaonsList       = "/emby/Shows/%s/Seasons?Limit=%d"
-	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d"
+	EmbySeaonsList       = "/emby/Shows/%s/Seasons?Limit=%d&UserId=%s"
+	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d&UserId=%s"
 	EmbyPrimaryThumbnail = "/emby/Items/%s/Images/Primary"
-	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo"
+	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo?reqformat=json"
 )
 
 type JfVideoType = string

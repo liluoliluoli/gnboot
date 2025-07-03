@@ -128,7 +128,7 @@ const (
 	Platform                     = "aliyun"
 	PageSize                     = 100
 
-	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=false&Limit=%d"
+	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=true&Limit=%d"
 	EmbyVideoDetail      = "/emby/Users/%s/Items/%s"
 	EmbySeaonsList       = "/emby/Shows/%s/Seasons?Limit=%d"
 	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d"
@@ -144,4 +144,5 @@ const (
 	JfSeason  JfVideoType = "Season"
 	JfSeries  JfVideoType = "Series"
 	JfFolder  JfVideoType = "Folder"
+	JFBoxSet  JfVideoType = "BoxSet"
 )

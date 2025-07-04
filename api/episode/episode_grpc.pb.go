@@ -20,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	EpisodeRemoteService_GetEpisode_FullMethodName    = "/gnboot.EpisodeRemoteService/GetEpisode"
-	EpisodeRemoteService_UpdateConfigs_FullMethodName = "/gnboot.EpisodeRemoteService/UpdateConfigs"
-	EpisodeRemoteService_TestSyncTask_FullMethodName  = "/gnboot.EpisodeRemoteService/TestSyncTask"
+	EpisodeRemoteService_GetEpisode_FullMethodName         = "/gnboot.EpisodeRemoteService/GetEpisode"
+	EpisodeRemoteService_UpdateConfigs_FullMethodName      = "/gnboot.EpisodeRemoteService/UpdateConfigs"
+	EpisodeRemoteService_TestFullSyncTask_FullMethodName   = "/gnboot.EpisodeRemoteService/TestFullSyncTask"
+	EpisodeRemoteService_TestLatestSyncTask_FullMethodName = "/gnboot.EpisodeRemoteService/TestLatestSyncTask"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
@@ -31,7 +32,8 @@ const (
 type EpisodeRemoteServiceClient interface {
 	GetEpisode(ctx context.Context, in *GetEpisodeRequest, opts ...grpc.CallOption) (*Episode, error)
 	UpdateConfigs(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	TestSyncTask(ctx context.Context, in *TestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestFullSyncTask(ctx context.Context, in *TestFullSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestLatestSyncTask(ctx context.Context, in *TestLatestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -60,9 +62,18 @@ func (c *episodeRemoteServiceClient) UpdateConfigs(ctx context.Context, in *Upda
 	return out, nil
 }
 
-func (c *episodeRemoteServiceClient) TestSyncTask(ctx context.Context, in *TestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *episodeRemoteServiceClient) TestFullSyncTask(ctx context.Context, in *TestFullSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, EpisodeRemoteService_TestSyncTask_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_TestFullSyncTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *episodeRemoteServiceClient) TestLatestSyncTask(ctx context.Context, in *TestLatestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_TestLatestSyncTask_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +86,8 @@ func (c *episodeRemoteServiceClient) TestSyncTask(ctx context.Context, in *TestS
 type EpisodeRemoteServiceServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
 	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
-	TestSyncTask(context.Context, *TestSyncTaskRequest) (*emptypb.Empty, error)
+	TestFullSyncTask(context.Context, *TestFullSyncTaskRequest) (*emptypb.Empty, error)
+	TestLatestSyncTask(context.Context, *TestLatestSyncTaskRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -89,8 +101,11 @@ func (UnimplementedEpisodeRemoteServiceServer) GetEpisode(context.Context, *GetE
 func (UnimplementedEpisodeRemoteServiceServer) UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfigs not implemented")
 }
-func (UnimplementedEpisodeRemoteServiceServer) TestSyncTask(context.Context, *TestSyncTaskRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TestSyncTask not implemented")
+func (UnimplementedEpisodeRemoteServiceServer) TestFullSyncTask(context.Context, *TestFullSyncTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestFullSyncTask not implemented")
+}
+func (UnimplementedEpisodeRemoteServiceServer) TestLatestSyncTask(context.Context, *TestLatestSyncTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestLatestSyncTask not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -141,20 +156,38 @@ func _EpisodeRemoteService_UpdateConfigs_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EpisodeRemoteService_TestSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TestSyncTaskRequest)
+func _EpisodeRemoteService_TestFullSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestFullSyncTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EpisodeRemoteServiceServer).TestSyncTask(ctx, in)
+		return srv.(EpisodeRemoteServiceServer).TestFullSyncTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EpisodeRemoteService_TestSyncTask_FullMethodName,
+		FullMethod: EpisodeRemoteService_TestFullSyncTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EpisodeRemoteServiceServer).TestSyncTask(ctx, req.(*TestSyncTaskRequest))
+		return srv.(EpisodeRemoteServiceServer).TestFullSyncTask(ctx, req.(*TestFullSyncTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EpisodeRemoteService_TestLatestSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestLatestSyncTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EpisodeRemoteServiceServer).TestLatestSyncTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EpisodeRemoteService_TestLatestSyncTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EpisodeRemoteServiceServer).TestLatestSyncTask(ctx, req.(*TestLatestSyncTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -175,8 +208,12 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EpisodeRemoteService_UpdateConfigs_Handler,
 		},
 		{
-			MethodName: "TestSyncTask",
-			Handler:    _EpisodeRemoteService_TestSyncTask_Handler,
+			MethodName: "TestFullSyncTask",
+			Handler:    _EpisodeRemoteService_TestFullSyncTask_Handler,
+		},
+		{
+			MethodName: "TestLatestSyncTask",
+			Handler:    _EpisodeRemoteService_TestLatestSyncTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

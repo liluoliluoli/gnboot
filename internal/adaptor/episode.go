@@ -57,17 +57,33 @@ func (s *EpisodeProvider) UpdateConfigs(ctx context.Context, req *episode.Update
 	return &emptypb.Empty{}, nil
 }
 
-func (s *EpisodeProvider) TestSyncTask(ctx context.Context, req *episode.TestSyncTaskRequest) (*emptypb.Empty, error) {
+func (s *EpisodeProvider) TestLatestSyncTask(ctx context.Context, req *episode.TestLatestSyncTaskRequest) (*emptypb.Empty, error) {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Errorf("FullSync panic recovered: %v\n%s", r, debug.Stack())
+				log.Errorf("TestLatestSyncTask panic recovered: %v\n%s", r, debug.Stack())
+			}
+		}()
+
+		err := s.embyVideoTask.LatestSync(ctx, req.ScanPathIds)
+		if err != nil {
+			log.Errorf("TestLatestSyncTask fail:%v", err)
+		}
+	}()
+	return &emptypb.Empty{}, nil
+}
+
+func (s *EpisodeProvider) TestFullSyncTask(ctx context.Context, req *episode.TestFullSyncTaskRequest) (*emptypb.Empty, error) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("TestFullSyncTask panic recovered: %v\n%s", r, debug.Stack())
 			}
 		}()
 
 		err := s.embyVideoTask.FullSync(ctx, req.ScanPathIds)
 		if err != nil {
-			log.Errorf("TestSyncTask fail:%v", err)
+			log.Errorf("TestFullSyncTask fail:%v", err)
 		}
 	}()
 	return &emptypb.Empty{}, nil

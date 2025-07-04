@@ -56,7 +56,7 @@ func (r *EpisodeRepo) Next(ctx context.Context, videoId int64, id int64) (*sdoma
 }
 
 func (r *EpisodeRepo) QueryByVideoId(ctx context.Context, videoId int64) ([]*sdomain.Episode, error) {
-	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.EpisodeTitle, gen.Episode.Episode).Find()
+	finds, err := r.do(ctx, nil).Where(gen.Episode.VideoID.Eq(videoId)).Order(gen.Episode.Episode).Find()
 	if err != nil {
 		return nil, handleQueryError(ctx, err)
 	}

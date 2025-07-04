@@ -439,22 +439,22 @@ var _ interface {
 	ErrorName() string
 } = UpdateConfigRequestValidationError{}
 
-// Validate checks the field values on TestSyncTaskRequest with the rules
+// Validate checks the field values on TestFullSyncTaskRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *TestSyncTaskRequest) Validate() error {
+func (m *TestFullSyncTaskRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on TestSyncTaskRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on TestFullSyncTaskRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// TestSyncTaskRequestMultiError, or nil if none found.
-func (m *TestSyncTaskRequest) ValidateAll() error {
+// TestFullSyncTaskRequestMultiError, or nil if none found.
+func (m *TestFullSyncTaskRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *TestSyncTaskRequest) validate(all bool) error {
+func (m *TestFullSyncTaskRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -464,19 +464,19 @@ func (m *TestSyncTaskRequest) validate(all bool) error {
 	// no validation rules for ScanPathIds
 
 	if len(errors) > 0 {
-		return TestSyncTaskRequestMultiError(errors)
+		return TestFullSyncTaskRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// TestSyncTaskRequestMultiError is an error wrapping multiple validation
-// errors returned by TestSyncTaskRequest.ValidateAll() if the designated
+// TestFullSyncTaskRequestMultiError is an error wrapping multiple validation
+// errors returned by TestFullSyncTaskRequest.ValidateAll() if the designated
 // constraints aren't met.
-type TestSyncTaskRequestMultiError []error
+type TestFullSyncTaskRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m TestSyncTaskRequestMultiError) Error() string {
+func (m TestFullSyncTaskRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -485,11 +485,11 @@ func (m TestSyncTaskRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m TestSyncTaskRequestMultiError) AllErrors() []error { return m }
+func (m TestFullSyncTaskRequestMultiError) AllErrors() []error { return m }
 
-// TestSyncTaskRequestValidationError is the validation error returned by
-// TestSyncTaskRequest.Validate if the designated constraints aren't met.
-type TestSyncTaskRequestValidationError struct {
+// TestFullSyncTaskRequestValidationError is the validation error returned by
+// TestFullSyncTaskRequest.Validate if the designated constraints aren't met.
+type TestFullSyncTaskRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -497,24 +497,24 @@ type TestSyncTaskRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e TestSyncTaskRequestValidationError) Field() string { return e.field }
+func (e TestFullSyncTaskRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e TestSyncTaskRequestValidationError) Reason() string { return e.reason }
+func (e TestFullSyncTaskRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e TestSyncTaskRequestValidationError) Cause() error { return e.cause }
+func (e TestFullSyncTaskRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e TestSyncTaskRequestValidationError) Key() bool { return e.key }
+func (e TestFullSyncTaskRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e TestSyncTaskRequestValidationError) ErrorName() string {
-	return "TestSyncTaskRequestValidationError"
+func (e TestFullSyncTaskRequestValidationError) ErrorName() string {
+	return "TestFullSyncTaskRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e TestSyncTaskRequestValidationError) Error() string {
+func (e TestFullSyncTaskRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -526,14 +526,14 @@ func (e TestSyncTaskRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sTestSyncTaskRequest.%s: %s%s",
+		"invalid %sTestFullSyncTaskRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = TestSyncTaskRequestValidationError{}
+var _ error = TestFullSyncTaskRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -541,7 +541,111 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = TestSyncTaskRequestValidationError{}
+} = TestFullSyncTaskRequestValidationError{}
+
+// Validate checks the field values on TestLatestSyncTaskRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TestLatestSyncTaskRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TestLatestSyncTaskRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TestLatestSyncTaskRequestMultiError, or nil if none found.
+func (m *TestLatestSyncTaskRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TestLatestSyncTaskRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ScanPathIds
+
+	if len(errors) > 0 {
+		return TestLatestSyncTaskRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// TestLatestSyncTaskRequestMultiError is an error wrapping multiple validation
+// errors returned by TestLatestSyncTaskRequest.ValidateAll() if the
+// designated constraints aren't met.
+type TestLatestSyncTaskRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TestLatestSyncTaskRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TestLatestSyncTaskRequestMultiError) AllErrors() []error { return m }
+
+// TestLatestSyncTaskRequestValidationError is the validation error returned by
+// TestLatestSyncTaskRequest.Validate if the designated constraints aren't met.
+type TestLatestSyncTaskRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TestLatestSyncTaskRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TestLatestSyncTaskRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TestLatestSyncTaskRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TestLatestSyncTaskRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TestLatestSyncTaskRequestValidationError) ErrorName() string {
+	return "TestLatestSyncTaskRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TestLatestSyncTaskRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTestLatestSyncTaskRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TestLatestSyncTaskRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TestLatestSyncTaskRequestValidationError{}
 
 // Validate checks the field values on Audio with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

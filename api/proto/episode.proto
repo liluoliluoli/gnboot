@@ -61,9 +61,15 @@ additional_properties:
         body : "*"
       };
     }
-    rpc TestSyncTask(TestSyncTaskRequest) returns (google.protobuf.Empty) {
+    rpc TestFullSyncTask(TestFullSyncTaskRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
-        post : "/api/test/synctask"
+        post : "/api/test/testFullSyncTask"
+        body : "*"
+      };
+    }
+    rpc TestLatestSyncTask(TestLatestSyncTaskRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/test/testLatestSyncTask"
         body : "*"
       };
     }
@@ -98,8 +104,12 @@ message UpdateConfigRequest {
   map<string, string> apikeyMapping = 6;
 }
 
-message TestSyncTaskRequest {
+message TestFullSyncTaskRequest {
     string scanPathIds = 1;
+}
+
+message TestLatestSyncTaskRequest {
+  string scanPathIds = 1;
 }
 
 message Audio{

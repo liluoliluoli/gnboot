@@ -88,11 +88,15 @@ func (t *EmbyVideoTask) FullSync(ctx context.Context, scanPathStr string) error 
 	for _, scanPath := range scanPaths {
 		log.Warnf("开始全量同步emby刮削: pathid=%s", scanPath)
 		scanPathAndType := strings.Split(scanPath, ":")
-		err = t.deepLoopListEmbyPath(ctx, boxIps[0], scanPathAndType[0], scanPathAndType[0], lo.TernaryF(len(scanPathAndType) == 2, func() string {
+		err = t.deepLoopListEmbyPath(ctx, boxIps[0], scanPathAndType[0], scanPathAndType[0], lo.TernaryF(len(scanPathAndType) >= 2, func() string {
 			return scanPathAndType[1]
 		}, func() string {
 			return ""
-		}), nil)
+		}), nil, lo.TernaryF(len(scanPathAndType) >= 3, func() string {
+			return scanPathAndType[2]
+		}, func() string {
+			return "false"
+		}))
 		if err != nil {
 			log.Errorf("全量同步emby刮削失败: %v", err)
 			return err
@@ -102,7 +106,7 @@ func (t *EmbyVideoTask) FullSync(ctx context.Context, scanPathStr string) error 
 	return nil
 }
 
-func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parentId string, rootPathId string, includeItemType string, root *embydto.VideoItem) error {
+func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parentId string, rootPathId string, includeItemType string, root *embydto.VideoItem, recursive string) error {
 	startIndex := int32(0)
 	embyDefaultToken, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_EmbyDefaultToken)
 	if err != nil {
@@ -115,7 +119,7 @@ func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parent
 	for {
 		headerMap := make(map[string]string)
 		headerMap["X-Emby-Token"] = embyDefaultToken
-		syncListURL := fmt.Sprintf(domain+constant.EmbyVideoList, embyDefaultUserId, startIndex, parentId, constant.PageSize)
+		syncListURL := fmt.Sprintf(domain+constant.EmbyVideoList, embyDefaultUserId, startIndex, parentId, constant.PageSize, recursive)
 		if includeItemType != "" {
 			syncListURL = syncListURL + "&IncludeItemTypes=" + includeItemType
 		}
@@ -127,7 +131,7 @@ func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parent
 			return fmt.Errorf("emby parentId %s 游标 %d 开始的返回结果无效", parentId, startIndex)
 		}
 		for index, content := range videoListResp.Items {
-			err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId, lo.Ternary(root != nil, root, content))
+			err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId, lo.Ternary(root != nil, root, content), recursive)
 			if err != nil {
 				return err
 			}
@@ -142,7 +146,7 @@ func (t *EmbyVideoTask) deepLoopListEmbyPath(ctx context.Context, domain, parent
 	return nil
 }
 
-func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *embydto.VideoDetailResp, series *embydto.VideoDetailResp, embyDefaultUserId string, headerMap map[string]string, index int, rootPathId string, root *embydto.VideoItem) error {
+func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, parentId string, id string, mediaType string, season *embydto.VideoDetailResp, series *embydto.VideoDetailResp, embyDefaultUserId string, headerMap map[string]string, index int, rootPathId string, root *embydto.VideoItem, recursive string) error {
 	//查出详情
 	syncDetailURL := fmt.Sprintf(domain+constant.EmbyVideoDetail, embyDefaultUserId, id)
 	videoDetailResp, err := httpclient_util.DoGet[embydto.VideoDetailResp](ctx, syncDetailURL, headerMap)
@@ -155,7 +159,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 
 	//按类型处理
 	if mediaType == constant.JfFolder || mediaType == constant.JFBoxSet {
-		return t.deepLoopListEmbyPath(ctx, domain, id, rootPathId, "", root)
+		return t.deepLoopListEmbyPath(ctx, domain, id, rootPathId, "", root, recursive)
 	}
 	if mediaType == constant.JfSeries {
 		syncSeasonListURL := fmt.Sprintf(domain+constant.EmbySeaonsList, id, 10000, embyDefaultUserId)
@@ -167,7 +171,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			return fmt.Errorf("emby seasonListResp parentId %s file %s 返回结果无效", parentId, id)
 		}
 		for newIndex, content := range seasonListResp.Items {
-			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfSeason, nil, videoDetailResp, embyDefaultUserId, headerMap, newIndex, rootPathId, root)
+			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfSeason, nil, videoDetailResp, embyDefaultUserId, headerMap, newIndex, rootPathId, root, recursive)
 			if err != nil {
 				return err
 			}
@@ -183,7 +187,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 			return fmt.Errorf("emby episodeListResp parentId %s file %s 返回结果无效", parentId, id)
 		}
 		for newIndex, content := range episodeListResp.Items {
-			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfEpisode, videoDetailResp, series, embyDefaultUserId, headerMap, newIndex, rootPathId, root)
+			err := t.deepLoopDetailEmbyPath(ctx, domain, id, content.Id, constant.JfEpisode, videoDetailResp, series, embyDefaultUserId, headerMap, newIndex, rootPathId, root, recursive)
 			if err != nil {
 				return err
 			}
@@ -385,7 +389,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 					if season != nil && season.ChildCount != 0 {
 						totalEpisode = season.ChildCount
 					}
-					if series != nil && series.Status != "Continuing" {
+					if series != nil && series.Status == "Continuing" {
 						totalEpisode = -1
 					}
 				}

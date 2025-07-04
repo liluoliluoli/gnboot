@@ -97,12 +97,12 @@ func (r *VideoRepo) Create(ctx context.Context, tx *gen.Query, movie *model.Vide
 	return nil
 }
 
-func (r *VideoRepo) Update(ctx context.Context, tx *gen.Query, movie *sdomain.UpdateVideo) error {
-	updates, err := r.do(ctx, tx).Updates(movie.ConvertToRepo())
+func (r *VideoRepo) Update(ctx context.Context, tx *gen.Query, movie *model.Video) error {
+	updates, err := r.do(ctx, tx).Where(gen.Video.ID.Eq(movie.ID)).Updates(movie)
 	if err != nil {
 		return err
 	}
-	if updates.RowsAffected != 1 {
+	if updates.RowsAffected > 1 {
 		return gorm.ErrDuplicatedKey
 	}
 	return nil

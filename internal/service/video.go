@@ -202,7 +202,7 @@ func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavori
 func (s *VideoService) Update(ctx context.Context, item *sdomain.UpdateVideo) error {
 	err := gen.Use(s.videoRepo.Data.DB(ctx)).Transaction(func(tx *gen.Query) error {
 		err := s.cache.Flush(ctx, func(ctx context.Context) error {
-			return s.videoRepo.Update(ctx, tx, item)
+			return s.videoRepo.Update(ctx, tx, item.ConvertToRepo())
 		})
 		if err != nil {
 			return err

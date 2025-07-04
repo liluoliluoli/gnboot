@@ -43,7 +43,7 @@ type VideoDetailResp struct {
 }
 
 type GenreItem struct {
-	Id   string `json:"Id"`
+	Id   int64  `json:"Id"`
 	Name string `json:"Name"`
 }
 

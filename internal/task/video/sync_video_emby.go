@@ -373,7 +373,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 				var totalEpisode int32
 				if videoDetailResp.Type == constant.JfMovie {
 					if videoType == "Record" && root != nil {
-						totalEpisode = 0
+						totalEpisode = -1
 					} else {
 						totalEpisode = 1
 					}
@@ -386,7 +386,7 @@ func (t *EmbyVideoTask) deepLoopDetailEmbyPath(ctx context.Context, domain, pare
 						totalEpisode = season.ChildCount
 					}
 					if series != nil && series.Status != "Continuing" {
-						totalEpisode = 0
+						totalEpisode = -1
 					}
 				}
 				//国家处理

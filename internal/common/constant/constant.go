@@ -107,7 +107,7 @@ var (
 	}
 	RegularChinese    *regexp.Regexp    = regexp.MustCompile(`[\p{Han}]+`)
 	RegionMap         map[string]string = make(map[string]string)
-	SupportVideoTypes []string          = []string{".mkv", ".mp4", ".rmvb", ".avi"}
+	SupportVideoTypes []string          = []string{".mkv", ".mp4", ".rmvb", ".avi", ".ts"}
 )
 
 const (
@@ -130,12 +130,12 @@ const (
 	Platform                     = "aliyun"
 	PageSize                     = 100
 
-	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=true&Limit=%d"
+	EmbyVideoList        = "/emby/Users/%s/Items?StartIndex=%d&ParentId=%s&Recursive=false&Limit=%d"
 	EmbyVideoDetail      = "/emby/Users/%s/Items/%s"
 	EmbySeaonsList       = "/emby/Shows/%s/Seasons?Limit=%d&UserId=%s"
 	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d&UserId=%s"
 	EmbyPrimaryThumbnail = "/emby/Items/%s/Images/Primary"
-	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo?reqformat=json"
+	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo?reqformat=json&IsPlayback=false"
 )
 
 type JfVideoType = string

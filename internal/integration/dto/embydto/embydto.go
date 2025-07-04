@@ -38,6 +38,13 @@ type VideoDetailResp struct {
 	SeasonName     string         `json:"SeasonName"`
 	ChildCount     int32          `json:"ChildCount"`
 	ExternalUrls   []*ExternalUrl `json:"ExternalUrls"`
+	Status         string         `json:"Status"`
+	GenreItems     []*GenreItem   `json:"GenreItems"`
+}
+
+type GenreItem struct {
+	Id   string `json:"Id"`
+	Name string `json:"Name"`
 }
 
 type MediaSource struct {

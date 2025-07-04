@@ -136,7 +136,7 @@ const (
 	EmbyEpisodesList     = "/emby/Shows/%s/Episodes?SeasonId=%s&Limit=%d&UserId=%s"
 	EmbyPrimaryThumbnail = "/emby/Items/%s/Images/Primary"
 	EmbyPlayInfo         = "/emby/Items/%s/PlaybackInfo?reqformat=json&IsPlayback=false"
-	EmbyLatestVideoList  = "/emby/Users/%s/Items/Latest?ParentId=%s%Limit=%d"
+	EmbyLatestVideoList  = "/emby/Users/%s/Items/Latest?ParentId=%s&Limit=%d"
 )
 
 type JfVideoType = string

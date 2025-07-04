@@ -110,6 +110,7 @@ message TestFullSyncTaskRequest {
 
 message TestLatestSyncTaskRequest {
   string scanPathIds = 1;
+  int32 findLatestCount = 2;
 }
 
 message Audio{

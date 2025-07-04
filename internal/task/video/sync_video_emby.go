@@ -60,14 +60,14 @@ func NewEmbyVideoTask(episodeRepo *repo.EpisodeRepo, videoRepo *repo.VideoRepo, 
 
 func (t *EmbyVideoTask) Process(task *sdomain.Task) error {
 	ctx := task.Ctx
-	err := t.LatestSync(ctx, "")
+	err := t.LatestSync(ctx, "", 200)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t *EmbyVideoTask) LatestSync(ctx context.Context, scanPathStr string) error {
+func (t *EmbyVideoTask) LatestSync(ctx context.Context, scanPathStr string, findLatestCount int32) error {
 	ctx = context.Background()
 	boxIpStr, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_BoxIpMapping, constant.SubKey_EmbyBoxIp)
 	if err != nil {
@@ -96,7 +96,7 @@ func (t *EmbyVideoTask) LatestSync(ctx context.Context, scanPathStr string) erro
 			return scanPathAndType[2]
 		}, func() string {
 			return "false"
-		}))
+		}), findLatestCount)
 		if err != nil {
 			log.Errorf("增量同步emby刮削失败: %v", err)
 			return err
@@ -106,7 +106,7 @@ func (t *EmbyVideoTask) LatestSync(ctx context.Context, scanPathStr string) erro
 	return nil
 }
 
-func (t *EmbyVideoTask) deepLoopLatestListEmbyPath(ctx context.Context, domain, parentId string, parentName string, rootPathId string, includeItemType string, recursive string) error {
+func (t *EmbyVideoTask) deepLoopLatestListEmbyPath(ctx context.Context, domain, parentId string, parentName string, rootPathId string, includeItemType string, recursive string, findLatestCount int32) error {
 	startIndex := int32(0)
 	embyDefaultToken, err := t.configRepo.GetConfigBySubKey(ctx, constant.Key_VideoSyncMapping, constant.SubKey_EmbyDefaultToken)
 	if err != nil {
@@ -116,32 +116,24 @@ func (t *EmbyVideoTask) deepLoopLatestListEmbyPath(ctx context.Context, domain, 
 	if err != nil {
 		return err
 	}
-	for {
-		headerMap := make(map[string]string)
-		headerMap["X-Emby-Token"] = embyDefaultToken
-		syncListURL := fmt.Sprintf(domain+constant.EmbyLatestVideoList, embyDefaultUserId, parentId, constant.PageSize)
-		if includeItemType != "" {
-			syncListURL = syncListURL + "&IncludeItemTypes=" + includeItemType
-		}
-		videoListResp, err := httpclient_util.DoGet[embydto.VideoListResp](ctx, syncListURL, headerMap)
+	headerMap := make(map[string]string)
+	headerMap["X-Emby-Token"] = embyDefaultToken
+	syncListURL := fmt.Sprintf(domain+constant.EmbyLatestVideoList, embyDefaultUserId, parentId, findLatestCount)
+	if includeItemType != "" {
+		syncListURL = syncListURL + "&IncludeItemTypes=" + includeItemType
+	}
+	videoItemsResp, err := httpclient_util.DoGet[[]*embydto.VideoItem](ctx, syncListURL, headerMap)
+	if err != nil {
+		return fmt.Errorf("emby请求parentId %s 游标 %d 开始的返回结果失败: %v", parentId, startIndex, err)
+	}
+	if videoItemsResp == nil {
+		return fmt.Errorf("emby parentId %s 游标 %d 开始的返回结果无效", parentId, startIndex)
+	}
+	for index, content := range lo.FromPtr(videoItemsResp) {
+		err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, parentName, len(lo.FromPtr(videoItemsResp)), content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId, recursive)
 		if err != nil {
-			return fmt.Errorf("emby请求parentId %s 游标 %d 开始的返回结果失败: %v", parentId, startIndex, err)
+			return err
 		}
-		if videoListResp == nil {
-			return fmt.Errorf("emby parentId %s 游标 %d 开始的返回结果无效", parentId, startIndex)
-		}
-		for index, content := range videoListResp.Items {
-			err = t.deepLoopDetailEmbyPath(ctx, domain, parentId, parentName, len(videoListResp.Items), content.Id, content.Type, nil, nil, embyDefaultUserId, headerMap, index, rootPathId, recursive)
-			if err != nil {
-				return err
-			}
-		}
-		if int64(startIndex+constant.PageSize) >= videoListResp.TotalRecordCount {
-			log.Warnf("==============跳出循环: startIndex=%d, total:%d", startIndex+constant.PageSize, videoListResp.TotalRecordCount)
-			break
-		}
-		startIndex = startIndex + constant.PageSize
-		log.Warnf("==============继续执行: startIndex=%d, total:%d", startIndex, videoListResp.TotalRecordCount)
 	}
 	return nil
 }

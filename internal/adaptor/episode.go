@@ -65,7 +65,7 @@ func (s *EpisodeProvider) TestLatestSyncTask(ctx context.Context, req *episode.T
 			}
 		}()
 
-		err := s.embyVideoTask.LatestSync(ctx, req.ScanPathIds)
+		err := s.embyVideoTask.LatestSync(ctx, req.ScanPathIds, req.FindLatestCount)
 		if err != nil {
 			log.Errorf("TestLatestSyncTask fail:%v", err)
 		}

@@ -567,6 +567,8 @@ func (m *TestLatestSyncTaskRequest) validate(all bool) error {
 
 	// no validation rules for ScanPathIds
 
+	// no validation rules for FindLatestCount
+
 	if len(errors) > 0 {
 		return TestLatestSyncTaskRequestMultiError(errors)
 	}

@@ -18,3 +18,16 @@ func getIndexByHash(s string, length int) int {
 	hash := h.Sum32()
 	return int(hash) % length
 }
+
+func HasIntersection(a, b []string) bool {
+	set := make(map[string]bool)
+	for _, v := range a {
+		set[v] = true
+	}
+	for _, v := range b {
+		if set[v] {
+			return true
+		}
+	}
+	return false
+}

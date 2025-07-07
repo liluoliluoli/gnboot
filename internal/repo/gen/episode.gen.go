@@ -33,6 +33,7 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.XiaoyaPath = field.NewString(tableName, "xiaoya_path")
 	_episode.Episode = field.NewInt32(tableName, "episode")
 	_episode.EpisodeTitle = field.NewString(tableName, "episode_title")
+	_episode.DisplayTitle = field.NewString(tableName, "display_title")
 	_episode.URL = field.NewString(tableName, "url")
 	_episode.Platform = field.NewString(tableName, "platform")
 	_episode.Ext = field.NewString(tableName, "ext")
@@ -44,7 +45,6 @@ func newEpisode(db *gorm.DB, opts ...gen.DOOption) episode {
 	_episode.UpdateTime = field.NewTime(tableName, "update_time")
 	_episode.Ratio = field.NewString(tableName, "ratio")
 	_episode.JellyfinID = field.NewString(tableName, "jellyfin_id")
-	_episode.DisplayTitle = field.NewString(tableName, "display_title")
 	_episode.AliDriveID = field.NewString(tableName, "ali_drive_id")
 	_episode.AliFileID = field.NewString(tableName, "ali_file_id")
 	_episode.JfCreateTime = field.NewTime(tableName, "jf_create_time")
@@ -65,6 +65,7 @@ type episode struct {
 	XiaoyaPath    field.String
 	Episode       field.Int32  // 第几集
 	EpisodeTitle  field.String // 集标题
+	DisplayTitle  field.String // 用于展示的title
 	URL           field.String // 影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址
 	Platform      field.String //  aliyun
 	Ext           field.String // 扩展参数
@@ -76,7 +77,6 @@ type episode struct {
 	UpdateTime    field.Time   // 更新时间
 	Ratio         field.String // 分辨率LD，SD，HD，QHD
 	JellyfinID    field.String // jellyfin id
-	DisplayTitle  field.String // 用于展示的title
 	AliDriveID    field.String // 阿里云盘driveid
 	AliFileID     field.String // 阿里云盘fileid
 	JfCreateTime  field.Time   // jf侧创建时间
@@ -103,6 +103,7 @@ func (e *episode) updateTableName(table string) *episode {
 	e.XiaoyaPath = field.NewString(table, "xiaoya_path")
 	e.Episode = field.NewInt32(table, "episode")
 	e.EpisodeTitle = field.NewString(table, "episode_title")
+	e.DisplayTitle = field.NewString(table, "display_title")
 	e.URL = field.NewString(table, "url")
 	e.Platform = field.NewString(table, "platform")
 	e.Ext = field.NewString(table, "ext")
@@ -114,7 +115,6 @@ func (e *episode) updateTableName(table string) *episode {
 	e.UpdateTime = field.NewTime(table, "update_time")
 	e.Ratio = field.NewString(table, "ratio")
 	e.JellyfinID = field.NewString(table, "jellyfin_id")
-	e.DisplayTitle = field.NewString(table, "display_title")
 	e.AliDriveID = field.NewString(table, "ali_drive_id")
 	e.AliFileID = field.NewString(table, "ali_file_id")
 	e.JfCreateTime = field.NewTime(table, "jf_create_time")
@@ -148,6 +148,7 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["xiaoya_path"] = e.XiaoyaPath
 	e.fieldMap["episode"] = e.Episode
 	e.fieldMap["episode_title"] = e.EpisodeTitle
+	e.fieldMap["display_title"] = e.DisplayTitle
 	e.fieldMap["url"] = e.URL
 	e.fieldMap["platform"] = e.Platform
 	e.fieldMap["ext"] = e.Ext
@@ -159,7 +160,6 @@ func (e *episode) fillFieldMap() {
 	e.fieldMap["update_time"] = e.UpdateTime
 	e.fieldMap["ratio"] = e.Ratio
 	e.fieldMap["jellyfin_id"] = e.JellyfinID
-	e.fieldMap["display_title"] = e.DisplayTitle
 	e.fieldMap["ali_drive_id"] = e.AliDriveID
 	e.fieldMap["ali_file_id"] = e.AliFileID
 	e.fieldMap["jf_create_time"] = e.JfCreateTime

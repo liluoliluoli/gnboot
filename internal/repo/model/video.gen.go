@@ -18,10 +18,11 @@ type Video struct {
 	VoteRate           *float32  `gorm:"column:vote_rate;type:float;comment:评分" json:"voteRate"`
 	Region             *string   `gorm:"column:region;type:varchar(32);comment:国家" json:"region"`
 	TotalEpisode       *int32    `gorm:"column:total_episode;type:int;comment:总集数，减去episode的集数判断是否完结" json:"totalEpisode"`
-	Description        *string   `gorm:"column:description;type:varchar(1024);comment:简介" json:"description"`
+	Description        *string   `gorm:"column:description;type:varchar(4096);comment:简介" json:"description"`
 	Ext                *string   `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
 	PublishDay         *string   `gorm:"column:publish_day;type:varchar(32);comment:出版月份，yyyymmdd" json:"publishDay"`
 	Thumbnail          *string   `gorm:"column:thumbnail;type:varchar(2048);comment:缩略图" json:"thumbnail"`
+	ExternalThumbnail  *string   `gorm:"column:external_thumbnail;type:varchar(2048);comment:外链缩略图" json:"externalThumbnail"`
 	Genres             *string   `gorm:"column:genres;type:varchar(2048);comment:流派，固定枚举，多个时用,分隔" json:"genres"`
 	CreateTime         time.Time `gorm:"column:create_time;type:int unsigned;not null;autoCreateTime;comment:创建时间" json:"createTime"`
 	UpdateTime         time.Time `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`

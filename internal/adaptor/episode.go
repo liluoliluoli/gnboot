@@ -88,3 +88,19 @@ func (s *EpisodeProvider) TestFullSyncTask(ctx context.Context, req *episode.Tes
 	}()
 	return &emptypb.Empty{}, nil
 }
+
+func (s *EpisodeProvider) TestDoubanSyncTask(ctx context.Context, req *episode.TestDoubanSyncTaskRequest) (*emptypb.Empty, error) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("TestDoubanSyncTask panic recovered: %v\n%s", r, debug.Stack())
+			}
+		}()
+
+		err := s.embyVideoTask.DoubanSync(ctx)
+		if err != nil {
+			log.Errorf("TestDoubanSyncTask fail:%v", err)
+		}
+	}()
+	return &emptypb.Empty{}, nil
+}

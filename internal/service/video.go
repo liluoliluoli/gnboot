@@ -113,7 +113,7 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 	var pageResult *sdomain.PageResult[*sdomain.Video]
 	var err error
 	if condition.IsHistory {
-		pageResult, err = s.pageUserVideo(ctx, userId, false, condition.Page)
+		pageResult, err = s.pageUserVideo(ctx, userId, nil, condition.Page)
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +168,7 @@ func (s *VideoService) page(ctx context.Context, condition *sdomain.VideoSearch,
 
 func (s *VideoService) PageFavorites(ctx context.Context, userId int64, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
 	rp, err := s.cache.Page(ctx, cache_util.GetCacheActionName(userId, page), func(action string, ctx context.Context) (*sdomain.PageResult[*sdomain.Video], error) {
-		return s.pageUserVideo(ctx, userId, true, page)
+		return s.pageUserVideo(ctx, userId, lo.ToPtr(true), page)
 	})
 	if err != nil {
 		return nil, err
@@ -176,7 +176,7 @@ func (s *VideoService) PageFavorites(ctx context.Context, userId int64, page *sd
 	return rp, nil
 }
 
-func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavorite bool, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
+func (s *VideoService) pageUserVideo(ctx context.Context, userId int64, isFavorite *bool, page *sdomain.Page) (*sdomain.PageResult[*sdomain.Video], error) {
 	pageResult, err := s.videoUserMappingRepo.Page(ctx, userId, isFavorite, page)
 	if err != nil {
 		return nil, err

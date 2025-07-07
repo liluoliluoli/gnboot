@@ -22,6 +22,7 @@ type Video struct {
 	Description         string
 	PublishDay          string
 	Thumbnail           string
+	ExternalThumbnail   string
 	Ratio               string
 	Genres              []string
 	Actors              []*VideoActorMapping
@@ -60,6 +61,7 @@ func (d *Video) ConvertFromRepo(m *model.Video) *Video {
 		Ext:                lo.FromPtr(m.Ext),
 		PublishDay:         lo.FromPtr(m.PublishDay),
 		Thumbnail:          lo.FromPtr(m.Thumbnail),
+		ExternalThumbnail:  lo.FromPtr(m.ExternalThumbnail),
 		Ratio:              lo.FromPtr(m.Ratio),
 		Genres:             strings.Split(lo.FromPtr(m.Genres), ","),
 		CreateTime:         m.CreateTime,
@@ -83,6 +85,7 @@ func (d *Video) ConvertToRepo() *model.Video {
 		Ext:                lo.ToPtr(d.Ext),
 		PublishDay:         lo.ToPtr(d.PublishDay),
 		Thumbnail:          lo.ToPtr(d.Thumbnail),
+		ExternalThumbnail:  lo.ToPtr(d.ExternalThumbnail),
 		Genres:             lo.ToPtr(strings.Join(d.Genres, ",")),
 		CreateTime:         d.CreateTime,
 		UpdateTime:         d.CreateTime,
@@ -116,7 +119,7 @@ func (d *Video) ConvertToDto() *videodto.Video {
 		Description:  d.Description,
 		Ext:          d.Ext,
 		PublishDay:   d.PublishDay,
-		Thumbnail:    d.Thumbnail,
+		Thumbnail:    d.ExternalThumbnail,
 		Ratio:        d.Ratio,
 		Genres:       d.Genres,
 		LastPlayedTime: lo.TernaryF(d.LastPlayedTime != nil, func() *int32 {

@@ -73,6 +73,12 @@ additional_properties:
         body : "*"
       };
     }
+    rpc TestDoubanSyncTask(TestDoubanSyncTaskRequest) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        post : "/api/test/testDoubanSyncTask"
+        body : "*"
+      };
+    }
   }
 
   message Episode {
@@ -111,6 +117,9 @@ message TestFullSyncTaskRequest {
 message TestLatestSyncTaskRequest {
   string scanPathIds = 1;
   int32 findLatestCount = 2;
+}
+
+message TestDoubanSyncTaskRequest {
 }
 
 message Audio{

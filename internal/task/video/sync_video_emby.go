@@ -2,6 +2,7 @@ package video
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
@@ -21,7 +22,9 @@ import (
 	"github.com/samber/lo"
 	"math"
 	"net/url"
+	"path"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -63,6 +66,91 @@ func (t *EmbyVideoTask) Process(task *sdomain.Task) error {
 	err := t.LatestSync(ctx, "", 200)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (t *EmbyVideoTask) DoubanSync(ctx context.Context) error {
+	condition := &sdomain.VideoSearch{}
+	var page int32 = 1
+	for {
+		condition.Page = &sdomain.Page{
+			CurrentPage: page,
+			PageSize:    constant.PageSize,
+		}
+		result, err := t.videoRepo.PageNew(ctx, condition)
+		if err != nil {
+			return err
+		}
+		if result == nil {
+			break
+		}
+		if len(result.List) == 0 {
+			break
+		}
+		for i, video := range result.List {
+			var thumbnail string
+			if lo.FromPtr(video.ExternalThumbnail) == "" {
+				if lo.FromPtr(video.Ext) != "" {
+					unmarshal, err := json_util.Unmarshal[[]*embydto.ExternalUrl](lo.FromPtr(video.Ext))
+					if err != nil {
+						return err
+					}
+					unmarshalMap := lo.SliceToMap(unmarshal, func(item *embydto.ExternalUrl) (string, string) {
+						return item.Name, item.Url
+					})
+					movieDbUrl := unmarshalMap["MovieDb"]
+					if movieDbUrl != "" {
+						thumbnail, err = t.getTmdbThumbnail(ctx, movieDbUrl)
+						if err != nil {
+							return err
+						}
+					}
+				}
+				if thumbnail == "" {
+					_, _, thumbnail, _, err = t.getDoubanInfo(ctx, video.Title, lo.FromPtr(video.Region))
+				}
+				video.ExternalThumbnail = lo.ToPtr(thumbnail)
+				video.UpdateTime = time.Now()
+				err = t.videoRepo.Update(ctx, nil, video)
+				if err != nil {
+					return err
+				}
+				log.Infof("douban sync index:%d, title:%s, thumbnail:%s", i, video.Title, thumbnail)
+			}
+			//region, genre, thumbnail, ratting, err := t.getDoubanInfo(ctx, video.Title, lo.FromPtr(video.Region))
+			//if err != nil {
+			//	return err
+			//}
+			//if lo.FromPtr(video.Region) == "" {
+			//	newRegions := t.replaceRegions(ctx, []string{region})
+			//	if len(newRegions) != 0 {
+			//		video.Region = lo.ToPtr(newRegions[0])
+			//	} else {
+			//		log.Infof("%d===region not match===========%s", video.ID, region)
+			//	}
+			//}
+			//if lo.FromPtr(video.Genres) == "" {
+			//	newGenres := t.replaceGenres(ctx, []string{genre})
+			//	if len(newGenres) != 0 {
+			//		video.Genres = lo.ToPtr(newGenres[0])
+			//	} else {
+			//		log.Infof("%d===genre not match===========%s", video.ID, genre)
+			//	}
+			//}
+			//if lo.FromPtr(video.ExternalThumbnail) == "" {
+			//	video.ExternalThumbnail = lo.ToPtr(thumbnail)
+			//}
+			//if lo.FromPtr(video.VoteRate) == 0 {
+			//	video.VoteRate = lo.ToPtr(ratting)
+			//}
+
+		}
+		page++
+		if len(result.List) < constant.PageSize {
+			break
+		}
+		log.Infof("douban sync page:%d", page)
 	}
 	return nil
 }
@@ -774,7 +862,7 @@ func (t *EmbyVideoTask) getRegion(ctx context.Context, externalUrls []*embydto.E
 		}
 		regular := constant.RegularMap[externalUrl.Name]
 		if regular != nil {
-			matches := regular.FindStringSubmatch(html)
+			matches := regular[0].FindStringSubmatch(html)
 			if len(matches) > 1 {
 				region := region_util.GetCnNameByName(ctx, matches[1])
 				if region != "" {
@@ -785,4 +873,82 @@ func (t *EmbyVideoTask) getRegion(ctx context.Context, externalUrls []*embydto.E
 		}
 	}
 	return "", uniqExternalUrls
+}
+
+func (t *EmbyVideoTask) getDoubanInfo(ctx context.Context, title string, oldRegion string) (string, string, string, float32, error) { //region,genre,thumbnail,ratting,actors
+	query := fmt.Sprintf("%s %s", title, oldRegion)
+	html, err := httpclient_util.DoHtml(ctx, fmt.Sprintf("https://search.douban.com/movie/subject_search?search_text=%s&cat=1002", url.QueryEscape(query)))
+	if err != nil {
+		return "", "", "", 0, nil
+	}
+	// 正则提取 window.__DATA__ 的 JSON
+	re := regexp.MustCompile(`window\.__DATA__\s*=\s*({.*?});`)
+	match := re.FindStringSubmatch(html)
+	if len(match) < 2 {
+		return "", "", "", 0, nil
+	}
+	jsonData := match[1]
+
+	// 解析 JSON 到 map
+	var data map[string]interface{}
+	err = json.Unmarshal([]byte(jsonData), &data)
+	if err != nil {
+		return "", "", "", 0, err
+	}
+
+	var region, genre, thumbnail string
+	var ratting float32
+
+	items := data["items"].([]interface{})
+	if len(items) > 0 {
+		var i = 0
+		var firstItem map[string]interface{}
+		for {
+			firstItem = items[i].(map[string]interface{})
+			if firstItem == nil || firstItem["tpl_name"].(string) != "search_subject" {
+				i++
+			} else {
+				break
+			}
+		}
+		abstract := strings.Split(firstItem["abstract"].(string), "/")
+		if len(abstract) > 0 {
+			region = strings.TrimSpace(abstract[0])
+		}
+		if len(abstract) > 1 {
+			genre = strings.TrimSpace(abstract[1])
+		}
+		filename := path.Base(firstItem["cover_url"].(string))
+		fileId := strings.TrimSuffix(filename, path.Ext(filename))
+		if fileId != "" {
+			thumbnail = fmt.Sprintf("https://img1.doubanio.com/view/photo/l/public/%s.webp", fileId)
+		}
+		ratingMap := firstItem["rating"].(map[string]interface{})
+		ratting = float32(ratingMap["value"].(float64))
+	}
+	return region, genre, thumbnail, ratting, nil
+}
+
+func (t *EmbyVideoTask) getTmdbThumbnail(ctx context.Context, url string) (string, error) { //region,genre,thumbnail,ratting,actors
+	html, err := httpclient_util.DoHtml(ctx, url)
+	if err != nil {
+		return "", nil
+	}
+	match := constant.RegularMap[constant.TheMovieDb][1].FindStringSubmatch(html)
+	if len(match) < 2 {
+		return "", nil
+	}
+	return match[1], nil
+}
+
+func (t *EmbyVideoTask) getTraktThumbnail(ctx context.Context, url string) (string, error) { //region,genre,thumbnail,ratting,actors
+	html, err := httpclient_util.DoHtml(ctx, url)
+	if err != nil {
+		return "", nil
+	}
+	match := constant.RegularMap[constant.Trakt][1].FindStringSubmatch(html)
+	if len(match) < 2 {
+		return "", nil
+	}
+	return match[1], nil
 }

@@ -576,7 +576,7 @@ func (t *JfVideoTask) getRegion(ctx context.Context, externalUrls []*jellyfindto
 		}
 		regular := constant.RegularMap[externalUrl.Name]
 		if regular != nil {
-			matches := regular.FindStringSubmatch(html)
+			matches := regular[0].FindStringSubmatch(html)
 			if len(matches) > 1 {
 				region := region_util.GetCnNameByName(ctx, matches[1])
 				if region != "" {

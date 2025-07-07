@@ -21,12 +21,14 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationEpisodeRemoteServiceGetEpisode = "/gnboot.EpisodeRemoteService/GetEpisode"
+const OperationEpisodeRemoteServiceTestDoubanSyncTask = "/gnboot.EpisodeRemoteService/TestDoubanSyncTask"
 const OperationEpisodeRemoteServiceTestFullSyncTask = "/gnboot.EpisodeRemoteService/TestFullSyncTask"
 const OperationEpisodeRemoteServiceTestLatestSyncTask = "/gnboot.EpisodeRemoteService/TestLatestSyncTask"
 const OperationEpisodeRemoteServiceUpdateConfigs = "/gnboot.EpisodeRemoteService/UpdateConfigs"
 
 type EpisodeRemoteServiceHTTPServer interface {
 	GetEpisode(context.Context, *GetEpisodeRequest) (*Episode, error)
+	TestDoubanSyncTask(context.Context, *TestDoubanSyncTaskRequest) (*emptypb.Empty, error)
 	TestFullSyncTask(context.Context, *TestFullSyncTaskRequest) (*emptypb.Empty, error)
 	TestLatestSyncTask(context.Context, *TestLatestSyncTaskRequest) (*emptypb.Empty, error)
 	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
@@ -38,6 +40,7 @@ func RegisterEpisodeRemoteServiceHTTPServer(s *http.Server, srv EpisodeRemoteSer
 	r.POST("/api/test/config/update", _EpisodeRemoteService_UpdateConfigs0_HTTP_Handler(srv))
 	r.POST("/api/test/testFullSyncTask", _EpisodeRemoteService_TestFullSyncTask0_HTTP_Handler(srv))
 	r.POST("/api/test/testLatestSyncTask", _EpisodeRemoteService_TestLatestSyncTask0_HTTP_Handler(srv))
+	r.POST("/api/test/testDoubanSyncTask", _EpisodeRemoteService_TestDoubanSyncTask0_HTTP_Handler(srv))
 }
 
 func _EpisodeRemoteService_GetEpisode0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
@@ -128,8 +131,31 @@ func _EpisodeRemoteService_TestLatestSyncTask0_HTTP_Handler(srv EpisodeRemoteSer
 	}
 }
 
+func _EpisodeRemoteService_TestDoubanSyncTask0_HTTP_Handler(srv EpisodeRemoteServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TestDoubanSyncTaskRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEpisodeRemoteServiceTestDoubanSyncTask)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TestDoubanSyncTask(ctx, req.(*TestDoubanSyncTaskRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type EpisodeRemoteServiceHTTPClient interface {
 	GetEpisode(ctx context.Context, req *GetEpisodeRequest, opts ...http.CallOption) (rsp *Episode, err error)
+	TestDoubanSyncTask(ctx context.Context, req *TestDoubanSyncTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	TestFullSyncTask(ctx context.Context, req *TestFullSyncTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	TestLatestSyncTask(ctx context.Context, req *TestLatestSyncTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateConfigs(ctx context.Context, req *UpdateConfigRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -148,6 +174,19 @@ func (c *EpisodeRemoteServiceHTTPClientImpl) GetEpisode(ctx context.Context, in 
 	pattern := "/api/episode/get"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceGetEpisode))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *EpisodeRemoteServiceHTTPClientImpl) TestDoubanSyncTask(ctx context.Context, in *TestDoubanSyncTaskRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/api/test/testDoubanSyncTask"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEpisodeRemoteServiceTestDoubanSyncTask))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

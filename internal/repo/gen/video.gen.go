@@ -38,6 +38,7 @@ func newVideo(db *gorm.DB, opts ...gen.DOOption) video {
 	_video.Ext = field.NewString(tableName, "ext")
 	_video.PublishDay = field.NewString(tableName, "publish_day")
 	_video.Thumbnail = field.NewString(tableName, "thumbnail")
+	_video.ExternalThumbnail = field.NewString(tableName, "external_thumbnail")
 	_video.Genres = field.NewString(tableName, "genres")
 	_video.CreateTime = field.NewTime(tableName, "create_time")
 	_video.UpdateTime = field.NewTime(tableName, "update_time")
@@ -67,6 +68,7 @@ type video struct {
 	Ext                field.String  // 扩展参数
 	PublishDay         field.String  // 出版月份，yyyymmdd
 	Thumbnail          field.String  // 缩略图
+	ExternalThumbnail  field.String  // 外链缩略图
 	Genres             field.String  // 流派，固定枚举，多个时用,分隔
 	CreateTime         field.Time    // 创建时间
 	UpdateTime         field.Time    // 更新时间
@@ -102,6 +104,7 @@ func (v *video) updateTableName(table string) *video {
 	v.Ext = field.NewString(table, "ext")
 	v.PublishDay = field.NewString(table, "publish_day")
 	v.Thumbnail = field.NewString(table, "thumbnail")
+	v.ExternalThumbnail = field.NewString(table, "external_thumbnail")
 	v.Genres = field.NewString(table, "genres")
 	v.CreateTime = field.NewTime(table, "create_time")
 	v.UpdateTime = field.NewTime(table, "update_time")
@@ -133,7 +136,7 @@ func (v *video) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *video) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 19)
+	v.fieldMap = make(map[string]field.Expr, 20)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["title"] = v.Title
 	v.fieldMap["video_type"] = v.VideoType
@@ -144,6 +147,7 @@ func (v *video) fillFieldMap() {
 	v.fieldMap["ext"] = v.Ext
 	v.fieldMap["publish_day"] = v.PublishDay
 	v.fieldMap["thumbnail"] = v.Thumbnail
+	v.fieldMap["external_thumbnail"] = v.ExternalThumbnail
 	v.fieldMap["genres"] = v.Genres
 	v.fieldMap["create_time"] = v.CreateTime
 	v.fieldMap["update_time"] = v.UpdateTime

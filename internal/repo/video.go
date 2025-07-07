@@ -44,6 +44,49 @@ func (r *VideoRepo) GetByJellyfinId(ctx context.Context, jellyfinId string) (*mo
 	return find, nil
 }
 
+func (r *VideoRepo) PageNew(ctx context.Context, condition *sdomain.VideoSearch) (*sdomain.PageResult[*model.Video], error) {
+	do := r.do(ctx, nil)
+	if condition.Search != "" {
+		do = do.Where(gen.Video.Title.Like("%" + condition.Search + "%"))
+	}
+	if len(condition.Ids) > 0 {
+		do = do.Where(gen.Video.ID.In(condition.Ids...))
+	}
+	if condition.Type != "" {
+		do = do.Where(gen.Video.VideoType.Eq(condition.Type))
+	}
+	if condition.Genre != "" {
+		do = do.Where(gen.Video.Genres.Like("%" + condition.Genre + "%"))
+	}
+	if condition.Region != "" {
+		do = do.Where(gen.Video.Region.Eq(condition.Region))
+	}
+	if condition.Year != "" {
+		do = do.Where(gen.Video.PublishDay.Between(condition.Year+"0101", condition.Year+"1231"))
+	}
+	if condition.Sort == constant.SortByHot {
+		do = do.Order(gen.Video.WatchCount.Desc())
+	} else if condition.Sort == constant.SortByRate {
+		do = do.Order(gen.Video.VoteRate.Desc())
+	} else if condition.Sort == constant.SortByPublish {
+		do = do.Order(gen.Video.PublishDay.Desc())
+	} else {
+		do = do.Order(gen.Video.PublishDay.Desc())
+	}
+	list, total, err := do.FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
+	if err != nil {
+		return nil, handleQueryError(ctx, err)
+	}
+	return &sdomain.PageResult[*model.Video]{
+		Page: &sdomain.Page{
+			CurrentPage: condition.Page.CurrentPage,
+			PageSize:    condition.Page.PageSize,
+			Count:       total,
+		},
+		List: list,
+	}, nil
+}
+
 func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*sdomain.PageResult[*sdomain.Video], error) {
 	do := r.do(ctx, nil)
 	if condition.Search != "" {
@@ -71,7 +114,7 @@ func (r *VideoRepo) Page(ctx context.Context, condition *sdomain.VideoSearch) (*
 	} else if condition.Sort == constant.SortByPublish {
 		do = do.Order(gen.Video.PublishDay.Desc())
 	} else {
-		do = do.Order(gen.Video.JellyfinCreateTime.Desc())
+		do = do.Order(gen.Video.PublishDay.Desc())
 	}
 	list, total, err := do.FindByPage(int((condition.Page.CurrentPage-1)*condition.Page.PageSize), int(condition.Page.PageSize))
 	if err != nil {

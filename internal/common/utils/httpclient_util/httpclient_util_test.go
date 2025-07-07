@@ -1,15 +1,31 @@
 package httpclient_util
 
 import (
+	"context"
 	"fmt"
+	"regexp"
 	"testing"
 )
 
 func TestRegular(t *testing.T) {
-	//ctx := context.Background()
-	html, err := CheckImageUrl("https://2a43-45-196-216-126.ngrok-free.app/Items/8d52885cdf2977c47dad7b060e5dd5e9/Images/Primary")
+	ctx := context.Background()
+	thumbnail, err := getTmdbInfo(ctx, "https://www.themoviedb.org/tv/38854")
 	if err != nil {
-		fmt.Println("find:" + err.Error())
+		t.Fatal(err)
 	}
-	fmt.Println("find:" + fmt.Sprintf("%v", html))
+	fmt.Println("count:", thumbnail) // 输出: 15
+}
+
+func getTmdbInfo(ctx context.Context, url string) (string, error) { //region,genre,thumbnail,ratting,actors
+	html, err := DoHtml(ctx, url)
+	if err != nil {
+		return "", nil
+	}
+	// 正则提取 window.__DATA__ 的 JSON
+	re := regexp.MustCompile(`<img class="poster w-full"[^>]*srcset="[^"]*?\s+1x,\s*([^"\s]+)\s+2x"`)
+	match := re.FindStringSubmatch(html)
+	if len(match) < 2 {
+		return "", nil
+	}
+	return match[1], nil
 }

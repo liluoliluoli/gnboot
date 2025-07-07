@@ -184,6 +184,8 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for IsFavorite
 
+	// no validation rules for ExternalThumbnail
+
 	if m.LastPlayedTime != nil {
 		// no validation rules for LastPlayedTime
 	}

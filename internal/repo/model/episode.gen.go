@@ -17,6 +17,7 @@ type Episode struct {
 	XiaoyaPath    *string    `gorm:"column:xiaoya_path;type:varchar(512)" json:"xiaoyaPath"`
 	Episode       int32      `gorm:"column:episode;type:int;not null;comment:第几集" json:"episode"`
 	EpisodeTitle  string     `gorm:"column:episode_title;type:varchar(256);not null;comment:集标题" json:"episodeTitle"`
+	DisplayTitle  *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
 	URL           *string    `gorm:"column:url;type:varchar(4096);comment:影片地址，如果非internal可以为空，每次调用外部数据源接口获取播放地址" json:"url"`
 	Platform      *string    `gorm:"column:platform;type:varchar(45);comment: aliyun" json:"platform"`
 	Ext           *string    `gorm:"column:ext;type:varchar(1024);comment:扩展参数" json:"ext"`
@@ -28,7 +29,6 @@ type Episode struct {
 	UpdateTime    time.Time  `gorm:"column:update_time;type:int unsigned;not null;autoUpdateTime;comment:更新时间" json:"updateTime"`
 	Ratio         *string    `gorm:"column:ratio;type:varchar(255);comment:分辨率LD，SD，HD，QHD" json:"ratio"`
 	JellyfinID    *string    `gorm:"column:jellyfin_id;type:varchar(255);comment:jellyfin id" json:"jellyfinId"`
-	DisplayTitle  *string    `gorm:"column:display_title;type:varchar(255);comment:用于展示的title" json:"displayTitle"`
 	AliDriveID    *string    `gorm:"column:ali_drive_id;type:varchar(255);comment:阿里云盘driveid" json:"aliDriveId"`
 	AliFileID     *string    `gorm:"column:ali_file_id;type:varchar(255);comment:阿里云盘fileid" json:"aliFileId"`
 	JfCreateTime  *time.Time `gorm:"column:jf_create_time;type:datetime;comment:jf侧创建时间" json:"jfCreateTime"`

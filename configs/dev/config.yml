@@ -2,10 +2,10 @@ server:
   prod: false
   machineId: ''
   http:
-    addr: 0.0.0.0:8888
+    addr: 0.0.0.0:8100
     timeout: 20s
   grpc:
-    addr: 0.0.0.0:9999
+    addr: 0.0.0.0:8101
     timeout: 20s
   language: 'en'
   idempotent: true

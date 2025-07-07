@@ -24,6 +24,7 @@ const (
 	EpisodeRemoteService_UpdateConfigs_FullMethodName      = "/gnboot.EpisodeRemoteService/UpdateConfigs"
 	EpisodeRemoteService_TestFullSyncTask_FullMethodName   = "/gnboot.EpisodeRemoteService/TestFullSyncTask"
 	EpisodeRemoteService_TestLatestSyncTask_FullMethodName = "/gnboot.EpisodeRemoteService/TestLatestSyncTask"
+	EpisodeRemoteService_TestDoubanSyncTask_FullMethodName = "/gnboot.EpisodeRemoteService/TestDoubanSyncTask"
 )
 
 // EpisodeRemoteServiceClient is the client API for EpisodeRemoteService service.
@@ -34,6 +35,7 @@ type EpisodeRemoteServiceClient interface {
 	UpdateConfigs(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	TestFullSyncTask(ctx context.Context, in *TestFullSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	TestLatestSyncTask(ctx context.Context, in *TestLatestSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestDoubanSyncTask(ctx context.Context, in *TestDoubanSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type episodeRemoteServiceClient struct {
@@ -80,6 +82,15 @@ func (c *episodeRemoteServiceClient) TestLatestSyncTask(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *episodeRemoteServiceClient) TestDoubanSyncTask(ctx context.Context, in *TestDoubanSyncTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EpisodeRemoteService_TestDoubanSyncTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EpisodeRemoteServiceServer is the server API for EpisodeRemoteService service.
 // All implementations must embed UnimplementedEpisodeRemoteServiceServer
 // for forward compatibility
@@ -88,6 +99,7 @@ type EpisodeRemoteServiceServer interface {
 	UpdateConfigs(context.Context, *UpdateConfigRequest) (*emptypb.Empty, error)
 	TestFullSyncTask(context.Context, *TestFullSyncTaskRequest) (*emptypb.Empty, error)
 	TestLatestSyncTask(context.Context, *TestLatestSyncTaskRequest) (*emptypb.Empty, error)
+	TestDoubanSyncTask(context.Context, *TestDoubanSyncTaskRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEpisodeRemoteServiceServer()
 }
 
@@ -106,6 +118,9 @@ func (UnimplementedEpisodeRemoteServiceServer) TestFullSyncTask(context.Context,
 }
 func (UnimplementedEpisodeRemoteServiceServer) TestLatestSyncTask(context.Context, *TestLatestSyncTaskRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestLatestSyncTask not implemented")
+}
+func (UnimplementedEpisodeRemoteServiceServer) TestDoubanSyncTask(context.Context, *TestDoubanSyncTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestDoubanSyncTask not implemented")
 }
 func (UnimplementedEpisodeRemoteServiceServer) mustEmbedUnimplementedEpisodeRemoteServiceServer() {}
 
@@ -192,6 +207,24 @@ func _EpisodeRemoteService_TestLatestSyncTask_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EpisodeRemoteService_TestDoubanSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestDoubanSyncTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EpisodeRemoteServiceServer).TestDoubanSyncTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EpisodeRemoteService_TestDoubanSyncTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EpisodeRemoteServiceServer).TestDoubanSyncTask(ctx, req.(*TestDoubanSyncTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EpisodeRemoteService_ServiceDesc is the grpc.ServiceDesc for EpisodeRemoteService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +247,10 @@ var EpisodeRemoteService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestLatestSyncTask",
 			Handler:    _EpisodeRemoteService_TestLatestSyncTask_Handler,
+		},
+		{
+			MethodName: "TestDoubanSyncTask",
+			Handler:    _EpisodeRemoteService_TestDoubanSyncTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

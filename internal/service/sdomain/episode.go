@@ -52,7 +52,7 @@ func (d *Episode) ConvertFromRepo(m *model.Episode) *Episode {
 		UpdateTime:   m.UpdateTime,
 		Ratio:        lo.FromPtr(m.Ratio),
 		JellyfinId:   lo.FromPtr(m.JellyfinID),
-		DisplayTitle: lo.FromPtr(m.DisplayTitle),
+		DisplayTitle: fmt.Sprintf("第 %d 集", m.Episode),
 		AliDriveId:   lo.FromPtr(m.AliDriveID),
 		AliFileId:    lo.FromPtr(m.AliFileID),
 	}
@@ -75,7 +75,7 @@ func (d *Episode) ConvertToDto() *episodedto.Episode {
 			return item.ConvertToDto()
 		}),
 		Ratio:        d.Ratio,
-		DisplayTitle: d.DisplayTitle + lo.Ternary(d.Ratio != "", fmt.Sprintf("【%s】", d.Ratio), ""),
+		DisplayTitle: d.DisplayTitle + fmt.Sprintf(" %s", d.EpisodeTitle),
 	}
 }
 

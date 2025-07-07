@@ -113,6 +113,7 @@ additional_properties:
     optional int32 lastPlayedPosition = 18;
     string ratio = 19;
     bool isFavorite = 20;
+    string externalThumbnail = 21;
   }
 
   message CreateVideoRequest {

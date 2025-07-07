@@ -93,11 +93,11 @@ const (
 var (
 	XiaoYaToken string                       = ""
 	ConfigMap   map[string]map[string]string = make(map[string]map[string]string)
-	RegularMap  map[string]*regexp.Regexp    = map[string]*regexp.Regexp{
-		IMDb:       regexp.MustCompile(`tt_dt_cnt">(.*?)</a>`),
-		TheMovieDb: nil,
-		Trakt:      regexp.MustCompile(`<label>Country</label>(.*?)\s*</li>`),
-		Douban:     regexp.MustCompile(`<span class="pl">制片国家/地区:</span>\s*(.*?)<br/>`),
+	RegularMap  map[string][]*regexp.Regexp  = map[string][]*regexp.Regexp{
+		IMDb:       {regexp.MustCompile(`tt_dt_cnt">(.*?)</a>`)},
+		TheMovieDb: {nil, regexp.MustCompile(`<img class="poster w-full"[^>]*srcset="[^"]*?\s+1x,\s*([^"\s]+)\s+2x"`)},
+		Trakt:      {regexp.MustCompile(`<label>Country</label>(.*?)\s*</li>`)},
+		Douban:     {regexp.MustCompile(`<span class="pl">制片国家/地区:</span>\s*(.*?)<br/>`)},
 	}
 	SortMap map[string]int32 = map[string]int32{
 		Douban:     1,
